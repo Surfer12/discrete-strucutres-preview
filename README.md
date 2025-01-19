@@ -21,7 +21,17 @@ This project explores the intersection of discrete mathematics, cognitive scienc
 - `fluid/`: Fluid dynamics modeling
   - `dynamics/`: Wave patterns and fluid emergence
   - `analysis/`: Pattern and flow analysis frameworks
+  
+### Documentation
+- `docs/`: Comprehensive documentation
+  - `notes/`: Project notes and additional documentation
+  - `research/`: Research papers and technical notes
+  - `syllabus/`: Course-related documents
+  - `dsl-notes/`: Domain-Specific Language design notes
 
+### Examples
+- `examples/`: Sample implementations and code snippets
+  - `java/`: Java code examples
 ## Key Features
 
 - Integrated cognitive-mathematical framework
@@ -35,7 +45,8 @@ This project explores the intersection of discrete mathematics, cognitive scienc
 1. Ensure you have Java 11+ installed
 2. Clone the repository
 3. Build the project using Maven or Gradle
-4. Explore example implementations in the `examples/` directory
+4. Explore documentation in the `docs/` directory
+5. Check out example implementations in the `examples/` directory
 
 ## Research Applications
 
@@ -50,6 +61,12 @@ This project explores the intersection of discrete mathematics, cognitive scienc
 2. Create a feature branch
 3. Commit your changes
 4. Push and create a pull request
+
+## Documentation Highlights
+
+- Detailed course syllabus in `docs/syllabus/`
+- Research notes on concurrent algorithms and data structures
+- Domain-Specific Language (DSL) design documentation
 
 ## License
 
