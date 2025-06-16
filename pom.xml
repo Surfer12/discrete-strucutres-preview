@@ -17,7 +17,7 @@
     >A comprehensive Java library and CLI tool for discrete logic mathematics concepts</description>
 
         <properties>
-            <java.version>21</java.version>
+            <java.version>11</java.version>
             <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
             <picocli.version>4.7.5</picocli.version>
             <junit.version>5.10.0</junit.version>
