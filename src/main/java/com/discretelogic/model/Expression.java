@@ -32,6 +32,16 @@ public class Expression {
     }
     
     /**
+     * Gets the string representation of the expression.
+     * This is an alias for getExpressionString() for compatibility with other components.
+     * 
+     * @return The expression string
+     */
+    public String getExpression() {
+        return expressionString;
+    }
+    
+    /**
      * Gets the set of variables used in the expression.
      * 
      * @return The set of variable names

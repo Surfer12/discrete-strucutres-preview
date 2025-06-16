@@ -18,6 +18,15 @@ import picocli.CommandLine.Model.CommandSpec;
 import java.util.*;
 import java.util.concurrent.Callable;
 
+import com.discretelogic.discrete.sets.SetOperations;
+import com.discretelogic.tutorial.Tutorial;
+import com.discretelogic.quiz.Quiz;
+import com.discretelogic.model.GateType;
+import com.discretelogic.LogicGateSim.LogicGate;
+import com.discretelogic.expressions.ExpressionParser;
+import com.discretelogic.algebra.BooleanAlgebra;
+import com.discretelogic.numbersystems.NumberSystemConverter;
+
 /**
  * Main CLI application for discrete logic mathematics operations.
  */

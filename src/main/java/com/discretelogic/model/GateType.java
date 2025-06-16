@@ -1,47 +1,77 @@
 package com.discretelogic.model;
 
 /**
- * Enum representing the different types of logic gates.
- * Each gate type corresponds to a specific boolean operation.
+ * Enumeration of different types of logic gates.
  */
 public enum GateType {
     /**
-     * AND gate - output is true only when all inputs are true
+     * AND gate: Output is true only when all inputs are true.
      */
-    AND,
+    AND("AND", "∧"),
     
     /**
-     * OR gate - output is true when at least one input is true
+     * OR gate: Output is true when at least one input is true.
      */
-    OR,
+    OR("OR", "∨"),
     
     /**
-     * NOT gate - output is the opposite of the input
+     * NOT gate: Inverts the input (true to false, false to true).
      */
-    NOT,
+    NOT("NOT", "¬"),
     
     /**
-     * NAND gate - output is false only when all inputs are true
+     * NAND gate: Negated AND. Output is false only when all inputs are true.
      */
-    NAND,
+    NAND("NAND", "⊼"),
     
     /**
-     * NOR gate - output is true only when all inputs are false
+     * NOR gate: Negated OR. Output is true only when all inputs are false.
      */
-    NOR,
+    NOR("NOR", "⊽"),
     
     /**
-     * XOR gate - output is true when inputs are different
+     * XOR gate: Output is true when odd number of inputs are true.
      */
-    XOR,
+    XOR("XOR", "⊕"),
     
     /**
-     * XNOR gate - output is true when inputs are the same
+     * XNOR gate: Output is true when even number of inputs are true.
      */
-    XNOR,
+    XNOR("XNOR", "≡"),
     
     /**
-     * BUFFER gate - output is the same as the input
+     * BUFFER gate: Output is the same as input. Often used for signal amplification.
      */
-    BUFFER
+    BUFFER("BUFFER", "→");
+    
+    private final String name;
+    private final String symbol;
+    
+    GateType(String name, String symbol) {
+        this.name = name;
+        this.symbol = symbol;
+    }
+    
+    /**
+     * Gets the name of the gate type.
+     *
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+    
+    /**
+     * Gets the symbol representation of the gate type.
+     *
+     * @return the symbol
+     */
+    public String getSymbol() {
+        return symbol;
+    }
+    
+    @Override
+    public String toString() {
+        return name + " (" + symbol + ")";
+    }
 } 
