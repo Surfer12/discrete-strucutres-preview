@@ -158,61 +158,55 @@ public class ScalableConcurrentGraphEngine<T> {
      * @param maxDepth maximum depth to search
      * @return map of nodes to their distances from start
      */
-    public CompletableFuture<Map<T, Integer>> parallelBFS(
-        T startNode,
-        int maxDepth
-    ) {
-        return CompletableFuture.supplyAsync(
-            () -> {
-                Map<T, Integer> distances = new ConcurrentHashMap<>();
-                Queue<T> currentLevel = new ArrayDeque<>();
-                Queue<T> nextLevel = new ArrayDeque<>();
+    public CompletableFuture<Map<T, Integer>> parallelBFS(final T startNode, final int maxDepth) {
+        return CompletableFuture.supplyAsync(() -> {
+            final Map<T, Integer> distances = new ConcurrentHashMap<>();
+            final Queue<T> currentLevel = new ConcurrentLinkedQueue<>();
+            final Queue<T> nextLevel = new ConcurrentLinkedQueue<>();
 
-                currentLevel.offer(startNode);
-                distances.put(startNode, 0);
+            currentLevel.offer(startNode);
+            distances.put(startNode, 0);
 
-                for (
-                    int depth = 0;
-                    depth < maxDepth && !currentLevel.isEmpty();
-                    depth++
-                ) {
-                    final int currentDepth = depth + 1;
+            for (
+                int depth = 0;
+                depth < maxDepth && !currentLevel.isEmpty();
+                depth++
+            ) {
+                final int currentDepth = depth + 1;
 
-                    // Process current level in parallel
-                    currentLevel
-                        .parallelStream()
-                        .forEach(node -> {
-                            Set<T> neighbors = getNeighbors(node);
-                            neighbors
-                                .stream()
-                                .filter(neighbor ->
-                                    !distances.containsKey(neighbor)
-                                )
-                                .forEach(neighbor -> {
-                                    if (
-                                        distances.putIfAbsent(
-                                            neighbor,
-                                            currentDepth
-                                        ) ==
-                                        null
-                                    ) {
-                                        synchronized (nextLevel) {
-                                            nextLevel.offer(neighbor);
-                                        }
+                // Process current level in parallel
+                currentLevel
+                    .parallelStream()
+                    .forEach(node -> {
+                        Set<T> neighbors = getNeighbors(node);
+                        neighbors
+                            .stream()
+                            .filter(neighbor ->
+                                !distances.containsKey(neighbor)
+                            )
+                            .forEach(neighbor -> {
+                                if (
+                                    distances.putIfAbsent(
+                                        neighbor,
+                                        currentDepth
+                                    ) ==
+                                    null
+                                ) {
+                                    synchronized (nextLevel) {
+                                        nextLevel.offer(neighbor);
                                     }
-                                });
-                        });
+                                }
+                            });
+                    });
 
-                    currentLevel.clear();
-                    Queue<T> temp = currentLevel;
-                    currentLevel = nextLevel;
-                    nextLevel = temp;
-                }
+                currentLevel.clear();
+                Queue<T> temp = currentLevel;
+                currentLevel = nextLevel;
+                nextLevel = temp;
+            }
 
-                return distances;
-            },
-            ForkJoinPool.commonPool()
-        );
+            return distances;
+        }, ForkJoinPool.commonPool());
     }
 
     /**
@@ -242,8 +236,9 @@ public class ScalableConcurrentGraphEngine<T> {
             .entrySet()
             .parallelStream()
             .forEach(entry -> {
-                entry
-                    .getValue()
+                final List<Edge<T>> edgeList = entry.getValue();
+                final int partitionId = entry.getKey();
+                edgeList
                     .forEach(edge -> {
                         int sourceId = addNode(edge.source);
                         int targetId = addNode(edge.target);

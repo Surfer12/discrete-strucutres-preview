@@ -81,6 +81,10 @@ public class CognitiveEducationFramework {
             return difficulty;
         }
 
+        public DifficultyLevel getDifficultyLevel() {
+            return difficulty;
+        }
+
         public Map<String, Double> getPrerequisites() {
             return new HashMap<>(prerequisites);
         }

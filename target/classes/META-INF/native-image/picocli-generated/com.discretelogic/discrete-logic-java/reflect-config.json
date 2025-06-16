@@ -1,0 +1,147 @@
+[
+  {
+    "name" : "com.discretelogic.app.DiscreteLogicCLI",
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allDeclaredMethods" : true,
+    "allPublicMethods" : true,
+    "fields" : [
+      { "name" : "spec" }
+    ]
+  },
+  {
+    "name" : "com.discretelogic.app.DiscreteLogicCLI$BooleanAlgebraCommand",
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allDeclaredMethods" : true,
+    "allPublicMethods" : true,
+    "fields" : [
+      { "name" : "cnf" },
+      { "name" : "compareWith" },
+      { "name" : "dnf" },
+      { "name" : "expression" },
+      { "name" : "simplify" }
+    ]
+  },
+  {
+    "name" : "com.discretelogic.app.DiscreteLogicCLI$CombinatoricsCommand",
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allDeclaredMethods" : true,
+    "allPublicMethods" : true,
+    "fields" : [
+      { "name" : "combinations" },
+      { "name" : "derangements" },
+      { "name" : "factorial" },
+      { "name" : "n" },
+      { "name" : "pascal" },
+      { "name" : "permutations" },
+      { "name" : "pigeonhole" },
+      { "name" : "r" },
+      { "name" : "table" }
+    ]
+  },
+  {
+    "name" : "com.discretelogic.app.DiscreteLogicCLI$KarnaughMapCommand",
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allDeclaredMethods" : true,
+    "allPublicMethods" : true,
+    "fields" : [
+      { "name" : "analyze" },
+      { "name" : "expression" }
+    ]
+  },
+  {
+    "name" : "com.discretelogic.app.DiscreteLogicCLI$LogicGateCommand",
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allDeclaredMethods" : true,
+    "allPublicMethods" : true,
+    "fields" : [
+      { "name" : "demo" },
+      { "name" : "gateType" },
+      { "name" : "list" }
+    ]
+  },
+  {
+    "name" : "com.discretelogic.app.DiscreteLogicCLI$NumberConversionCommand",
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allDeclaredMethods" : true,
+    "allPublicMethods" : true,
+    "fields" : [
+      { "name" : "arithmetic" },
+      { "name" : "fromBase" },
+      { "name" : "number" },
+      { "name" : "showSteps" },
+      { "name" : "showTable" },
+      { "name" : "toBase" }
+    ]
+  },
+  {
+    "name" : "com.discretelogic.app.DiscreteLogicCLI$QuizCommand",
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allDeclaredMethods" : true,
+    "allPublicMethods" : true,
+    "fields" : [
+      { "name" : "questionCount" },
+      { "name" : "topic" }
+    ]
+  },
+  {
+    "name" : "com.discretelogic.app.DiscreteLogicCLI$SetOperationsCommand",
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allDeclaredMethods" : true,
+    "allPublicMethods" : true,
+    "fields" : [
+      { "name" : "analyzeSets" },
+      { "name" : "deMorgan" },
+      { "name" : "demo" },
+      { "name" : "powerSet" }
+    ]
+  },
+  {
+    "name" : "com.discretelogic.app.DiscreteLogicCLI$TruthTableCommand",
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allDeclaredMethods" : true,
+    "allPublicMethods" : true,
+    "fields" : [
+      { "name" : "expression" },
+      { "name" : "format" },
+      { "name" : "verbose" }
+    ]
+  },
+  {
+    "name" : "com.discretelogic.app.DiscreteLogicCLI$TutorialCommand",
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allDeclaredMethods" : true,
+    "allPublicMethods" : true,
+    "fields" : [
+      { "name" : "list" },
+      { "name" : "topic" }
+    ]
+  },
+  {
+    "name" : "java.lang.Integer",
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allDeclaredMethods" : true,
+    "allPublicMethods" : true
+  },
+  {
+    "name" : "picocli.CommandLine$AutoHelpMixin",
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allDeclaredMethods" : true,
+    "allPublicMethods" : true,
+    "fields" : [
+      { "name" : "helpRequested" },
+      { "name" : "versionRequested" }
+    ]
+  }
+]

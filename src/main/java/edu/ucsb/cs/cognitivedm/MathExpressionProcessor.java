@@ -259,12 +259,16 @@ public class MathExpressionProcessor {
         simplified = simplified.replaceAll("\\(([a-zA-Z0-9]+)\\)", "$1");
 
         // Combine like terms (simplified version)
-        simplified = simplified.replaceAll("([0-9]*)x \\+ ([0-9]*)x",
+        simplified = simplified.replaceAll("([0-9]*)x \\+ ([0-9]*)x", 
             (match) -> {
-                String[] parts = match.split(" \\+ ");
-                int coeff1 = parts[0].equals("x") ? 1 : Integer.parseInt(parts[0].replace("x", ""));
-                int coeff2 = parts[1].equals("x") ? 1 : Integer.parseInt(parts[1].replace("x", ""));
-                return (coeff1 + coeff2) + "x";
+                try {
+                    String[] parts = match.group().split(" \\+ ");
+                    int coeff1 = parts[0].equals("x") ? 1 : Integer.parseInt(parts[0].replace("x", ""));
+                    int coeff2 = parts[1].equals("x") ? 1 : Integer.parseInt(parts[1].replace("x", ""));
+                    return (coeff1 + coeff2) + "x";
+                } catch (Exception e) {
+                    return match.group();
+                }
             });
 
         return simplified;
