@@ -1092,6 +1092,242 @@ public class MathExpression extends Expression {
         public long getLastQueryTime() {
             return lastQueryTime;
         }
+
+        /**
+         * Component for lexical viability analysis in mathematical expressions.
+         * Evaluates the coherence and meaningfulness of expressions from a lexical perspective.
+         */
+        public class LexicalViabilityComponent {
+            private final Map<String, Double> termWeights;
+            private final Map<String, List<String>> relatedTerms;
+            private final double viabilityThreshold;
+            
+            /**
+             * Creates a new lexical viability component with default settings.
+             */
+            public LexicalViabilityComponent() {
+                this.termWeights = new HashMap<>();
+                this.relatedTerms = new HashMap<>();
+                this.viabilityThreshold = 0.6;
+                initializeTermWeights();
+            }
+            
+            /**
+             * Creates a new lexical viability component with custom threshold.
+             * 
+             * @param viabilityThreshold The threshold for viability (0.0-1.0)
+             */
+            public LexicalViabilityComponent(double viabilityThreshold) {
+                this.termWeights = new HashMap<>();
+                this.relatedTerms = new HashMap<>();
+                this.viabilityThreshold = viabilityThreshold;
+                initializeTermWeights();
+            }
+            
+            /**
+             * Initializes the term weights with default values.
+             */
+            private void initializeTermWeights() {
+                // Common mathematical operators
+                termWeights.put("+", 1.0);
+                termWeights.put("-", 1.0);
+                termWeights.put("*", 1.0);
+                termWeights.put("/", 1.0);
+                termWeights.put("^", 0.9);
+                
+                // Common functions
+                termWeights.put("sin", 0.8);
+                termWeights.put("cos", 0.8);
+                termWeights.put("tan", 0.8);
+                termWeights.put("log", 0.8);
+                termWeights.put("exp", 0.8);
+                
+                // Common variables
+                termWeights.put("x", 0.9);
+                termWeights.put("y", 0.9);
+                termWeights.put("z", 0.9);
+                termWeights.put("n", 0.8);
+                
+                // Initialize related terms
+                relatedTerms.put("sin", Arrays.asList("cos", "tan", "angle", "trigonometric"));
+                relatedTerms.put("cos", Arrays.asList("sin", "tan", "angle", "trigonometric"));
+                termWeights.put("log", 0.8);
+                termWeights.put("exp", 0.8);
+                relatedTerms.put("log", Arrays.asList("exp", "ln", "logarithm", "base"));
+            }
+            
+            /**
+             * Analyzes the viability of a mathematical expression.
+             * 
+             * @param expression The expression to analyze
+             * @return A viability score between 0.0 and 1.0
+             */
+            public double analyzeViability(String expression) {
+                if (expression == null || expression.trim().isEmpty()) {
+                    return 0.0;
+                }
+                
+                // Tokenize the expression
+                List<String> tokens = tokenize(expression);
+                
+                // Calculate the average term weight
+                double totalWeight = 0.0;
+                int weightedTerms = 0;
+                
+                for (String token : tokens) {
+                    if (termWeights.containsKey(token)) {
+                        totalWeight += termWeights.get(token);
+                        weightedTerms++;
+                    }
+                }
+                
+                // Calculate coherence based on related terms
+                double coherence = calculateCoherence(tokens);
+                
+                // Calculate balance based on token patterns
+                double balance = calculateBalance(tokens);
+                
+                // Combine metrics
+                double baseScore = weightedTerms > 0 ? totalWeight / weightedTerms : 0.5;
+                
+                return 0.5 * baseScore + 0.3 * coherence + 0.2 * balance;
+            }
+            
+            /**
+             * Checks if an expression meets the viability threshold.
+             * 
+             * @param expression The expression to check
+             * @return true if the expression is viable, false otherwise
+             */
+            public boolean isViable(String expression) {
+                return analyzeViability(expression) >= viabilityThreshold;
+            }
+            
+            /**
+             * Tokenizes a mathematical expression.
+             * 
+             * @param expression The expression to tokenize
+             * @return A list of tokens
+             */
+            private List<String> tokenize(String expression) {
+                List<String> tokens = new ArrayList<>();
+                StringBuilder current = new StringBuilder();
+                
+                for (char c : expression.toCharArray()) {
+                    if (Character.isLetterOrDigit(c)) {
+                        current.append(c);
+                    } else {
+                        if (current.length() > 0) {
+                            tokens.add(current.toString());
+                            current = new StringBuilder();
+                        }
+                        if (!Character.isWhitespace(c)) {
+                            tokens.add(String.valueOf(c));
+                        }
+                    }
+                }
+                
+                if (current.length() > 0) {
+                    tokens.add(current.toString());
+                }
+                
+                return tokens;
+            }
+            
+            /**
+             * Calculates the coherence score based on related terms.
+             * 
+             * @param tokens The tokens to analyze
+             * @return A coherence score between 0.0 and 1.0
+             */
+            private double calculateCoherence(List<String> tokens) {
+                int relatedPairs = 0;
+                int totalPossiblePairs = 0;
+                
+                for (int i = 0; i < tokens.size(); i++) {
+                    String token1 = tokens.get(i);
+                    if (!relatedTerms.containsKey(token1)) {
+                        continue;
+                    }
+                    
+                    List<String> related = relatedTerms.get(token1);
+                    for (int j = i + 1; j < tokens.size(); j++) {
+                        String token2 = tokens.get(j);
+                        totalPossiblePairs++;
+                        
+                        if (related.contains(token2)) {
+                            relatedPairs++;
+                        }
+                    }
+                }
+                
+                return totalPossiblePairs > 0 ? (double) relatedPairs / totalPossiblePairs : 0.5;
+            }
+            
+            /**
+             * Calculates the balance score based on token patterns.
+             * 
+             * @param tokens The tokens to analyze
+             * @return A balance score between 0.0 and 1.0
+             */
+            private double calculateBalance(List<String> tokens) {
+                // Count operators vs. operands
+                int operators = 0;
+                int operands = 0;
+                
+                for (String token : tokens) {
+                    if (token.equals("+") || token.equals("-") || token.equals("*") || token.equals("/") || token.equals("^")) {
+                        operators++;
+                    } else if (Character.isLetterOrDigit(token.charAt(0))) {
+                        operands++;
+                    }
+                }
+                
+                // Check parentheses balance
+                int openParens = 0;
+                int closeParens = 0;
+                
+                for (String token : tokens) {
+                    if (token.equals("(")) {
+                        openParens++;
+                    } else if (token.equals(")")) {
+                        closeParens++;
+                    }
+                }
+                
+                double operatorBalance = operands > 0 ? Math.min(1.0, (double) (operands - 1) / Math.max(1, operators)) : 0.0;
+                double parenBalance = openParens > 0 ? (double) Math.min(openParens, closeParens) / Math.max(openParens, closeParens) : 1.0;
+                
+                return 0.7 * operatorBalance + 0.3 * parenBalance;
+            }
+            
+            /**
+             * Gets the viability threshold.
+             * 
+             * @return The viability threshold
+             */
+            public double getViabilityThreshold() {
+                return viabilityThreshold;
+            }
+            
+            /**
+             * Gets the term weights.
+             * 
+             * @return An unmodifiable map of term weights
+             */
+            public Map<String, Double> getTermWeights() {
+                return Collections.unmodifiableMap(termWeights);
+            }
+            
+            /**
+             * Gets the related terms.
+             * 
+             * @return An unmodifiable map of related terms
+             */
+            public Map<String, List<String>> getRelatedTerms() {
+                return Collections.unmodifiableMap(relatedTerms);
+            }
+        }
     }
 
     public static class LexicalNode {
@@ -1133,378 +1369,6 @@ public class MathExpression extends Expression {
 
         public double getConfidence() {
             return confidence;
-        }
-    }
-
-    /**
-     * Lexical viability component for optimizing mathematical expression processing
-     */
-    public static class LexicalViabilityComponent {
-
-        private final LexicalNetwork network;
-        private final Map<String, Double> notationPreferences;
-        private final Map<String, Double> learnerProfile;
-        private final MathEmbeddingService embeddingService;
-        private final Map<String, Double> viabilityCache;
-
-        public LexicalViabilityComponent(
-            LexicalNetwork network,
-            MathEmbeddingService embeddingService
-        ) {
-            this.network = network;
-            this.embeddingService = embeddingService;
-            this.notationPreferences = new ConcurrentHashMap<>();
-            this.learnerProfile = new ConcurrentHashMap<>();
-            this.viabilityCache = new ConcurrentHashMap<>();
-            initializeDefaults();
-        }
-
-        private void initializeDefaults() {
-            // Default notation preferences
-            notationPreferences.put("algebraic_notation", 0.8);
-            notationPreferences.put("set_notation", 0.7);
-            notationPreferences.put("symbolic_density", 0.6);
-            notationPreferences.put("parentheses_depth", 0.5);
-            
-            // Default learner profile
-            learnerProfile.put("attention_span", 0.7);
-            learnerProfile.put("cognitive_load_threshold", 0.65);
-            learnerProfile.put("familiarity_set_theory", 0.6);
-            learnerProfile.put("familiarity_algebra", 0.75);
-        }
-
-        public double calculateViability(
-            String expr,
-            CognitiveState state,
-            List<ProcessingResult> results
-        ) {
-            // Check cache first
-            String cacheKey = expr + "_" + state.getAttention() + "_" + 
-                state.getRecognition() + "_" + state.getWandering();
-            if (viabilityCache.containsKey(cacheKey)) {
-                return viabilityCache.get(cacheKey);
-            }
-            
-            // Multi-dimensional viability calculation
-            double attentionViability = calculateAttentionViability(state, results);
-            double notationViability = calculateNotationViability(expr);
-            double learnerViability = calculateLearnerViability(expr);
-            double embeddingViability = calculateEmbeddingViability(expr, state);
-            
-            // Weighted combination
-            double attentionWeight = 0.3;
-            double notationWeight = 0.25;
-            double learnerWeight = 0.25;
-            double embeddingWeight = 0.2;
-            
-            // Adjust weights based on cognitive state
-            if (state.getAttention() < 0.4) {
-                // When attention is low, prioritize attention viability
-                attentionWeight = 0.5;
-                notationWeight = 0.2;
-                learnerWeight = 0.2;
-                embeddingWeight = 0.1;
-            } else if (state.getCognitiveLoad() > 0.7) {
-                // When cognitive load is high, prioritize learner viability
-                attentionWeight = 0.2;
-                notationWeight = 0.2;
-                learnerWeight = 0.4;
-                embeddingWeight = 0.2;
-            }
-            
-            // Calculate combined viability
-            double viability = 
-                attentionWeight * attentionViability +
-                notationWeight * notationViability +
-                learnerWeight * learnerViability + 
-                embeddingWeight * embeddingViability;
-            
-            // Cache result
-            viabilityCache.put(cacheKey, viability);
-            
-            return viability;
-        }
-
-        private double calculateAttentionViability(
-            CognitiveState state,
-            List<ProcessingResult> results
-        ) {
-            // Higher viability when attention is focused and wandering is low
-            double attentionFactor = state.getAttention() * (1.0 - state.getWandering());
-            
-            // Analyze attention stability across time
-            double stabilityFactor = 1.0;
-            if (results != null && !results.isEmpty()) {
-                double attentionVariance = calculateAttentionVariance(results);
-                stabilityFactor = 1.0 / (1.0 + attentionVariance);
-            }
-            
-            return attentionFactor * stabilityFactor;
-        }
-
-        private double calculateAttentionVariance(List<ProcessingResult> results) {
-            if (results.size() < 2) return 0.0;
-            
-            // Calculate variance of attention values
-            double sum = 0.0;
-            double sumSq = 0.0;
-            for (ProcessingResult result : results) {
-                double attention = result.getState().getAttention();
-                sum += attention;
-                sumSq += attention * attention;
-            }
-            
-            double mean = sum / results.size();
-            double variance = (sumSq / results.size()) - (mean * mean);
-            return variance;
-        }
-
-        private double calculateNotationViability(String expr) {
-            // Examine notation style and match with preferences
-            double algebraicNotationFactor = expr.contains("=") || expr.contains("+") ? 
-                notationPreferences.getOrDefault("algebraic_notation", 0.5) : 0.5;
-                
-            double setNotationFactor = expr.contains("∪") || expr.contains("∩") ?
-                notationPreferences.getOrDefault("set_notation", 0.5) : 0.5;
-                
-            // Analyze symbolic density
-            double symbolDensity = (double) expr.replaceAll("[a-zA-Z0-9\\s]", "").length() / expr.length();
-            double preferredDensity = notationPreferences.getOrDefault("symbolic_density", 0.5);
-            double densityViability = 1.0 - Math.abs(symbolDensity - preferredDensity);
-            
-            // Combine factors
-            return (algebraicNotationFactor + setNotationFactor + densityViability) / 3.0;
-        }
-
-        private double calculateLearnerViability(String expr) {
-            // Match expression with learner profile
-            double attentionSpanFactor = learnerProfile.getOrDefault("attention_span", 0.5);
-            double expressionLengthViability = 
-                1.0 - Math.min(1.0, (double) expr.length() / (100 * attentionSpanFactor));
-            
-            // Cognitive load threshold
-            double loadThreshold = learnerProfile.getOrDefault("cognitive_load_threshold", 0.5);
-            double complexityEstimate = calculateExpressionComplexity(expr);
-            double complexityViability = 1.0 - Math.min(1.0, complexityEstimate / (1.5 * loadThreshold));
-            
-            // Domain familiarity
-            double domainFamiliarity = expr.contains("∪") || expr.contains("∩") ?
-                learnerProfile.getOrDefault("familiarity_set_theory", 0.5) :
-                learnerProfile.getOrDefault("familiarity_algebra", 0.5);
-                
-            // Combine factors
-            return (expressionLengthViability + complexityViability + domainFamiliarity) / 3.0;
-        }
-
-        private double calculateExpressionComplexity(String expr) {
-            // Simple complexity metric based on:
-            // 1. Length
-            // 2. Number of operators
-            // 3. Nesting depth
-            
-            double lengthFactor = Math.min(1.0, expr.length() / 50.0);
-            
-            int operatorCount = expr.replaceAll("[^+\\-*/=∪∩\\\\×']", "").length();
-            double operatorFactor = Math.min(1.0, operatorCount / 10.0);
-            
-            int nestingDepth = 0;
-            int maxDepth = 0;
-            for (char c : expr.toCharArray()) {
-                if (c == '(' || c == '{' || c == '[') nestingDepth++;
-                if (c == ')' || c == '}' || c == ']') nestingDepth--;
-                maxDepth = Math.max(maxDepth, nestingDepth);
-            }
-            double nestingFactor = Math.min(1.0, maxDepth / 5.0);
-            
-            return (lengthFactor + operatorFactor + nestingFactor) / 3.0;
-        }
-
-        public double getNotationPreference(String expr) {
-            // For backward compatibility
-            return calculateNotationViability(expr);
-        }
-
-        public String optimizeNotation(String expr, CognitiveState state) {
-            double viability = calculateViability(expr, state, null);
-            
-            if (viability < 0.4) {
-                // Low viability - simplify notation
-                return simplifyNotation(expr);
-            } else if (viability > 0.8) {
-                // High viability - can use more advanced notation
-                return expr; // Keep as is
-            } else {
-                // Medium viability - make moderate adjustments
-                return adjustNotation(expr, state);
-            }
-        }
-
-        private String simplifyNotation(String expr) {
-            // Replace complex symbols with simpler ones
-            String simplified = expr
-                .replace("∪", " union ")
-                .replace("∩", " intersect ")
-                .replace("×", " cartesian ")
-                .replace("\\", " minus ");
-                
-            // Add more spacing for clarity
-            simplified = simplified.replaceAll("([\\(\\)\\{\\}])", " $1 ");
-            
-            return simplified.replaceAll("\\s+", " ").trim();
-        }
-
-        private String adjustNotation(String expr, CognitiveState state) {
-            // Adjust notation based on cognitive state
-            if (state.getAttention() < 0.5) {
-                // Add attention cues for low attention
-                return addAttentionCues(expr);
-            } else if (state.getCognitiveLoad() > 0.7) {
-                // Simplify for high cognitive load
-                return breakComplexExpressions(expr);
-            } else {
-                return expr; // No changes needed
-            }
-        }
-
-        private String addAttentionCues(String expr) {
-            // Simple implementation - add spacing around key operators
-            return expr.replaceAll("([\\+\\-\\*/=∪∩\\\\×'])", " $1 ")
-                       .replaceAll("\\s+", " ")
-                       .trim();
-        }
-
-        private String breakComplexExpressions(String expr) {
-            // If expression is long, insert line breaks
-            if (expr.length() > 30) {
-                // Insert breaks after operators
-                return expr.replaceAll("([\\+\\-\\*/=∪∩\\\\×'])", "$1\n")
-                           .replaceAll("\\n+", "\n");
-            }
-            return expr;
-        }
-
-        private double calculateEmbeddingViability(
-            String expr,
-            CognitiveState state
-        ) {
-            if (embeddingService == null) {
-                return 0.5; // Default when embedding service not available
-            }
-            
-            try {
-                // Get embedding for expression
-                double[] embedding = embeddingService.getEmbedding(expr);
-                if (embedding == null) {
-                    return 0.5;
-                }
-                
-                // Find similar expressions
-                Map<String, Double> similarExpressions = 
-                    embeddingService.findSimilarExpressions(embedding, 3);
-                
-                if (similarExpressions.isEmpty()) {
-                    return 0.5;
-                }
-                
-                // Calculate average similarity
-                double totalSimilarity = similarExpressions.values().stream()
-                    .mapToDouble(Double::doubleValue)
-                    .sum();
-                double avgSimilarity = totalSimilarity / similarExpressions.size();
-                
-                // Adjust based on cognitive state
-                if (state.getWandering() > 0.6) {
-                    // High wandering - prioritize familiar expressions
-                    return avgSimilarity;
-                } else if (state.getRecognition() < 0.4) {
-                    // Low recognition - prioritize recognizable patterns
-                    return avgSimilarity * 0.8;
-                } else {
-                    // Normal state
-                    return avgSimilarity * 0.5 + 0.25; // Scale to range 0.25-0.75
-                }
-            } catch (Exception e) {
-                // Fallback for embedding errors
-                return 0.5;
-            }
-        }
-
-        public String getMostViableTerm(String expr, CognitiveState state) {
-            // Extract terms
-            String[] terms = expr.split("[^a-zA-Z0-9_]");
-            
-            // Find most viable term
-            String bestTerm = "";
-            double bestViability = 0.0;
-            
-            for (String term : terms) {
-                if (term.length() < 2) continue; // Skip short terms
-                
-                // Evaluate term viability
-                double viability = 0.0;
-                
-                // Check lexical network
-                if (network != null && network.nodes.containsKey(term)) {
-                    LexicalNode node = network.nodes.get(term);
-                    viability += 0.4 * node.getFeature("usage_frequency", 0.5);
-                    viability += 0.3 * node.getFeature("specificity", 0.5);
-                }
-                
-                // Consider cognitive state
-                viability += 0.3 * (1.0 - Math.abs(state.getAttention() - 0.7));
-                
-                if (viability > bestViability) {
-                    bestViability = viability;
-                    bestTerm = term;
-                }
-            }
-            
-            return bestTerm;
-        }
-
-        public void updateEmbeddingFeedback(
-            String expr,
-            CognitiveState state,
-            boolean success
-        ) {
-            if (embeddingService == null) return;
-            
-            try {
-                // Get embedding for expression
-                double[] embedding = embeddingService.getEmbedding(expr);
-                if (embedding == null) return;
-                
-                // Update feedback in embedding service
-                Map<String, Double> feedback = new HashMap<>();
-                feedback.put("success", success ? 1.0 : 0.0);
-                feedback.put("attention", state.getAttention());
-                feedback.put("recognition", state.getRecognition());
-                feedback.put("wandering", state.getWandering());
-                
-                embeddingService.updateFeedback(expr, embedding, feedback);
-                
-                // Update viability cache
-                String cacheKey = expr + "_" + state.getAttention() + "_" + 
-                    state.getRecognition() + "_" + state.getWandering();
-                viabilityCache.remove(cacheKey);
-            } catch (Exception e) {
-                // Ignore feedback errors
-            }
-        }
-
-        public void updateLearnerProfile(String key, double value) {
-            if (key != null && !key.isEmpty()) {
-                learnerProfile.put(key, value);
-                // Clear cache after profile update
-                viabilityCache.clear();
-            }
-        }
-
-        public MathEmbeddingService.EmbeddingStats getEmbeddingStats() {
-            if (embeddingService == null) {
-                return null;
-            }
-            return embeddingService.getStats();
         }
     }
 

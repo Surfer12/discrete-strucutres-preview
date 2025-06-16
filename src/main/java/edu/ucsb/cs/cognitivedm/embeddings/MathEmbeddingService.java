@@ -497,6 +497,7 @@ public class MathEmbeddingService {
         private final double avgAdaptiveWeight;
         private final long highWeightTerms;
         private final double attentionWeight;
+        private final int contextCount;
 
         public EmbeddingStats(
             int totalTerms,
@@ -504,10 +505,21 @@ public class MathEmbeddingService {
             long highWeightTerms,
             double attentionWeight
         ) {
+            this(totalTerms, avgAdaptiveWeight, highWeightTerms, attentionWeight, 0);
+        }
+        
+        public EmbeddingStats(
+            int totalTerms,
+            double avgAdaptiveWeight,
+            long highWeightTerms,
+            double attentionWeight,
+            int contextCount
+        ) {
             this.totalTerms = totalTerms;
             this.avgAdaptiveWeight = avgAdaptiveWeight;
             this.highWeightTerms = highWeightTerms;
             this.attentionWeight = attentionWeight;
+            this.contextCount = contextCount;
         }
 
         public int getTotalTerms() {
@@ -579,5 +591,106 @@ public class MathEmbeddingService {
         public double getCognitiveLoadThreshold() {
             return cognitiveLoadThreshold;
         }
+    }
+
+    /**
+     * Find similar expressions to an embedding vector
+     * 
+     * @param embedding The embedding vector to search for
+     * @param limit The maximum number of results to return
+     * @return A map of expressions and their similarity scores
+     */
+    public Map<String, Double> findSimilarExpressions(double[] embedding, int limit) {
+        if (embedding == null || embedding.length != embeddingDimension) {
+            return Collections.emptyMap();
+        }
+        
+        Map<String, Double> results = new LinkedHashMap<>();
+        
+        contextEmbeddings.entrySet().stream()
+            .map(entry -> new AbstractMap.SimpleEntry<>(
+                entry.getKey(), 
+                cosineSimilarity(embedding, entry.getValue())
+            ))
+            .sorted((e1, e2) -> Double.compare(e2.getValue(), e1.getValue()))
+            .limit(limit)
+            .forEach(entry -> results.put(entry.getKey(), entry.getValue()));
+        
+        return results;
+    }
+
+    /**
+     * Update feedback for an expression
+     * 
+     * @param expression The expression to update
+     * @param embedding The embedding vector for the expression
+     * @param feedback A map of feedback metrics
+     */
+    public void updateFeedback(String expression, double[] embedding, Map<String, Double> feedback) {
+        if (expression == null || embedding == null || feedback == null) {
+            return;
+        }
+        
+        // Store or update the embedding
+        if (!contextEmbeddings.containsKey(expression)) {
+            contextEmbeddings.put(expression, embedding.clone());
+        }
+        
+        // Apply feedback to adapt the embedding
+        double[] currentEmbedding = contextEmbeddings.get(expression);
+        double successFactor = feedback.getOrDefault("success", 0.5);
+        double attention = feedback.getOrDefault("attention", 0.5);
+        double cognitiveLoad = feedback.getOrDefault("cognitiveLoad", 0.5);
+        
+        // Adaptive learning rate
+        double adaptiveLR = learningRate * attention * (1.0 - cognitiveLoad);
+        
+        // Update embedding based on feedback
+        for (int i = 0; i < embeddingDimension; i++) {
+            // Slight adjustment based on success factor
+            if (successFactor > 0.5) {
+                // Reinforce successful patterns
+                currentEmbedding[i] += adaptiveLR * 0.1 * (successFactor - 0.5);
+            } else {
+                // Diminish unsuccessful patterns
+                currentEmbedding[i] -= adaptiveLR * 0.1 * (0.5 - successFactor);
+            }
+        }
+        
+        // Normalize and store the updated embedding
+        contextEmbeddings.put(expression, normalizeVector(currentEmbedding));
+        
+        // Update cognitive alignment
+        updateCognitiveAlignment(attention, cognitiveLoad);
+    }
+
+    /**
+     * Gets the embedding service statistics
+     * 
+     * @return The embedding service statistics
+     */
+    public EmbeddingStats getStats() {
+        double avgWeight = adaptiveWeights
+            .values()
+            .stream()
+            .mapToDouble(Double::doubleValue)
+            .average()
+            .orElse(1.0);
+
+        long highWeightTerms = adaptiveWeights
+            .values()
+            .stream()
+            .filter(w -> w > 1.5)
+            .count();
+            
+        int contextCount = contextEmbeddings.size();
+
+        return new EmbeddingStats(
+            termEmbeddings.size(),
+            avgWeight,
+            highWeightTerms,
+            attentionWeight,
+            contextCount
+        );
     }
 }

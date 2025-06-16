@@ -194,10 +194,12 @@ public class PatternDetector {
 
             // Ensure hurstExponent is a valid double
             if (!Double.isNaN(hurstExponent) && hurstExponent > hurstThreshold && hurstExponent < 1.0) {
+                double confidence = calculatePatternConfidence(hurstExponent);
                 Pattern fractalPattern = new Pattern(
                     "FractalPersistence",
                     "Fractal persistence pattern with Hurst exponent " + hurstExponent,
-                    calculatePatternConfidence(hurstExponent)
+                    scale,
+                    confidence
                 );
                 patterns.add(fractalPattern);
             }

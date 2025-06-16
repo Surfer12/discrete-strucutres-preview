@@ -22,14 +22,17 @@
 /home/computeruse/discrete-strucutres-preview/src/main/java/com/discretelogic/discrete/logic/FlowStateLogic.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/com/discretelogic/exceptions/ParsingException.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/com/discretelogic/discrete/sets/WavePatternSet.java
+/home/computeruse/discrete-strucutres-preview/src/main/java/edu/ucsb/cs/cognitivedm/recommendations/RecommendationType.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/edu/ucsb/cs/cognitivedm/framework/CognitiveFrameworkUtility.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/edu/ucsb/cs/cognitivedm/demo/CognitiveMathDemo.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/com/discretelogic/fluid/dynamics/FluidEmergence.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/edu/ucsb/cs/cognitivedm/education/CognitiveEducationFramework.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/edu/ucsb/cs/cognitivedm/MathExpression.java
+/home/computeruse/discrete-strucutres-preview/src/main/java/edu/ucsb/cs/cognitivedm/framework/CognitiveSession.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/com/discretelogic/model/TruthTable.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/com/discretelogic/cognitive/CognitiveOptimizationEngine.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/com/discretelogic/exceptions/ValidationException.java
+/home/computeruse/discrete-strucutres-preview/src/main/java/edu/ucsb/cs/cognitivedm/recommendations/RecommendationRequest.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/edu/ucsb/cs/cognitivedm/sessions/CognitiveSessionManager.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/com/discretelogic/concurrent/ConcurrentCollectionHandler.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/edu/ucsb/cs/cognitivedm/framework/MetaAwarenessProcessor.java
@@ -39,6 +42,7 @@
 /home/computeruse/discrete-strucutres-preview/src/main/java/com/discretelogic/cognitive/emergence/PatternRecognition.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/edu/ucsb/cs/cognitivedm/examples/EmbeddingLVCDemo.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/com/discretelogic/cognitive/processing/RecursiveAnalysis.java
+/home/computeruse/discrete-strucutres-preview/src/main/java/edu/ucsb/cs/cognitivedm/recommendations/Recommendation.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/com/discretelogic/cognitive/emergence/CognitiveState.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/com/discretelogic/discrete/graphs/WavePatternGraph.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/edu/ucsb/cs/cognitivedm/framework/CognitiveBiasAdjuster.java
@@ -51,6 +55,7 @@
 /home/computeruse/discrete-strucutres-preview/src/main/java/com/discretelogic/discrete/logic/StateVerification.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/com/discretelogic/fluid/dynamics/Combinatorics.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/com/discretelogic/discrete/sets/EmergentSet.java
+/home/computeruse/discrete-strucutres-preview/src/main/java/edu/ucsb/cs/cognitivedm/education/LearningPath.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/com/discretelogic/fluid/dynamics/MathUtils.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/edu/ucsb/cs/cognitivedm/MathExpressionProcessor.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/com/discretelogic/cognitive/integration/FlowMathMapping.java
