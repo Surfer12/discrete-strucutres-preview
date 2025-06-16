@@ -511,4 +511,135 @@ public class AttentionRecognitionFramework {
     public List<ScaleLevel> getScales() {
         return new ArrayList<>(scales);
     }
+
+    /**
+     * System-wide analysis and statistics
+     */
+    public static class SystemAnalysis {
+
+        private final double systemCognitiveLoad;
+        private final double averageAttention;
+        private final double averageRecognition;
+        private final double averageWandering;
+        private final long totalProcessingTime;
+        private final int totalScales;
+        private final Map<String, Double> performanceMetrics;
+        private final long timestamp;
+
+        public SystemAnalysis(
+            double systemCognitiveLoad,
+            double averageAttention,
+            double averageRecognition,
+            double averageWandering,
+            long totalProcessingTime,
+            int totalScales
+        ) {
+            this.systemCognitiveLoad = Math.max(
+                0.0,
+                Math.min(1.0, systemCognitiveLoad)
+            );
+            this.averageAttention = averageAttention;
+            this.averageRecognition = averageRecognition;
+            this.averageWandering = averageWandering;
+            this.totalProcessingTime = totalProcessingTime;
+            this.totalScales = totalScales;
+            this.performanceMetrics = new HashMap<>();
+            this.timestamp = System.currentTimeMillis();
+        }
+
+        public double getSystemCognitiveLoad() {
+            return systemCognitiveLoad;
+        }
+
+        public double getAverageAttention() {
+            return averageAttention;
+        }
+
+        public double getAverageRecognition() {
+            return averageRecognition;
+        }
+
+        public double getAverageWandering() {
+            return averageWandering;
+        }
+
+        public long getTotalProcessingTime() {
+            return totalProcessingTime;
+        }
+
+        public int getTotalScales() {
+            return totalScales;
+        }
+
+        public Map<String, Double> getPerformanceMetrics() {
+            return new HashMap<>(performanceMetrics);
+        }
+
+        public long getTimestamp() {
+            return timestamp;
+        }
+
+        public void addPerformanceMetric(String key, double value) {
+            performanceMetrics.put(key, value);
+        }
+
+        @Override
+        public String toString() {
+            return String.format(
+                "SystemAnalysis{cognitiveLoad=%.3f, attention=%.3f, recognition=%.3f, wandering=%.3f}",
+                systemCognitiveLoad,
+                averageAttention,
+                averageRecognition,
+                averageWandering
+            );
+        }
+    }
+
+    /**
+     * Generate system-wide analysis
+     */
+    public SystemAnalysis getSystemAnalysis() {
+        if (scales.isEmpty()) {
+            return new SystemAnalysis(0.0, 0.0, 0.0, 0.0, 0L, 0);
+        }
+
+        double avgAttention = scales
+            .stream()
+            .mapToDouble(scale -> scale.getCurrentState().getAttention())
+            .average()
+            .orElse(0.0);
+
+        double avgRecognition = scales
+            .stream()
+            .mapToDouble(scale -> scale.getCurrentState().getRecognition())
+            .average()
+            .orElse(0.0);
+
+        double avgWandering = scales
+            .stream()
+            .mapToDouble(scale -> scale.getCurrentState().getWandering())
+            .average()
+            .orElse(0.0);
+
+        // Calculate system cognitive load as weighted combination
+        double systemLoad =
+            (avgAttention * 0.3 + avgRecognition * 0.3 + avgWandering * 0.4);
+
+        SystemAnalysis analysis = new SystemAnalysis(
+            systemLoad,
+            avgAttention,
+            avgRecognition,
+            avgWandering,
+            0L,
+            scales.size()
+        );
+
+        analysis.addPerformanceMetric("scale_count", scales.size());
+        analysis.addPerformanceMetric(
+            "processing_efficiency",
+            1.0 - systemLoad
+        );
+
+        return analysis;
+    }
 }

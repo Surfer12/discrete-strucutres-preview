@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 public class ScalableConcurrentGraphEngine {
 
     public static class Vertex {
+
         private final String id;
         private final Map<String, Object> properties;
         private final Set<String> outgoingEdges;
@@ -33,10 +34,21 @@ public class ScalableConcurrentGraphEngine {
             this.incomingEdges = ConcurrentHashMap.newKeySet();
         }
 
-        public String getId() { return id; }
-        public Map<String, Object> getProperties() { return new HashMap<>(properties); }
-        public Set<String> getOutgoingEdges() { return new HashSet<>(outgoingEdges); }
-        public Set<String> getIncomingEdges() { return new HashSet<>(incomingEdges); }
+        public String getId() {
+            return id;
+        }
+
+        public Map<String, Object> getProperties() {
+            return new HashMap<>(properties);
+        }
+
+        public Set<String> getOutgoingEdges() {
+            return new HashSet<>(outgoingEdges);
+        }
+
+        public Set<String> getIncomingEdges() {
+            return new HashSet<>(incomingEdges);
+        }
 
         public void setProperty(String key, Object value) {
             synchronized (lock) {
@@ -75,6 +87,7 @@ public class ScalableConcurrentGraphEngine {
     }
 
     public static class Edge {
+
         private final String id;
         private final String sourceId;
         private final String targetId;
@@ -82,11 +95,22 @@ public class ScalableConcurrentGraphEngine {
         private final boolean directed;
         private double weight;
 
-        public Edge(String id, String sourceId, String targetId, boolean directed) {
+        public Edge(
+            String id,
+            String sourceId,
+            String targetId,
+            boolean directed
+        ) {
             this(id, sourceId, targetId, directed, 1.0);
         }
 
-        public Edge(String id, String sourceId, String targetId, boolean directed, double weight) {
+        public Edge(
+            String id,
+            String sourceId,
+            String targetId,
+            boolean directed,
+            double weight
+        ) {
             this.id = id;
             this.sourceId = sourceId;
             this.targetId = targetId;
@@ -95,47 +119,99 @@ public class ScalableConcurrentGraphEngine {
             this.properties = new ConcurrentHashMap<>();
         }
 
-        public String getId() { return id; }
-        public String getSourceId() { return sourceId; }
-        public String getTargetId() { return targetId; }
-        public boolean isDirected() { return directed; }
-        public double getWeight() { return weight; }
-        public Map<String, Object> getProperties() { return new HashMap<>(properties); }
+        public String getId() {
+            return id;
+        }
 
-        public void setWeight(double weight) { this.weight = weight; }
-        public void setProperty(String key, Object value) { properties.put(key, value); }
-        public Object getProperty(String key) { return properties.get(key); }
+        public String getSourceId() {
+            return sourceId;
+        }
+
+        public String getTargetId() {
+            return targetId;
+        }
+
+        public boolean isDirected() {
+            return directed;
+        }
+
+        public double getWeight() {
+            return weight;
+        }
+
+        public Map<String, Object> getProperties() {
+            return new HashMap<>(properties);
+        }
+
+        public void setWeight(double weight) {
+            this.weight = weight;
+        }
+
+        public void setProperty(String key, Object value) {
+            properties.put(key, value);
+        }
+
+        public Object getProperty(String key) {
+            return properties.get(key);
+        }
 
         @Override
         public String toString() {
             String arrow = directed ? " -> " : " -- ";
-            return String.format("Edge{%s%s%s, weight=%.2f}", sourceId, arrow, targetId, weight);
+            return String.format(
+                "Edge{%s%s%s, weight=%.2f}",
+                sourceId,
+                arrow,
+                targetId,
+                weight
+            );
         }
     }
 
     public static class GraphSnapshot {
+
         private final Map<String, Vertex> vertices;
         private final Map<String, Edge> edges;
         private final long timestamp;
         private final String snapshotId;
 
-        public GraphSnapshot(Map<String, Vertex> vertices, Map<String, Edge> edges) {
+        public GraphSnapshot(
+            Map<String, Vertex> vertices,
+            Map<String, Edge> edges
+        ) {
             this.vertices = new HashMap<>(vertices);
             this.edges = new HashMap<>(edges);
             this.timestamp = System.currentTimeMillis();
             this.snapshotId = UUID.randomUUID().toString();
         }
 
-        public Map<String, Vertex> getVertices() { return new HashMap<>(vertices); }
-        public Map<String, Edge> getEdges() { return new HashMap<>(edges); }
-        public long getTimestamp() { return timestamp; }
-        public String getSnapshotId() { return snapshotId; }
+        public Map<String, Vertex> getVertices() {
+            return new HashMap<>(vertices);
+        }
 
-        public int getVertexCount() { return vertices.size(); }
-        public int getEdgeCount() { return edges.size(); }
+        public Map<String, Edge> getEdges() {
+            return new HashMap<>(edges);
+        }
+
+        public long getTimestamp() {
+            return timestamp;
+        }
+
+        public String getSnapshotId() {
+            return snapshotId;
+        }
+
+        public int getVertexCount() {
+            return vertices.size();
+        }
+
+        public int getEdgeCount() {
+            return edges.size();
+        }
     }
 
     public static class GraphAnalytics {
+
         private final AtomicLong totalOperations;
         private final AtomicLong totalTraversals;
         private final Map<String, Long> operationCounts;
@@ -158,15 +234,28 @@ public class ScalableConcurrentGraphEngine {
             totalTraversals.incrementAndGet();
         }
 
-        public long getTotalOperations() { return totalOperations.get(); }
-        public long getTotalTraversals() { return totalTraversals.get(); }
-        public Map<String, Long> getOperationCounts() { return new HashMap<>(operationCounts); }
-        public Map<String, Long> getExecutionTimes() { return new HashMap<>(executionTimes); }
+        public long getTotalOperations() {
+            return totalOperations.get();
+        }
+
+        public long getTotalTraversals() {
+            return totalTraversals.get();
+        }
+
+        public Map<String, Long> getOperationCounts() {
+            return new HashMap<>(operationCounts);
+        }
+
+        public Map<String, Long> getExecutionTimes() {
+            return new HashMap<>(executionTimes);
+        }
 
         public double getAverageExecutionTime(String operation) {
             Long count = operationCounts.get(operation);
             Long totalTime = executionTimes.get(operation);
-            return (count != null && totalTime != null && count > 0) ? (double) totalTime / count : 0.0;
+            return (count != null && totalTime != null && count > 0)
+                ? (double) totalTime / count
+                : 0.0;
         }
     }
 
@@ -183,7 +272,10 @@ public class ScalableConcurrentGraphEngine {
         this(true, 4);
     }
 
-    public ScalableConcurrentGraphEngine(boolean enableConcurrentOperations, int threadPoolSize) {
+    public ScalableConcurrentGraphEngine(
+        boolean enableConcurrentOperations,
+        int threadPoolSize
+    ) {
         this.vertices = new ConcurrentHashMap<>();
         this.edges = new ConcurrentHashMap<>();
         this.executorService = Executors.newFixedThreadPool(threadPoolSize);
@@ -193,7 +285,9 @@ public class ScalableConcurrentGraphEngine {
         this.enableConcurrentOperations = enableConcurrentOperations;
     }
 
-    public ScalableConcurrentGraphEngine(AttentionRecognitionFramework attentionFramework) {
+    public ScalableConcurrentGraphEngine(
+        AttentionRecognitionFramework attentionFramework
+    ) {
         this(true, 4);
     }
 
@@ -209,7 +303,10 @@ public class ScalableConcurrentGraphEngine {
 
             Vertex vertex = new Vertex(vertexId);
             vertices.put(vertexId, vertex);
-            analytics.recordOperation("addVertex", System.currentTimeMillis() - startTime);
+            analytics.recordOperation(
+                "addVertex",
+                System.currentTimeMillis() - startTime
+            );
             return vertex;
         } finally {
             graphLock.writeLock().unlock();
@@ -245,7 +342,10 @@ public class ScalableConcurrentGraphEngine {
             }
 
             vertices.remove(vertexId);
-            analytics.recordOperation("removeVertex", System.currentTimeMillis() - startTime);
+            analytics.recordOperation(
+                "removeVertex",
+                System.currentTimeMillis() - startTime
+            );
             return true;
         } finally {
             graphLock.writeLock().unlock();
@@ -253,11 +353,22 @@ public class ScalableConcurrentGraphEngine {
     }
 
     // Edge operations
-    public Edge addEdge(String edgeId, String sourceId, String targetId, boolean directed) {
+    public Edge addEdge(
+        String edgeId,
+        String sourceId,
+        String targetId,
+        boolean directed
+    ) {
         return addEdge(edgeId, sourceId, targetId, directed, 1.0);
     }
 
-    public Edge addEdge(String edgeId, String sourceId, String targetId, boolean directed, double weight) {
+    public Edge addEdge(
+        String edgeId,
+        String sourceId,
+        String targetId,
+        boolean directed,
+        double weight
+    ) {
         long startTime = System.currentTimeMillis();
 
         graphLock.writeLock().lock();
@@ -267,8 +378,13 @@ public class ScalableConcurrentGraphEngine {
             }
 
             // Ensure vertices exist
-            if (!vertices.containsKey(sourceId) || !vertices.containsKey(targetId)) {
-                throw new IllegalArgumentException("Source or target vertex does not exist");
+            if (
+                !vertices.containsKey(sourceId) ||
+                !vertices.containsKey(targetId)
+            ) {
+                throw new IllegalArgumentException(
+                    "Source or target vertex does not exist"
+                );
             }
 
             Edge edge = new Edge(edgeId, sourceId, targetId, directed, weight);
@@ -283,7 +399,10 @@ public class ScalableConcurrentGraphEngine {
                 vertices.get(sourceId).addIncomingEdge(edgeId);
             }
 
-            analytics.recordOperation("addEdge", System.currentTimeMillis() - startTime);
+            analytics.recordOperation(
+                "addEdge",
+                System.currentTimeMillis() - startTime
+            );
             return edge;
         } finally {
             graphLock.writeLock().unlock();
@@ -328,7 +447,10 @@ public class ScalableConcurrentGraphEngine {
             }
 
             edges.remove(edgeId);
-            analytics.recordOperation("removeEdge", System.currentTimeMillis() - startTime);
+            analytics.recordOperation(
+                "removeEdge",
+                System.currentTimeMillis() - startTime
+            );
             return true;
         } finally {
             graphLock.writeLock().unlock();
@@ -340,7 +462,10 @@ public class ScalableConcurrentGraphEngine {
         return breadthFirstSearch(startVertexId, null);
     }
 
-    public List<String> breadthFirstSearch(String startVertexId, String targetVertexId) {
+    public List<String> breadthFirstSearch(
+        String startVertexId,
+        String targetVertexId
+    ) {
         long startTime = System.currentTimeMillis();
 
         graphLock.readLock().lock();
@@ -362,15 +487,18 @@ public class ScalableConcurrentGraphEngine {
                 String currentId = queue.poll();
                 result.add(currentId);
 
-                if (targetVertexId != null && currentId.equals(targetVertexId)) {
+                if (
+                    targetVertexId != null && currentId.equals(targetVertexId)
+                ) {
                     break;
                 }
 
                 Vertex current = vertices.get(currentId);
                 for (String edgeId : current.getOutgoingEdges()) {
                     Edge edge = edges.get(edgeId);
-                    String neighborId = edge.getTargetId().equals(currentId) ?
-                        edge.getSourceId() : edge.getTargetId();
+                    String neighborId = edge.getTargetId().equals(currentId)
+                        ? edge.getSourceId()
+                        : edge.getTargetId();
 
                     if (!visited.contains(neighborId)) {
                         visited.add(neighborId);
@@ -379,7 +507,10 @@ public class ScalableConcurrentGraphEngine {
                 }
             }
 
-            analytics.recordOperation("breadthFirstSearch", System.currentTimeMillis() - startTime);
+            analytics.recordOperation(
+                "breadthFirstSearch",
+                System.currentTimeMillis() - startTime
+            );
             return result;
         } finally {
             graphLock.readLock().unlock();
@@ -390,7 +521,10 @@ public class ScalableConcurrentGraphEngine {
         return depthFirstSearch(startVertexId, null);
     }
 
-    public List<String> depthFirstSearch(String startVertexId, String targetVertexId) {
+    public List<String> depthFirstSearch(
+        String startVertexId,
+        String targetVertexId
+    ) {
         long startTime = System.currentTimeMillis();
 
         graphLock.readLock().lock();
@@ -403,17 +537,29 @@ public class ScalableConcurrentGraphEngine {
 
             List<String> result = new ArrayList<>();
             Set<String> visited = new HashSet<>();
-            depthFirstSearchRecursive(startVertexId, targetVertexId, visited, result);
+            depthFirstSearchRecursive(
+                startVertexId,
+                targetVertexId,
+                visited,
+                result
+            );
 
-            analytics.recordOperation("depthFirstSearch", System.currentTimeMillis() - startTime);
+            analytics.recordOperation(
+                "depthFirstSearch",
+                System.currentTimeMillis() - startTime
+            );
             return result;
         } finally {
             graphLock.readLock().unlock();
         }
     }
 
-    private void depthFirstSearchRecursive(String currentId, String targetId,
-                                          Set<String> visited, List<String> result) {
+    private void depthFirstSearchRecursive(
+        String currentId,
+        String targetId,
+        Set<String> visited,
+        List<String> result
+    ) {
         visited.add(currentId);
         result.add(currentId);
 
@@ -424,30 +570,50 @@ public class ScalableConcurrentGraphEngine {
         Vertex current = vertices.get(currentId);
         for (String edgeId : current.getOutgoingEdges()) {
             Edge edge = edges.get(edgeId);
-            String neighborId = edge.getTargetId().equals(currentId) ?
-                edge.getSourceId() : edge.getTargetId();
+            String neighborId = edge.getTargetId().equals(currentId)
+                ? edge.getSourceId()
+                : edge.getTargetId();
 
             if (!visited.contains(neighborId)) {
-                depthFirstSearchRecursive(neighborId, targetId, visited, result);
+                depthFirstSearchRecursive(
+                    neighborId,
+                    targetId,
+                    visited,
+                    result
+                );
             }
         }
     }
 
     // Parallel processing operations
-    public CompletableFuture<List<String>> parallelBreadthFirstSearch(String startVertexId) {
+    public CompletableFuture<List<String>> parallelBreadthFirstSearch(
+        String startVertexId
+    ) {
         if (!enableConcurrentOperations) {
-            return CompletableFuture.completedFuture(breadthFirstSearch(startVertexId));
+            return CompletableFuture.completedFuture(
+                breadthFirstSearch(startVertexId)
+            );
         }
 
-        return CompletableFuture.supplyAsync(() -> breadthFirstSearch(startVertexId), executorService);
+        return CompletableFuture.supplyAsync(
+            () -> breadthFirstSearch(startVertexId),
+            executorService
+        );
     }
 
-    public CompletableFuture<Map<String, Double>> parallelShortestPaths(String startVertexId) {
+    public CompletableFuture<Map<String, Double>> parallelShortestPaths(
+        String startVertexId
+    ) {
         if (!enableConcurrentOperations) {
-            return CompletableFuture.completedFuture(calculateShortestPaths(startVertexId));
+            return CompletableFuture.completedFuture(
+                calculateShortestPaths(startVertexId)
+            );
         }
 
-        return CompletableFuture.supplyAsync(() -> calculateShortestPaths(startVertexId), executorService);
+        return CompletableFuture.supplyAsync(
+            () -> calculateShortestPaths(startVertexId),
+            executorService
+        );
     }
 
     private Map<String, Double> calculateShortestPaths(String startVertexId) {
@@ -457,7 +623,10 @@ public class ScalableConcurrentGraphEngine {
         );
 
         for (String vertexId : vertices.keySet()) {
-            distances.put(vertexId, vertexId.equals(startVertexId) ? 0.0 : Double.POSITIVE_INFINITY);
+            distances.put(
+                vertexId,
+                vertexId.equals(startVertexId) ? 0.0 : Double.POSITIVE_INFINITY
+            );
         }
 
         pq.offer(new AbstractMap.SimpleEntry<>(startVertexId, 0.0));
@@ -474,13 +643,16 @@ public class ScalableConcurrentGraphEngine {
             Vertex currentVertex = vertices.get(currentId);
             for (String edgeId : currentVertex.getOutgoingEdges()) {
                 Edge edge = edges.get(edgeId);
-                String neighborId = edge.getTargetId().equals(currentId) ?
-                    edge.getSourceId() : edge.getTargetId();
+                String neighborId = edge.getTargetId().equals(currentId)
+                    ? edge.getSourceId()
+                    : edge.getTargetId();
 
                 double newDistance = currentDistance + edge.getWeight();
                 if (newDistance < distances.get(neighborId)) {
                     distances.put(neighborId, newDistance);
-                    pq.offer(new AbstractMap.SimpleEntry<>(neighborId, newDistance));
+                    pq.offer(
+                        new AbstractMap.SimpleEntry<>(neighborId, newDistance)
+                    );
                 }
             }
         }
@@ -507,15 +679,30 @@ public class ScalableConcurrentGraphEngine {
             analysis.put("edgeCount", edges.size());
 
             // Calculate degree statistics
-            List<Integer> degrees = vertices.values().stream()
+            List<Integer> degrees = vertices
+                .values()
+                .stream()
                 .mapToInt(Vertex::getDegree)
                 .boxed()
                 .collect(Collectors.toList());
 
             if (!degrees.isEmpty()) {
-                analysis.put("avgDegree", degrees.stream().mapToInt(Integer::intValue).average().orElse(0.0));
-                analysis.put("maxDegree", degrees.stream().mapToInt(Integer::intValue).max().orElse(0));
-                analysis.put("minDegree", degrees.stream().mapToInt(Integer::intValue).min().orElse(0));
+                analysis.put(
+                    "avgDegree",
+                    degrees
+                        .stream()
+                        .mapToInt(Integer::intValue)
+                        .average()
+                        .orElse(0.0)
+                );
+                analysis.put(
+                    "maxDegree",
+                    degrees.stream().mapToInt(Integer::intValue).max().orElse(0)
+                );
+                analysis.put(
+                    "minDegree",
+                    degrees.stream().mapToInt(Integer::intValue).min().orElse(0)
+                );
             }
 
             // Calculate density
@@ -599,6 +786,137 @@ public class ScalableConcurrentGraphEngine {
         } catch (InterruptedException e) {
             executorService.shutdownNow();
             Thread.currentThread().interrupt();
+        }
+    }
+
+    /**
+     * Graph statistics and performance metrics
+     */
+    public static class GraphStatistics {
+
+        private final int vertexCount;
+        private final int edgeCount;
+        private final double averageProcessingTimeMs;
+        private final long totalOperations;
+        private final long totalTraversals;
+        private final double density;
+        private final Map<String, Object> additionalMetrics;
+        private final long timestamp;
+
+        public GraphStatistics(
+            int vertexCount,
+            int edgeCount,
+            double averageProcessingTimeMs,
+            long totalOperations,
+            long totalTraversals,
+            double density
+        ) {
+            this.vertexCount = vertexCount;
+            this.edgeCount = edgeCount;
+            this.averageProcessingTimeMs = averageProcessingTimeMs;
+            this.totalOperations = totalOperations;
+            this.totalTraversals = totalTraversals;
+            this.density = density;
+            this.additionalMetrics = new HashMap<>();
+            this.timestamp = System.currentTimeMillis();
+        }
+
+        public int getVertexCount() {
+            return vertexCount;
+        }
+
+        public int getEdgeCount() {
+            return edgeCount;
+        }
+
+        public double getAverageProcessingTimeMs() {
+            return averageProcessingTimeMs;
+        }
+
+        public long getTotalOperations() {
+            return totalOperations;
+        }
+
+        public long getTotalTraversals() {
+            return totalTraversals;
+        }
+
+        public double getDensity() {
+            return density;
+        }
+
+        public Map<String, Object> getAdditionalMetrics() {
+            return new HashMap<>(additionalMetrics);
+        }
+
+        public long getTimestamp() {
+            return timestamp;
+        }
+
+        public void addMetric(String key, Object value) {
+            additionalMetrics.put(key, value);
+        }
+
+        @Override
+        public String toString() {
+            return String.format(
+                "GraphStatistics{vertices=%d, edges=%d, avgTime=%.2fms, operations=%d}",
+                vertexCount,
+                edgeCount,
+                averageProcessingTimeMs,
+                totalOperations
+            );
+        }
+    }
+
+    /**
+     * Generate current graph statistics
+     */
+    public GraphStatistics getStatistics() {
+        graphLock.readLock().lock();
+        try {
+            // Calculate average processing time
+            double avgTime = 0.0;
+            Map<String, Long> executionTimes = analytics.getExecutionTimes();
+            Map<String, Long> operationCounts = analytics.getOperationCounts();
+
+            if (!operationCounts.isEmpty()) {
+                long totalTime = executionTimes
+                    .values()
+                    .stream()
+                    .mapToLong(Long::longValue)
+                    .sum();
+                long totalOps = operationCounts
+                    .values()
+                    .stream()
+                    .mapToLong(Long::longValue)
+                    .sum();
+                avgTime = totalOps > 0 ? (double) totalTime / totalOps : 0.0;
+            }
+
+            // Calculate density
+            int n = vertices.size();
+            int m = edges.size();
+            double density = n > 1 ? (2.0 * m) / (n * (n - 1)) : 0.0;
+
+            GraphStatistics stats = new GraphStatistics(
+                vertices.size(),
+                edges.size(),
+                avgTime,
+                analytics.getTotalOperations(),
+                analytics.getTotalTraversals(),
+                density
+            );
+
+            stats.addMetric(
+                "concurrent_operations_enabled",
+                enableConcurrentOperations
+            );
+            stats.addMetric("executor_active", !executorService.isShutdown());
+
+            return stats;
+        } finally {
+            graphLock.readLock().unlock();
         }
     }
 }

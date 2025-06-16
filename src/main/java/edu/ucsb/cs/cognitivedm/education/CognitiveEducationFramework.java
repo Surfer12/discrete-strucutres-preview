@@ -24,7 +24,7 @@ public class CognitiveEducationFramework {
         COMBINATORICS,
         NUMBER_THEORY,
         PROOF_TECHNIQUES,
-        RECURSIVE_STRUCTURES
+        RECURSIVE_STRUCTURES,
     }
 
     public enum DifficultyLevel {
@@ -45,13 +45,18 @@ public class CognitiveEducationFramework {
     }
 
     public static class LearningPath {
+
         private final String pathId;
         private final List<String> topics;
         private final DifficultyLevel difficulty;
         private final Map<String, Double> prerequisites;
         private double completionRate;
 
-        public LearningPath(String pathId, List<String> topics, DifficultyLevel difficulty) {
+        public LearningPath(
+            String pathId,
+            List<String> topics,
+            DifficultyLevel difficulty
+        ) {
             this.pathId = pathId;
             this.topics = new ArrayList<>(topics);
             this.difficulty = difficulty;
@@ -59,11 +64,25 @@ public class CognitiveEducationFramework {
             this.completionRate = 0.0;
         }
 
-        public String getPathId() { return pathId; }
-        public List<String> getTopics() { return new ArrayList<>(topics); }
-        public DifficultyLevel getDifficulty() { return difficulty; }
-        public Map<String, Double> getPrerequisites() { return new HashMap<>(prerequisites); }
-        public double getCompletionRate() { return completionRate; }
+        public String getPathId() {
+            return pathId;
+        }
+
+        public List<String> getTopics() {
+            return new ArrayList<>(topics);
+        }
+
+        public DifficultyLevel getDifficulty() {
+            return difficulty;
+        }
+
+        public Map<String, Double> getPrerequisites() {
+            return new HashMap<>(prerequisites);
+        }
+
+        public double getCompletionRate() {
+            return completionRate;
+        }
 
         public void setCompletionRate(double rate) {
             this.completionRate = Math.max(0.0, Math.min(1.0, rate));
@@ -75,6 +94,7 @@ public class CognitiveEducationFramework {
     }
 
     public static class CognitiveSession {
+
         private final String sessionId;
         private final long startTime;
         private final Map<String, Object> sessionData;
@@ -87,17 +107,37 @@ public class CognitiveEducationFramework {
             this.active = true;
         }
 
-        public String getSessionId() { return sessionId; }
-        public long getStartTime() { return startTime; }
-        public Map<String, Object> getSessionData() { return new HashMap<>(sessionData); }
-        public boolean isActive() { return active; }
+        public String getSessionId() {
+            return sessionId;
+        }
 
-        public void setActive(boolean active) { this.active = active; }
-        public void addData(String key, Object value) { sessionData.put(key, value); }
-        public Object getData(String key) { return sessionData.get(key); }
+        public long getStartTime() {
+            return startTime;
+        }
+
+        public Map<String, Object> getSessionData() {
+            return new HashMap<>(sessionData);
+        }
+
+        public boolean isActive() {
+            return active;
+        }
+
+        public void setActive(boolean active) {
+            this.active = active;
+        }
+
+        public void addData(String key, Object value) {
+            sessionData.put(key, value);
+        }
+
+        public Object getData(String key) {
+            return sessionData.get(key);
+        }
     }
 
     public static class LearningAnalytics {
+
         private final Map<String, Double> topicMastery;
         private final Map<String, Integer> attemptCounts;
         private final Map<String, Long> timeSpent;
@@ -143,7 +183,9 @@ public class CognitiveEducationFramework {
     private final Map<String, CognitiveSession> activeSessions;
     private final LearningAnalytics analytics;
 
-    public CognitiveEducationFramework(AttentionRecognitionFramework attentionFramework) {
+    public CognitiveEducationFramework(
+        AttentionRecognitionFramework attentionFramework
+    ) {
         this.attentionFramework = attentionFramework;
         this.learningPaths = new ConcurrentHashMap<>();
         this.activeSessions = new ConcurrentHashMap<>();
@@ -155,7 +197,13 @@ public class CognitiveEducationFramework {
         // Set Theory path
         LearningPath setTheoryPath = new LearningPath(
             "set_theory_basics",
-            Arrays.asList("sets", "unions", "intersections", "complements", "venn_diagrams"),
+            Arrays.asList(
+                "sets",
+                "unions",
+                "intersections",
+                "complements",
+                "venn_diagrams"
+            ),
             DifficultyLevel.BEGINNER
         );
         learningPaths.put("set_theory_basics", setTheoryPath);
@@ -163,7 +211,12 @@ public class CognitiveEducationFramework {
         // Boolean Logic path
         LearningPath booleanLogicPath = new LearningPath(
             "boolean_logic_fundamentals",
-            Arrays.asList("truth_tables", "logical_operators", "boolean_algebra", "karnaugh_maps"),
+            Arrays.asList(
+                "truth_tables",
+                "logical_operators",
+                "boolean_algebra",
+                "karnaugh_maps"
+            ),
             DifficultyLevel.INTERMEDIATE
         );
         booleanLogicPath.addPrerequisite("set_theory_basics", 0.7);
@@ -172,7 +225,14 @@ public class CognitiveEducationFramework {
         // Graph Theory path
         LearningPath graphTheoryPath = new LearningPath(
             "graph_theory_intro",
-            Arrays.asList("vertices", "edges", "paths", "cycles", "trees", "connectivity"),
+            Arrays.asList(
+                "vertices",
+                "edges",
+                "paths",
+                "cycles",
+                "trees",
+                "connectivity"
+            ),
             DifficultyLevel.ADVANCED
         );
         graphTheoryPath.addPrerequisite("set_theory_basics", 0.8);
@@ -194,7 +254,11 @@ public class CognitiveEducationFramework {
         }
     }
 
-    public LearningPath createLearningPath(String pathId, List<String> topics, DifficultyLevel difficulty) {
+    public LearningPath createLearningPath(
+        String pathId,
+        List<String> topics,
+        DifficultyLevel difficulty
+    ) {
         LearningPath path = new LearningPath(pathId, topics, difficulty);
         learningPaths.put(pathId, path);
         return path;
@@ -204,7 +268,12 @@ public class CognitiveEducationFramework {
         return learningPaths.get(pathId);
     }
 
-    public List<String> getRecommendedTopics(String sessionId, ContentType contentType, double attention, double cognitiveLoad) {
+    public List<String> getRecommendedTopics(
+        String sessionId,
+        ContentType contentType,
+        double attention,
+        double cognitiveLoad
+    ) {
         List<String> recommendations = new ArrayList<>();
 
         // Use attention and cognitive load to determine appropriate difficulty
@@ -219,7 +288,9 @@ public class CognitiveEducationFramework {
 
         // Find appropriate learning paths
         for (LearningPath path : learningPaths.values()) {
-            if (path.getDifficulty().getLevel() <= targetDifficulty.getLevel()) {
+            if (
+                path.getDifficulty().getLevel() <= targetDifficulty.getLevel()
+            ) {
                 recommendations.addAll(path.getTopics());
             }
         }
@@ -227,7 +298,12 @@ public class CognitiveEducationFramework {
         return recommendations;
     }
 
-    public void updateLearningProgress(String sessionId, String topic, double masteryScore, boolean success) {
+    public void updateLearningProgress(
+        String sessionId,
+        String topic,
+        double masteryScore,
+        boolean success
+    ) {
         analytics.updateMastery(topic, masteryScore);
         analytics.incrementAttempts(topic);
 
@@ -247,10 +323,15 @@ public class CognitiveEducationFramework {
         double prerequisiteScore = 1.0;
         for (LearningPath path : learningPaths.values()) {
             if (path.getTopics().contains(topic)) {
-                for (Map.Entry<String, Double> prereq : path.getPrerequisites().entrySet()) {
-                    double prereqMastery = analytics.getMastery(prereq.getKey());
+                for (Map.Entry<String, Double> prereq : path
+                    .getPrerequisites()
+                    .entrySet()) {
+                    double prereqMastery = analytics.getMastery(
+                        prereq.getKey()
+                    );
                     if (prereqMastery < prereq.getValue()) {
-                        prerequisiteScore *= (prereqMastery / prereq.getValue());
+                        prerequisiteScore *= (prereqMastery /
+                            prereq.getValue());
                     }
                 }
             }
@@ -258,7 +339,10 @@ public class CognitiveEducationFramework {
 
         // Combine mastery, attempts, and prerequisites
         double attemptsBonus = Math.min(0.2, attempts * 0.05);
-        return Math.min(1.0, (currentMastery + attemptsBonus) * prerequisiteScore);
+        return Math.min(
+            1.0,
+            (currentMastery + attemptsBonus) * prerequisiteScore
+        );
     }
 
     public Map<String, Object> generateProgressReport(String sessionId) {
@@ -267,16 +351,25 @@ public class CognitiveEducationFramework {
 
         if (session != null) {
             report.put("sessionId", sessionId);
-            report.put("duration", System.currentTimeMillis() - session.getStartTime());
+            report.put(
+                "duration",
+                System.currentTimeMillis() - session.getStartTime()
+            );
             report.put("sessionData", session.getSessionData());
         }
 
         report.put("topicMastery", analytics.getAllMastery());
         report.put("totalTopics", analytics.getAllMastery().size());
-        report.put("averageMastery", analytics.getAllMastery().values().stream()
-            .mapToDouble(Double::doubleValue)
-            .average()
-            .orElse(0.0));
+        report.put(
+            "averageMastery",
+            analytics
+                .getAllMastery()
+                .values()
+                .stream()
+                .mapToDouble(Double::doubleValue)
+                .average()
+                .orElse(0.0)
+        );
 
         return report;
     }
@@ -291,5 +384,91 @@ public class CognitiveEducationFramework {
 
     public Collection<CognitiveSession> getActiveSessions() {
         return new ArrayList<>(activeSessions.values());
+    }
+
+    /**
+     * System analytics for education framework
+     */
+    public static class SystemAnalytics {
+
+        private final double averageEngagement;
+        private final int totalSessions;
+        private final int activeSessions;
+        private final Map<String, Double> topicMasteryAverages;
+        private final double systemEfficiency;
+        private final long timestamp;
+
+        public SystemAnalytics(
+            double averageEngagement,
+            int totalSessions,
+            int activeSessions,
+            Map<String, Double> topicMasteryAverages,
+            double systemEfficiency
+        ) {
+            this.averageEngagement = averageEngagement;
+            this.totalSessions = totalSessions;
+            this.activeSessions = activeSessions;
+            this.topicMasteryAverages = new HashMap<>(topicMasteryAverages);
+            this.systemEfficiency = systemEfficiency;
+            this.timestamp = System.currentTimeMillis();
+        }
+
+        public double getAverageEngagement() {
+            return averageEngagement;
+        }
+
+        public int getTotalSessions() {
+            return totalSessions;
+        }
+
+        public int getActiveSessions() {
+            return activeSessions;
+        }
+
+        public Map<String, Double> getTopicMasteryAverages() {
+            return new HashMap<>(topicMasteryAverages);
+        }
+
+        public double getSystemEfficiency() {
+            return systemEfficiency;
+        }
+
+        public long getTimestamp() {
+            return timestamp;
+        }
+
+        @Override
+        public String toString() {
+            return String.format(
+                "SystemAnalytics{engagement=%.2f, sessions=%d, efficiency=%.2f}",
+                averageEngagement,
+                totalSessions,
+                systemEfficiency
+            );
+        }
+    }
+
+    /**
+     * Generate system-wide analytics
+     */
+    public SystemAnalytics getSystemAnalytics() {
+        double avgEngagement = activeSessions.isEmpty() ? 0.0 : 0.75; // Simplified calculation
+        Map<String, Double> masteryAverages = analytics.getAllMastery();
+        double efficiency = masteryAverages.isEmpty()
+            ? 0.0
+            : masteryAverages
+                .values()
+                .stream()
+                .mapToDouble(Double::doubleValue)
+                .average()
+                .orElse(0.0);
+
+        return new SystemAnalytics(
+            avgEngagement,
+            learningPaths.size(),
+            activeSessions.size(),
+            masteryAverages,
+            efficiency
+        );
     }
 }
