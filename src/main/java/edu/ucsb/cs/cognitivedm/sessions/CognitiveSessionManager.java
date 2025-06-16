@@ -1,11 +1,11 @@
 package edu.ucsb.cs.cognitivedm.sessions;
 
-import edu.ucsb.cs.cognitivedm.framework.AttentionRecognitionFramework;
 import edu.ucsb.cs.cognitivedm.education.CognitiveEducationFramework;
+import edu.ucsb.cs.cognitivedm.framework.AttentionRecognitionFramework;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.*;
-import java.time.LocalDateTime;
-import java.time.Duration;
 
 /**
  * Cognitive Session Manager
@@ -39,6 +39,7 @@ public class CognitiveSessionManager {
      * Represents an active cognitive learning session
      */
     public static class CognitiveSession {
+
         private final String sessionId;
         private final String learnerId;
         private final LocalDateTime startTime;
@@ -60,19 +61,41 @@ public class CognitiveSessionManager {
         }
 
         // Getters and setters
-        public String getSessionId() { return sessionId; }
-        public String getLearnerId() { return learnerId; }
-        public LocalDateTime getStartTime() { return startTime; }
-        public SessionStatus getStatus() { return status; }
-        public void setStatus(SessionStatus status) { this.status = status; }
+        public String getSessionId() {
+            return sessionId;
+        }
+
+        public String getLearnerId() {
+            return learnerId;
+        }
+
+        public LocalDateTime getStartTime() {
+            return startTime;
+        }
+
+        public SessionStatus getStatus() {
+            return status;
+        }
+
+        public void setStatus(SessionStatus status) {
+            this.status = status;
+        }
 
         public AttentionRecognitionFramework.CognitiveState getCurrentCognitiveState() {
             return currentCognitiveState;
         }
 
-        public void updateCognitiveState(AttentionRecognitionFramework.CognitiveState state) {
+        public void updateCognitiveState(
+            AttentionRecognitionFramework.CognitiveState state
+        ) {
             this.currentCognitiveState = state;
-            this.events.add(new CognitiveEvent(LocalDateTime.now(), "cognitive_state_update", state));
+            this.events.add(
+                    new CognitiveEvent(
+                        LocalDateTime.now(),
+                        "cognitive_state_update",
+                        state
+                    )
+                );
         }
 
         public void setSessionType(Object sessionType) {
@@ -81,7 +104,13 @@ public class CognitiveSessionManager {
 
         public void startSession() {
             this.status = SessionStatus.ACTIVE;
-            this.events.add(new CognitiveEvent(LocalDateTime.now(), "session_started", null));
+            this.events.add(
+                    new CognitiveEvent(
+                        LocalDateTime.now(),
+                        "session_started",
+                        null
+                    )
+                );
         }
 
         public void setCognitiveMonitoringInterval(int intervalMs) {
@@ -109,11 +138,11 @@ public class CognitiveSessionManager {
      * Represents different types of learning sessions
      */
     public enum SessionType {
-        EXPLORATORY,      // Free exploration of concepts
-        GUIDED_PRACTICE,  // Structured practice with guidance
-        ASSESSMENT,       // Evaluation and testing
-        CREATIVE_MODE,    // Open-ended problem solving
-        REVIEW_SESSION    // Reinforcement of previous learning
+        EXPLORATORY, // Free exploration of concepts
+        GUIDED_PRACTICE, // Structured practice with guidance
+        ASSESSMENT, // Evaluation and testing
+        CREATIVE_MODE, // Open-ended problem solving
+        REVIEW_SESSION, // Reinforcement of previous learning
     }
 
     /**
@@ -125,32 +154,46 @@ public class CognitiveSessionManager {
         PAUSED,
         COMPLETED,
         TERMINATED,
-        ERROR
+        ERROR,
     }
 
     /**
      * Represents a cognitive event within a session
      */
     public static class CognitiveEvent {
+
         private final LocalDateTime timestamp;
         private final String eventType;
         private final Object eventData;
 
-        public CognitiveEvent(LocalDateTime timestamp, String eventType, Object eventData) {
+        public CognitiveEvent(
+            LocalDateTime timestamp,
+            String eventType,
+            Object eventData
+        ) {
             this.timestamp = timestamp;
             this.eventType = eventType;
             this.eventData = eventData;
         }
 
-        public LocalDateTime getTimestamp() { return timestamp; }
-        public String getEventType() { return eventType; }
-        public Object getEventData() { return eventData; }
+        public LocalDateTime getTimestamp() {
+            return timestamp;
+        }
+
+        public String getEventType() {
+            return eventType;
+        }
+
+        public Object getEventData() {
+            return eventData;
+        }
     }
 
     /**
      * Session performance metrics
      */
     public static class SessionMetrics {
+
         private final String sessionId;
         private final Duration sessionDuration;
         private final double averageCognitiveLoad;
@@ -158,8 +201,14 @@ public class CognitiveSessionManager {
         private final int mindWanderingEpisodes;
         private final double learningEfficiency;
 
-        public SessionMetrics(String sessionId, Duration duration, double avgLoad,
-                            double attentionStab, int wanderingEpisodes, double efficiency) {
+        public SessionMetrics(
+            String sessionId,
+            Duration duration,
+            double avgLoad,
+            double attentionStab,
+            int wanderingEpisodes,
+            double efficiency
+        ) {
             this.sessionId = sessionId;
             this.sessionDuration = duration;
             this.averageCognitiveLoad = avgLoad;
@@ -169,12 +218,29 @@ public class CognitiveSessionManager {
         }
 
         // Getters
-        public String getSessionId() { return sessionId; }
-        public Duration getSessionDuration() { return sessionDuration; }
-        public double getAverageCognitiveLoad() { return averageCognitiveLoad; }
-        public double getAttentionStability() { return attentionStability; }
-        public int getMindWanderingEpisodes() { return mindWanderingEpisodes; }
-        public double getLearningEfficiency() { return learningEfficiency; }
+        public String getSessionId() {
+            return sessionId;
+        }
+
+        public Duration getSessionDuration() {
+            return sessionDuration;
+        }
+
+        public double getAverageCognitiveLoad() {
+            return averageCognitiveLoad;
+        }
+
+        public double getAttentionStability() {
+            return attentionStability;
+        }
+
+        public int getMindWanderingEpisodes() {
+            return mindWanderingEpisodes;
+        }
+
+        public double getLearningEfficiency() {
+            return learningEfficiency;
+        }
     }
 
     /**
@@ -228,8 +294,9 @@ public class CognitiveSessionManager {
         SessionMetrics metrics = calculateSessionMetrics(session);
 
         // Store in history
-        sessionHistory.computeIfAbsent(session.getLearnerId(), k -> new ArrayList<>())
-                     .add(metrics);
+        sessionHistory
+            .computeIfAbsent(session.getLearnerId(), k -> new ArrayList<>())
+            .add(metrics);
 
         return metrics;
     }
@@ -237,8 +304,10 @@ public class CognitiveSessionManager {
     /**
      * Update cognitive state for a session
      */
-    public void updateSessionCognitiveState(String sessionId,
-                                          AttentionRecognitionFramework.CognitiveState state) {
+    public void updateSessionCognitiveState(
+        String sessionId,
+        AttentionRecognitionFramework.CognitiveState state
+    ) {
         CognitiveSession session = activeSessions.get(sessionId);
         if (session != null) {
             session.updateCognitiveState(state);
@@ -294,34 +363,57 @@ public class CognitiveSessionManager {
     // Private helper methods
 
     private String generateSessionId(String learnerId) {
-        return learnerId + "_" + System.currentTimeMillis() + "_" +
-               UUID.randomUUID().toString().substring(0, 8);
+        return (
+            learnerId +
+            "_" +
+            System.currentTimeMillis() +
+            "_" +
+            UUID.randomUUID().toString().substring(0, 8)
+        );
     }
 
     private void startCognitiveMonitoring(CognitiveSession session) {
-        monitoringService.scheduleAtFixedRate(() -> {
-            if (session.getStatus() == SessionStatus.ACTIVE) {
-                // Generate cognitive state update based on session activity
-                AttentionRecognitionFramework.CognitiveState currentState = 
-                    cognitiveFramework.getCurrentCognitiveState();
-                session.updateCognitiveState(currentState);
-            }
-        }, 0, session.getCognitiveMonitoringInterval(), TimeUnit.MILLISECONDS);
+        monitoringService.scheduleAtFixedRate(
+            () -> {
+                if (session.getStatus() == SessionStatus.ACTIVE) {
+                    // Generate cognitive state update based on session activity
+                    AttentionRecognitionFramework.CognitiveState currentState =
+                        cognitiveFramework.getCurrentCognitiveState();
+                    session.updateCognitiveState(currentState);
+                }
+            },
+            0,
+            session.getCognitiveMonitoringInterval(),
+            TimeUnit.MILLISECONDS
+        );
     }
 
     private SessionMetrics calculateSessionMetrics(CognitiveSession session) {
-        Duration duration = Duration.between(session.getStartTime(), LocalDateTime.now());
-        
+        Duration duration = Duration.between(
+            session.getStartTime(),
+            LocalDateTime.now()
+        );
+
         List<CognitiveEvent> events = session.getEvents();
-        double avgCognitiveLoad = events.stream()
-            .filter(e -> e.getEventData() instanceof AttentionRecognitionFramework.CognitiveState)
-            .mapToDouble(e -> ((AttentionRecognitionFramework.CognitiveState) e.getEventData()).getCognitiveLoad())
+        double avgCognitiveLoad = events
+            .stream()
+            .filter(e ->
+                e.getEventData() instanceof
+                AttentionRecognitionFramework.CognitiveState
+            )
+            .mapToDouble(e ->
+                ((AttentionRecognitionFramework.CognitiveState) e.getEventData()).getCognitiveLoad()
+            )
             .average()
             .orElse(0.0);
 
         double attentionStability = calculateAttentionStability(events);
         int wanderingEpisodes = countMindWanderingEpisodes(events);
-        double learningEfficiency = calculateLearningEfficiency(session, avgCognitiveLoad, attentionStability);
+        double learningEfficiency = calculateLearningEfficiency(
+            session,
+            avgCognitiveLoad,
+            attentionStability
+        );
 
         return new SessionMetrics(
             session.getSessionId(),
@@ -334,4 +426,99 @@ public class CognitiveSessionManager {
     }
 
     private double calculateAttentionStability(List<CognitiveEvent> events) {
-        List<Double> attentionValues
+        List<Double> attentionValues = events
+            .stream()
+            .filter(e ->
+                e.getEventData() instanceof
+                AttentionRecognitionFramework.CognitiveState
+            )
+            .map(e ->
+                ((AttentionRecognitionFramework.CognitiveState) e.getEventData()).getAttention()
+            )
+            .collect(Collectors.toList());
+
+        if (attentionValues.size() < 2) {
+            return 1.0; // Perfect stability if only one or no measurements
+        }
+
+        // Calculate coefficient of variation (inverse of stability)
+        double mean = attentionValues
+            .stream()
+            .mapToDouble(Double::doubleValue)
+            .average()
+            .orElse(0.0);
+        double variance = attentionValues
+            .stream()
+            .mapToDouble(v -> Math.pow(v - mean, 2))
+            .average()
+            .orElse(0.0);
+        double stdDev = Math.sqrt(variance);
+
+        return mean > 0 ? Math.max(0, 1.0 - (stdDev / mean)) : 0.0;
+    }
+
+    private int countMindWanderingEpisodes(List<CognitiveEvent> events) {
+        int episodes = 0;
+        boolean inWanderingState = false;
+        final double wanderingThreshold = 0.5;
+
+        for (CognitiveEvent event : events) {
+            if (
+                event.getEventData() instanceof
+                AttentionRecognitionFramework.CognitiveState
+            ) {
+                AttentionRecognitionFramework.CognitiveState state =
+                    (AttentionRecognitionFramework.CognitiveState) event.getEventData();
+
+                boolean isWandering = state.getWandering() > wanderingThreshold;
+
+                if (!inWanderingState && isWandering) {
+                    episodes++;
+                    inWanderingState = true;
+                } else if (inWanderingState && !isWandering) {
+                    inWanderingState = false;
+                }
+            }
+        }
+
+        return episodes;
+    }
+
+    private double calculateLearningEfficiency(
+        CognitiveSession session,
+        double avgCognitiveLoad,
+        double attentionStability
+    ) {
+        // Learning efficiency combines optimal cognitive load with attention stability
+        // Optimal cognitive load is around 0.6-0.7 (not too low, not too high)
+        double optimalLoad = 0.65;
+        double loadEfficiency =
+            1.0 - Math.abs(avgCognitiveLoad - optimalLoad) / optimalLoad;
+
+        // Combine load efficiency with attention stability
+        return (loadEfficiency * 0.6) + (attentionStability * 0.4);
+    }
+
+    private void handleCognitiveOverload(CognitiveSession session) {
+        // Log the overload event
+        session
+            .getEvents()
+            .add(
+                new CognitiveEvent(
+                    LocalDateTime.now(),
+                    "cognitive_overload_detected",
+                    session.getCurrentCognitiveState()
+                )
+            );
+
+        // Could implement intervention strategies here:
+        // - Suggest break
+        // - Reduce task complexity
+        // - Switch to different learning mode
+        // - Provide mindfulness prompt
+
+        // For now, just mark in session context
+        session.setContextValue("overload_detected", true);
+        session.setContextValue("overload_timestamp", LocalDateTime.now());
+    }
+}
