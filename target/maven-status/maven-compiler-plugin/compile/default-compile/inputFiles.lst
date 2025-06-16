@@ -2,6 +2,7 @@
 /home/computeruse/discrete-strucutres-preview/src/main/java/edu/ucsb/cs/cognitivedm/framework/MockCognitiveSessionManager.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/com/discretelogic/expressions/ExpressionParser.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/com/discretelogic/discrete/graphs/ScalableConcurrentGraphEngine.java
+/home/computeruse/discrete-strucutres-preview/src/main/java/edu/ucsb/cs/cognitivedm/education/LearningAnalytics.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/edu/ucsb/cs/cognitivedm/patterns/PatternDetector.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/com/discretelogic/app/DiscreteLogicCLI.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/edu/ucsb/cs/cognitivedm/education/LearningStyle.java

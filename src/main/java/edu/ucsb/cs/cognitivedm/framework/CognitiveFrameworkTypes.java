@@ -46,6 +46,17 @@ public final class CognitiveFrameworkTypes {
     }
 
     /**
+     * Represents recommendation types for cognitive learning.
+     */
+    public enum RecommendationType {
+        CONCEPT_REVIEW,       // Review of fundamental concepts
+        PRACTICE_EXERCISE,    // Practice to reinforce learning
+        CHALLENGE_PROBLEM,    // Challenge to extend understanding
+        ALTERNATIVE_APPROACH, // Alternative approach to existing knowledge
+        PREREQUISITE_MATERIAL // Material needed before proceeding
+    }
+
+    /**
      * Represents a pattern for pattern detection.
      */
     public static class Pattern {
@@ -153,13 +164,67 @@ public final class CognitiveFrameworkTypes {
     public static class Recommendation {
         private final LearningContent content;
         private final double relevanceScore;
+        private final RecommendationType type;
+        private final String reason;
 
         public Recommendation(LearningContent content, double relevanceScore) {
+            this(content, relevanceScore, RecommendationType.CONCEPT_REVIEW, null);
+        }
+
+        public Recommendation(
+            LearningContent content, 
+            double relevanceScore, 
+            RecommendationType type,
+            String reason
+        ) {
             this.content = content;
             this.relevanceScore = relevanceScore;
+            this.type = type;
+            this.reason = reason;
         }
 
         public LearningContent getContent() { return content; }
         public double getRelevanceScore() { return relevanceScore; }
+        public RecommendationType getType() { return type; }
+        public String getReason() { return reason; }
+    }
+
+    /**
+     * Represents a request for learning recommendations.
+     */
+    public static class RecommendationRequest implements CognitiveFrameworkInterfaces.RecommendationRequest {
+        private final String userId;
+        private final CognitiveFrameworkInterfaces.CognitiveState cognitiveState;
+        private final RecommendationType preferredType;
+        private final Map<String, Object> context;
+        
+        public RecommendationRequest(String userId, CognitiveFrameworkInterfaces.CognitiveState cognitiveState) {
+            this(userId, cognitiveState, null, new java.util.HashMap<>());
+        }
+        
+        public RecommendationRequest(
+            String userId, 
+            CognitiveFrameworkInterfaces.CognitiveState cognitiveState,
+            RecommendationType preferredType,
+            Map<String, Object> context
+        ) {
+            this.userId = userId;
+            this.cognitiveState = cognitiveState;
+            this.preferredType = preferredType;
+            this.context = new java.util.HashMap<>(context);
+        }
+        
+        public String getUserId() { return userId; }
+        public CognitiveFrameworkInterfaces.CognitiveState getCognitiveState() { return cognitiveState; }
+        public RecommendationType getPreferredType() { return preferredType; }
+        
+        @Override
+        public Object getContext() {
+            return context;
+        }
+        
+        public void addContextItem(String key, Object value) {
+            context.put(key, value);
+        }
     }
 } 

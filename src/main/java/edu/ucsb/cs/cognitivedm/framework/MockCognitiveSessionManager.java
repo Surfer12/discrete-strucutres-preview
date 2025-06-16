@@ -3,6 +3,8 @@ package edu.ucsb.cs.cognitivedm.framework;
 import com.discretelogic.util.LoggingUtil;
 import org.slf4j.Logger;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -41,7 +43,7 @@ public class MockCognitiveSessionManager implements CognitiveFrameworkInterfaces
     public CognitiveFrameworkInterfaces.CognitiveSession getOrCreateSession(String userId) {
         LOGGER.debug("Attempting to get or create session for user: {}", userId);
         return sessionStore.computeIfAbsent(userId, key -> {
-            CognitiveFrameworkInterfaces.CognitiveSession newSession = createNewSession();
+            CognitiveFrameworkInterfaces.CognitiveSession newSession = createNewSession(userId);
             activeSessionCount.incrementAndGet();
             return newSession;
         });
@@ -75,12 +77,14 @@ public class MockCognitiveSessionManager implements CognitiveFrameworkInterfaces
     /**
      * Create a new cognitive session with default parameters.
      *
+     * @param userId The ID of the user for this session
      * @return A new CognitiveSession instance
      */
-    private CognitiveFrameworkInterfaces.CognitiveSession createNewSession() {
-        MockCognitiveSession session = new MockCognitiveSession();
+    private CognitiveFrameworkInterfaces.CognitiveSession createNewSession(String userId) {
+        MockCognitiveSession session = new MockCognitiveSession(userId);
         session.setSessionType("default");
         session.setCognitiveMonitoringInterval(defaultMonitoringInterval);
+        session.startSession();
         return session;
     }
 
@@ -91,12 +95,24 @@ public class MockCognitiveSessionManager implements CognitiveFrameworkInterfaces
         private static final Logger SESSION_LOGGER = LoggingUtil.getLogger(MockCognitiveSession.class);
         
         private Object sessionType;
-        private CognitiveState currentState;
+        private CognitiveFrameworkInterfaces.CognitiveState currentState;
         private int monitoringInterval;
         private boolean isActive;
+        private final String userId;
+        private final long sessionStartTime;
+
+        public MockCognitiveSession(String userId) {
+            this.userId = userId;
+            this.sessionStartTime = System.currentTimeMillis();
+            this.isActive = false;
+            // Initialize with default cognitive state
+            this.currentState = new AttentionRecognitionFramework.CognitiveState(
+                0.5, 0.5, 0.3, 0.4, false
+            );
+        }
 
         @Override
-        public void updateCognitiveState(CognitiveState state) {
+        public void updateCognitiveState(CognitiveFrameworkInterfaces.CognitiveState state) {
             this.currentState = state;
             SESSION_LOGGER.debug("Cognitive state updated to: {}", state);
         }
@@ -110,7 +126,7 @@ public class MockCognitiveSessionManager implements CognitiveFrameworkInterfaces
         @Override
         public void startSession() {
             this.isActive = true;
-            SESSION_LOGGER.info("Session started");
+            SESSION_LOGGER.info("Session started for user: {}", userId);
         }
 
         @Override
@@ -124,27 +140,41 @@ public class MockCognitiveSessionManager implements CognitiveFrameworkInterfaces
         }
 
         @Override
-        public CognitiveState getCurrentCognitiveState() {
-            return this.currentState;
-        }
-    }
-
-    /**
-     * Represents a simplified cognitive state for demonstration.
-     */
-    public static class CognitiveState {
-        private final String description;
-        private final double attentionLevel;
-
-        public CognitiveState(String description, double attentionLevel) {
-            this.description = description;
-            this.attentionLevel = attentionLevel;
+        public void pauseSession() {
+            this.isActive = false;
+            SESSION_LOGGER.info("Session paused for user: {}", userId);
         }
 
         @Override
-        public String toString() {
-            return String.format("CognitiveState{description='%s', attentionLevel=%.2f}", 
-                description, attentionLevel);
+        public void resumeSession() {
+            this.isActive = true;
+            SESSION_LOGGER.info("Session resumed for user: {}", userId);
+        }
+
+        @Override
+        public void endSession() {
+            this.isActive = false;
+            SESSION_LOGGER.info("Session ended for user: {}", userId);
+        }
+
+        @Override
+        public CognitiveFrameworkInterfaces.CognitiveState getCurrentCognitiveState() {
+            return this.currentState;
+        }
+
+        @Override
+        public String getUserId() {
+            return this.userId;
+        }
+
+        @Override
+        public long getSessionStartTime() {
+            return this.sessionStartTime;
+        }
+
+        @Override
+        public boolean isActive() {
+            return this.isActive;
         }
     }
 } 

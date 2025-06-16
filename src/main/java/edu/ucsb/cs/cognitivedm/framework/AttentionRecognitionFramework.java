@@ -38,6 +38,7 @@ public class AttentionRecognitionFramework {
         private final double cognitiveLoad;
         private final boolean inFlowState;
         private final Map<String, Double> metrics;
+        private final long timestamp;
 
         /**
          * Creates a new cognitive state.
@@ -55,6 +56,7 @@ public class AttentionRecognitionFramework {
             this.cognitiveLoad = cognitiveLoad;
             this.inFlowState = inFlowState;
             this.metrics = new HashMap<>();
+            this.timestamp = System.currentTimeMillis();
         }
 
         /**
@@ -74,6 +76,77 @@ public class AttentionRecognitionFramework {
             this.cognitiveLoad = cognitiveLoad;
             this.inFlowState = inFlowState;
             this.metrics = new HashMap<>(metrics);
+            this.timestamp = System.currentTimeMillis();
+        }
+
+        /**
+         * Creates a new cognitive state with custom metrics and timestamp.
+         */
+        private CognitiveState(
+            double attention,
+            double recognition,
+            double wandering,
+            double cognitiveLoad,
+            boolean inFlowState,
+            Map<String, Double> metrics,
+            long timestamp
+        ) {
+            this.attention = attention;
+            this.recognition = recognition;
+            this.wandering = wandering;
+            this.cognitiveLoad = cognitiveLoad;
+            this.inFlowState = inFlowState;
+            this.metrics = new HashMap<>(metrics);
+            this.timestamp = timestamp;
+        }
+
+        /**
+         * Evolves the cognitive state based on the provided time delta.
+         * Uses the fractal communication principle z = z² + c where:
+         * - z is the current state
+         * - z² represents recursive elaboration (intrinsic dynamics)
+         * - c represents external influence (time delta factor)
+         *
+         * @param timeDelta The time delta in seconds to evolve the state
+         * @return A new evolved cognitive state
+         */
+        public CognitiveState evolve(double timeDelta) {
+            // Scale factor for time influence (smaller values = slower evolution)
+            double timeScale = 0.1;
+            
+            // Calculate intrinsic evolution factors (z²)
+            double attentionFactor = Math.pow(attention, 2) * (1.0 - wandering);
+            double recognitionFactor = Math.pow(recognition, 2) * (0.8 + 0.2 * attention);
+            double wanderingFactor = Math.pow(wandering, 2) * (1.0 - attention * 0.8);
+            
+            // Calculate external influences (c) based on time
+            double attentionDelta = timeScale * timeDelta * (attention < 0.5 ? 0.1 : -0.1);
+            double recognitionDelta = timeScale * timeDelta * 0.05; // Recognition slowly increases
+            double wanderingDelta = timeScale * timeDelta * (wandering < 0.4 ? 0.12 : -0.08);
+            
+            // Combine intrinsic and extrinsic factors (z² + c)
+            double newAttention = Math.max(0.0, Math.min(1.0, attentionFactor + attentionDelta));
+            double newRecognition = Math.max(0.0, Math.min(1.0, recognitionFactor + recognitionDelta));
+            double newWandering = Math.max(0.0, Math.min(1.0, wanderingFactor + wanderingDelta));
+            
+            // Calculate new cognitive load
+            double newCognitiveLoad = calculateCognitiveLoad(newAttention, newRecognition, newWandering);
+            
+            // Determine if in flow state
+            boolean newFlowState = determineFlowState(newAttention, newRecognition, newWandering);
+            
+            // Create new state with updated timestamp
+            long newTimestamp = this.timestamp + (long)(timeDelta * 1000);
+            
+            return new CognitiveState(
+                newAttention,
+                newRecognition,
+                newWandering,
+                newCognitiveLoad,
+                newFlowState,
+                this.metrics,
+                newTimestamp
+            );
         }
 
         @Override
@@ -105,6 +178,15 @@ public class AttentionRecognitionFramework {
         public Map<String, Double> getMetrics() {
             return metrics;
         }
+        
+        /**
+         * Gets the timestamp when this cognitive state was created.
+         * 
+         * @return The timestamp in milliseconds
+         */
+        public long getTimestamp() {
+            return timestamp;
+        }
 
         @Override
         public String toString() {
@@ -115,6 +197,7 @@ public class AttentionRecognitionFramework {
                 ", cognitiveLoad=" + cognitiveLoad +
                 ", inFlowState=" + inFlowState +
                 ", metrics=" + metrics +
+                ", timestamp=" + timestamp +
                 '}';
         }
     }
@@ -662,8 +745,8 @@ public class AttentionRecognitionFramework {
     public static CognitiveState createCognitiveState(double attention, double recognition, 
                                                      double wandering) {
         double cognitiveLoad = calculateCognitiveLoad(attention, recognition, wandering);
-        boolean inFlow = determineFlowState(attention, recognition, wandering);
-        return new CognitiveState(attention, recognition, wandering, cognitiveLoad, inFlow);
+        boolean inFlowState = determineFlowState(attention, recognition, wandering);
+        return new CognitiveState(attention, recognition, wandering, cognitiveLoad, inFlowState);
     }
 
     /**
