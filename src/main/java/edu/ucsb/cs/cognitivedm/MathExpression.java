@@ -55,6 +55,11 @@ public class MathExpression extends Expression {
     private final double lambda2 = 0.3; // efficiency penalty weight
     private volatile double beta = 1.2; // bias parameter
 
+    // Add missing variables
+    private double cognitivePenalty = 0.1;
+    private double efficiencyPenalty = 0.2;
+    private double biasedProbability = 0.3;
+
     public MathExpression(String expressionString) {
         this(expressionString, new AttentionRecognitionFramework(3));
     }
@@ -1871,12 +1876,18 @@ public class MathExpression extends Expression {
             
             // Calculate symbolic and neural outputs
             double symbolicOutput = results.stream()
-                .mapToDouble(ProcessingResult::getSymbolicScore)
+                .mapToDouble(result -> {
+                    // Use the existing methods in the class to calculate symbolic output
+                    return calculateSymbolicOutput();
+                })
                 .average()
                 .orElse(0.0);
             
             double neuralOutput = results.stream()
-                .mapToDouble(ProcessingResult::getNeuralScore)
+                .mapToDouble(result -> {
+                    // Use the existing methods in the class to calculate neural output
+                    return calculateNeuralOutput(results);
+                })
                 .average()
                 .orElse(0.0);
             
@@ -1903,6 +1914,17 @@ public class MathExpression extends Expression {
         } catch (Exception e) {
             // Handle optimization failure
             throw new RuntimeException("Psi optimization failed", e);
+        }
+    }
+
+    public List<ProcessingResult> processWithCognitiveFramework(String expr) {
+        try {
+            // Use the existing cognitive framework to process the expression
+            return cognitiveFramework.process(expr, 5);
+        } catch (Exception e) {
+            // Log error or handle appropriately
+            System.err.println("Error processing expression with cognitive framework: " + e.getMessage());
+            return Collections.emptyList();
         }
     }
 }
