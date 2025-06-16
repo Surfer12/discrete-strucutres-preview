@@ -37,7 +37,7 @@
             <configuration>
               <transformers>
                 <transformer>
-                  <mainClass>com.discretelogic.DiscreteLogicCLI</mainClass>
+                  <mainClass>com.discretelogic.app.DiscreteLogicCLI</mainClass>
                 </transformer>
               </transformers>
             </configuration>
