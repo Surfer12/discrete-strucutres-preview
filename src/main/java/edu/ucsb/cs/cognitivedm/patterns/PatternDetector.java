@@ -180,7 +180,6 @@ public class PatternDetector {
         if (hurstExponent > hurstThreshold && hurstExponent < 1.0) {
             Pattern fractalPattern = new Pattern(
                 "FractalPersistence",
-                String.format("Fractal pattern detected with Hurst exponent %.3f", hurstExponent),
                 scale,
                 Math.abs(hurstExponent - 0.5) * 2 // Confidence based on deviation from 0.5
             );
@@ -195,7 +194,6 @@ public class PatternDetector {
         if (selfSimilarity > selfSimilarityThreshold) {
             Pattern selfSimilarPattern = new Pattern(
                 "RecursiveSelfSimilarity",
-                String.format("Recursive self-similar patterns detected (similarity=%.3f)", selfSimilarity),
                 scale,
                 selfSimilarity
             );
@@ -208,7 +206,6 @@ public class PatternDetector {
         if (multiFractalDimension > 1.5 && multiFractalDimension < 2.5) {
             Pattern multiFractalPattern = new Pattern(
                 "MultiFractal",
-                String.format("Multi-fractal structure detected (dimension=%.3f)", multiFractalDimension),
                 scale,
                 Math.min(1.0, (multiFractalDimension - 1.0) / 1.5)
             );

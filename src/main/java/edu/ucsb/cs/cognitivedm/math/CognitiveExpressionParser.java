@@ -439,9 +439,9 @@ public class CognitiveExpressionParser {
             evidence.put("pattern_count", result.getDetectedPatterns().size());
 
             // Example: Apply confirmation bias to pattern detection confidence
-            for (PatternDetector.Pattern pattern : result.getDetectedPatterns()) {
+            for (AttentionRecognitionFramework.Pattern pattern : result.getDetectedPatterns()) {
                 double adjustedConfidence = biasAdjuster.calculateBiasedProbability(
-                    pattern.getConfidence(), evidence, context
+                    pattern.getStrength(), evidence, context
                 );
                 // Note: In a full implementation, we'd need a way to update pattern confidence
                 // This would require modifying the Pattern class or creating a new adjusted pattern

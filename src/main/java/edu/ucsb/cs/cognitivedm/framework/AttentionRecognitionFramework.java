@@ -372,7 +372,7 @@ public class AttentionRecognitionFramework {
         }
 
         private List<Pattern> detectPatterns() {
-            return patternDetector.analyzeSequence(
+            List<edu.ucsb.cs.cognitivedm.patterns.PatternDetector.Pattern> detectorPatterns = patternDetector.analyzeSequence(
                 stateHistory
                     .stream()
                     .map(state ->
@@ -384,6 +384,11 @@ public class AttentionRecognitionFramework {
                     )
                     .collect(Collectors.toList())
             );
+
+            // Convert detector patterns to framework patterns
+            return detectorPatterns.stream()
+                .map(dp -> new Pattern(dp.getType(), dp.getConfidence(), dp.getDuration()))
+                .collect(Collectors.toList());
         }
 
         private double assessCognitiveLoad() {
@@ -691,53 +696,5 @@ public class AttentionRecognitionFramework {
                 averageWandering
             );
         }
-    }
-
-    /**
-     * Generate system-wide analysis
-     */
-    public SystemAnalysis getSystemAnalysis() {
-        if (scales.isEmpty()) {
-            return new SystemAnalysis(0.0, 0.0, 0.0, 0.0, 0L, 0);
-        }
-
-        double avgAttention = scales
-            .stream()
-            .mapToDouble(scale -> scale.getCurrentState().getAttention())
-            .average()
-            .orElse(0.0);
-
-        double avgRecognition = scales
-            .stream()
-            .mapToDouble(scale -> scale.getCurrentState().getRecognition())
-            .average()
-            .orElse(0.0);
-
-        double avgWandering = scales
-            .stream()
-            .mapToDouble(scale -> scale.getCurrentState().getWandering())
-            .average()
-            .orElse(0.0);
-
-        // Calculate system cognitive load as weighted combination
-        double systemLoad =
-            (avgAttention * 0.3 + avgRecognition * 0.3 + avgWandering * 0.4);
-
-        SystemAnalysis analysis = new SystemAnalysis(
-            systemLoad,
-            avgAttention,
-            avgRecognition,
-            avgWandering,
-            0L,
-            scales.size()
-        );
-
-        analysis.addPerformanceMetric("scale_count", scales.size());
-        analysis.addPerformanceMetric(
-            "processing_efficiency",
-            1.0 - systemLoad
-        );
-
-        return analysis;
     }
 }

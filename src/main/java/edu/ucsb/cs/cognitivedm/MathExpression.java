@@ -1125,7 +1125,7 @@ public class MathExpression extends Expression {
     }
 
     /**
-     * Lexical Viability Component for educational adaptivity
+     * Lexical viability component for optimizing mathematical expression processing
      */
     public static class LexicalViabilityComponent {
 
@@ -1141,11 +1141,10 @@ public class MathExpression extends Expression {
         ) {
             this.network = network;
             this.embeddingService = embeddingService;
-            this.notationPreferences = new HashMap<>();
-            this.learnerProfile = new HashMap<>();
+            this.notationPreferences = new ConcurrentHashMap<>();
+            this.learnerProfile = new ConcurrentHashMap<>();
             this.viabilityCache = new ConcurrentHashMap<>();
             initializeDefaults();
-            network.setEmbeddingService(embeddingService);
         }
 
         private void initializeDefaults() {

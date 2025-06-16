@@ -30,7 +30,7 @@ public class EmbeddingLVCDemo {
 
         // Initialize cognitive framework
         AttentionRecognitionFramework framework =
-            new AttentionRecognitionFramework();
+            new AttentionRecognitionFramework(3); // Using 3 scales as default
 
         // Run comprehensive demonstrations
         demonstrateBasicEmbeddingSimilarity();
@@ -220,7 +220,7 @@ public class EmbeddingLVCDemo {
 
         try {
             AttentionRecognitionFramework framework =
-                new AttentionRecognitionFramework();
+                new AttentionRecognitionFramework(3);
             MathExpression expr = new MathExpression(
                 "{1,2,3} ∪ {4,5,6}",
                 framework
@@ -317,7 +317,7 @@ public class EmbeddingLVCDemo {
 
         try {
             AttentionRecognitionFramework framework =
-                new AttentionRecognitionFramework();
+                new AttentionRecognitionFramework(3);
 
             // Test expressions with different complexity levels
             String[] testExpressions = {
@@ -474,7 +474,7 @@ public class EmbeddingLVCDemo {
 
         try {
             AttentionRecognitionFramework framework =
-                new AttentionRecognitionFramework();
+                new AttentionRecognitionFramework(3);
 
             // Test complex nested expression
             String complexExpression = "(A ∪ B) ∩ (C ∪ D)";
