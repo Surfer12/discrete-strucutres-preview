@@ -1,4 +1,4 @@
-package cognitive.emergence;
+package com.discretelogic.cognitive.emergence;
 
 /**
  * Analyzes and models the emergence of flow states 
