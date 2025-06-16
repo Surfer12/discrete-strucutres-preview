@@ -1,149 +1,103 @@
 package com.discretelogic.model;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 
 /**
  * Represents a boolean expression with variables and operations.
- * This class provides functionality for evaluating the expression with different variable assignments.
+ * This class provides functionality to evaluate the expression with different
+ * variable assignments and analyze its properties.
  */
 public class Expression {
-    private final String expression;
+    private final String expressionString;
     private final Set<String> variables;
-
+    
     /**
-     * Creates a new Expression with the specified string representation.
+     * Creates a new Expression.
      * 
-     * @param expression The string representation of the boolean expression
+     * @param expressionString The string representation of the expression
      * @param variables The set of variables used in the expression
      */
-    public Expression(String expression, Set<String> variables) {
-        this.expression = expression;
-        this.variables = new HashSet<>(variables);
+    public Expression(String expressionString, Set<String> variables) {
+        this.expressionString = expressionString;
+        this.variables = Collections.unmodifiableSet(new HashSet<>(variables));
     }
-
+    
     /**
-     * Creates a new Expression with the specified string representation.
-     * Variables are automatically extracted from the expression.
-     * 
-     * @param expression The string representation of the boolean expression
-     */
-    public Expression(String expression) {
-        this.expression = expression;
-        this.variables = extractVariables(expression);
-    }
-
-    /**
-     * Extracts variable names from the expression.
-     * This is a simple implementation that assumes single-letter variables.
-     * 
-     * @param expr The expression to analyze
-     * @return A set of variable names found in the expression
-     */
-    private Set<String> extractVariables(String expr) {
-        Set<String> vars = new HashSet<>();
-        for (char c : expr.toCharArray()) {
-            if (Character.isLetter(c) && Character.isLowerCase(c)) {
-                vars.add(String.valueOf(c));
-            }
-        }
-        return vars;
-    }
-
-    /**
-     * Gets the string representation of this expression.
+     * Gets the string representation of the expression.
      * 
      * @return The expression string
      */
-    public String getExpression() {
-        return expression;
+    public String getExpressionString() {
+        return expressionString;
     }
-
+    
     /**
-     * Gets the set of variables used in this expression.
+     * Gets the set of variables used in the expression.
      * 
      * @return The set of variable names
      */
     public Set<String> getVariables() {
-        return new HashSet<>(variables);
+        return variables;
     }
-
+    
     /**
      * Evaluates the expression with the given variable assignments.
      * 
-     * @param assignment A map from variable names to boolean values
-     * @return The boolean result of evaluating the expression
+     * @param assignments A map of variable names to boolean values
+     * @return The result of evaluating the expression
      */
-    public boolean evaluate(Map<String, Boolean> assignment) {
-        // This is a simplified implementation.
-        // In a real-world scenario, this would involve parsing and evaluating
-        // the expression based on the provided variable assignments.
+    public boolean evaluate(Map<String, Boolean> assignments) {
+        // This is a placeholder implementation
+        // In a real implementation, this would actually evaluate the expression
+        // using the variable assignments
         
-        // For demonstration purposes, we'll use a simple approach based on the expression:
-        // If the expression contains "AND" or "∧", we'll perform AND operation on all variables
-        // If the expression contains "OR" or "∨", we'll perform OR operation on all variables
-        // If the expression contains "NOT" or "¬", we'll negate the result
-        
-        boolean result;
-        
-        if (expression.contains("AND") || expression.contains("∧")) {
-            result = true;
-            for (String var : variables) {
-                if (assignment.containsKey(var)) {
-                    result &= assignment.get(var);
-                }
+        // For demonstration purposes, we'll return a simple result
+        // based on the number of true assignments
+        int trueCount = 0;
+        for (String variable : variables) {
+            if (assignments.containsKey(variable) && assignments.get(variable)) {
+                trueCount++;
             }
-        } else if (expression.contains("OR") || expression.contains("∨")) {
-            result = false;
-            for (String var : variables) {
-                if (assignment.containsKey(var)) {
-                    result |= assignment.get(var);
-                }
-            }
-        } else {
-            // Default to the first variable's value
-            String firstVar = variables.iterator().next();
-            result = assignment.getOrDefault(firstVar, false);
         }
         
-        // Apply NOT if needed
-        if (expression.contains("NOT") || expression.contains("¬")) {
-            result = !result;
-        }
-        
-        return result;
+        // Even number of true variables will give true result
+        return trueCount % 2 == 0;
     }
-
+    
     /**
-     * Generates all possible variable assignments for the variables in this expression.
+     * Gets all possible variable assignments for this expression.
      * 
-     * @return A list of all possible assignments
+     * @return A list of all possible variable assignment combinations
      */
     public List<Map<String, Boolean>> getAllAssignments() {
-        List<Map<String, Boolean>> allAssignments = new ArrayList<>();
-        int numVars = variables.size();
-        int numRows = (int) Math.pow(2, numVars);
-        
-        List<String> varList = new ArrayList<>(variables);
-        
-        for (int i = 0; i < numRows; i++) {
-            Map<String, Boolean> assignment = new HashMap<>();
-            for (int j = 0; j < numVars; j++) {
-                boolean value = (i & (1 << (numVars - 1 - j))) != 0;
-                assignment.put(varList.get(j), value);
-            }
-            allAssignments.add(assignment);
+        List<Map<String, Boolean>> assignments = new ArrayList<>();
+        generateAssignments(new HashMap<>(), new ArrayList<>(variables), 0, assignments);
+        return assignments;
+    }
+    
+    /**
+     * Recursively generates all possible variable assignments.
+     */
+    private void generateAssignments(Map<String, Boolean> current, List<String> vars, 
+                                    int index, List<Map<String, Boolean>> result) {
+        if (index == vars.size()) {
+            result.add(new HashMap<>(current));
+            return;
         }
         
-        return allAssignments;
+        String var = vars.get(index);
+        
+        // Try with variable set to false
+        current.put(var, false);
+        generateAssignments(current, vars, index + 1, result);
+        
+        // Try with variable set to true
+        current.put(var, true);
+        generateAssignments(current, vars, index + 1, result);
     }
-
+    
     @Override
     public String toString() {
-        return expression;
+        return expressionString;
     }
 } 

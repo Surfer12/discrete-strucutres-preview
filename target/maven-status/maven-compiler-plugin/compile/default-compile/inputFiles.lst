@@ -7,6 +7,7 @@
 /Users/ryandavidoates/discrete-strucutres-preview/src/main/java/com/discretelogic/LogicGateSim/NumberSystemConverter.java
 /Users/ryandavidoates/discrete-strucutres-preview/src/main/java/com/discretelogic/fluid/dynamics/MathUtils.java
 /Users/ryandavidoates/discrete-strucutres-preview/src/main/java/com/discretelogic/model/Expression.java
+/Users/ryandavidoates/discrete-strucutres-preview/src/main/java/com/discretelogic/core/BooleanAlgebra.java
 /Users/ryandavidoates/discrete-strucutres-preview/src/main/java/com/discretelogic/cognitive/emergence/PatternRecognition.java
 /Users/ryandavidoates/discrete-strucutres-preview/src/main/java/com/discretelogic/fluid/dynamics/WavePatterns.java
 /Users/ryandavidoates/discrete-strucutres-preview/src/main/java/com/discretelogic/discrete/sets/LogicalSet.java
@@ -28,5 +29,6 @@
 /Users/ryandavidoates/discrete-strucutres-preview/src/main/java/com/discretelogic/cognitive/integration/FlowMathMapping.java
 /Users/ryandavidoates/discrete-strucutres-preview/src/main/java/com/discretelogic/discrete/graphs/WavePatternGraph.java
 /Users/ryandavidoates/discrete-strucutres-preview/src/main/java/com/discretelogic/cognitive/integration/ConceptualBridge.java
+/Users/ryandavidoates/discrete-strucutres-preview/src/main/java/com/discretelogic/core/ExpressionParser.java
 /Users/ryandavidoates/discrete-strucutres-preview/src/main/java/com/discretelogic/fluid/analysis/PatternAnalysis.java
 /Users/ryandavidoates/discrete-strucutres-preview/src/main/java/com/discretelogic/model/GateType.java
