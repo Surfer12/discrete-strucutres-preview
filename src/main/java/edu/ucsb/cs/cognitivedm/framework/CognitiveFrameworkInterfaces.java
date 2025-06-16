@@ -6,6 +6,15 @@ import java.util.concurrent.CompletableFuture;
 
 public class CognitiveFrameworkInterfaces {
     
+    public interface CognitiveState {
+        double getAttention();
+        double getRecognition();
+        double getWandering();
+        double getCognitiveLoad();
+        boolean isInFlowState();
+        Map<String, Double> getMetrics();
+    }
+
     public interface CognitiveSessionManager {
         CognitiveSession getOrCreateSession(String userId);
         int getActiveSessionCount();
@@ -18,7 +27,13 @@ public class CognitiveFrameworkInterfaces {
         void setSessionType(Object sessionType);
         void startSession();
         void setCognitiveMonitoringInterval(int interval);
+        void pauseSession();
+        void resumeSession();
+        void endSession();
         CognitiveState getCurrentCognitiveState();
+        String getUserId();
+        long getSessionStartTime();
+        boolean isActive();
     }
 
     public interface CognitiveRecommendationEngine {
@@ -41,28 +56,11 @@ public class CognitiveFrameworkInterfaces {
     }
 
     public interface RecommendationRequest {
-        // Placeholder for recommendation request methods
+        Object getContext();
     }
 
     public interface LearningPath {
         // Placeholder for learning path methods
-    }
-
-    public static class CognitiveState {
-        private final double attentionLevel;
-        private final double recognitionLevel;
-        private final double wanderingLevel;
-
-        public CognitiveState(double attentionLevel, double recognitionLevel, double wanderingLevel) {
-            this.attentionLevel = attentionLevel;
-            this.recognitionLevel = recognitionLevel;
-            this.wanderingLevel = wanderingLevel;
-        }
-
-        // Getters
-        public double getAttentionLevel() { return attentionLevel; }
-        public double getRecognitionLevel() { return recognitionLevel; }
-        public double getWanderingLevel() { return wanderingLevel; }
     }
 
     public enum DifficultyLevel {

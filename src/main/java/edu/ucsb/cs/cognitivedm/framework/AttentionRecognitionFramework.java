@@ -29,169 +29,93 @@ public class AttentionRecognitionFramework {
     private final CognitiveBiasAdjuster biasAdjuster;
 
     /**
-     * Represents a cognitive state at a specific moment in time
+     * Represents a cognitive state with attention, recognition, and wandering metrics.
      */
-    public static class CognitiveState {
+    public static class CognitiveState implements CognitiveFrameworkInterfaces.CognitiveState {
+        private final double attention;
+        private final double recognition;
+        private final double wandering;
+        private final double cognitiveLoad;
+        private final boolean inFlowState;
+        private final Map<String, Double> metrics;
 
-        private final double attention; // Focus level [0,1]
-        private final double recognition; // Pattern recognition strength [0,1]
-        private final double wandering; // Mind-wandering intensity [0,1]
-        private final long timestamp;
-        private final Map<String, Double> contextualFactors;
-
-        public CognitiveState(
-            double attention,
-            double recognition,
-            double wandering
-        ) {
-            this(attention, recognition, wandering, new HashMap<>());
-        }
-
+        /**
+         * Creates a new cognitive state.
+         */
         public CognitiveState(
             double attention,
             double recognition,
             double wandering,
-            Map<String, Double> contextualFactors
+            double cognitiveLoad,
+            boolean inFlowState
         ) {
-            this.attention = Math.max(0, Math.min(1, attention));
-            this.recognition = Math.max(0, Math.min(1, recognition));
-            this.wandering = Math.max(0, Math.min(1, wandering));
-            this.timestamp = System.currentTimeMillis();
-            this.contextualFactors = new HashMap<>(contextualFactors);
+            this.attention = attention;
+            this.recognition = recognition;
+            this.wandering = wandering;
+            this.cognitiveLoad = cognitiveLoad;
+            this.inFlowState = inFlowState;
+            this.metrics = new HashMap<>();
         }
 
         /**
-         * Recursive state evolution implementing z = z² + c
-         * @param novelInput The 'c' component - external influence
-         * @return New evolved cognitive state
+         * Creates a new cognitive state with custom metrics.
          */
-        public CognitiveState evolve(double novelInput) {
-            // z² component: recursive elaboration of current state
-            double attentionSquared = attention * attention;
-            double recognitionSquared = recognition * recognition;
-            double wanderingSquared = wandering * wandering;
-
-            // c component: novel input influence with adaptive weighting
-            double adaptiveInfluence = calculateAdaptiveInfluence(novelInput);
-
-            // New state calculation with bounded evolution
-            double newAttention = boundedEvolution(
-                attentionSquared + adaptiveInfluence * 0.1,
-                0.05 // minimum change threshold
-            );
-
-            double newRecognition = boundedEvolution(
-                recognitionSquared + (1 - wandering) * adaptiveInfluence * 0.2,
-                0.03
-            );
-
-            double newWandering = boundedEvolution(
-                wanderingSquared +
-                (novelInput > 0.5 ? -0.1 : 0.05) * adaptiveInfluence,
-                0.02
-            );
-
-            // Update contextual factors
-            Map<String, Double> newContextualFactors = evolveContextualFactors(
-                novelInput
-            );
-
-            return new CognitiveState(
-                newAttention,
-                newRecognition,
-                newWandering,
-                newContextualFactors
-            );
+        public CognitiveState(
+            double attention,
+            double recognition,
+            double wandering,
+            double cognitiveLoad,
+            boolean inFlowState,
+            Map<String, Double> metrics
+        ) {
+            this.attention = attention;
+            this.recognition = recognition;
+            this.wandering = wandering;
+            this.cognitiveLoad = cognitiveLoad;
+            this.inFlowState = inFlowState;
+            this.metrics = new HashMap<>(metrics);
         }
 
-        private double calculateAdaptiveInfluence(double novelInput) {
-            // Adaptive influence based on current cognitive load
-            double cognitiveLoad =
-                (attention + recognition + (1 - wandering)) / 3.0;
-            return novelInput * (1 - cognitiveLoad * 0.5); // Reduce influence when overloaded
-        }
-
-        private double boundedEvolution(double value, double minChange) {
-            double evolved = Math.max(0, Math.min(1, value));
-            // Ensure minimum change for system dynamics
-            return Math.abs(evolved - value) < minChange
-                ? value + minChange
-                : evolved;
-        }
-
-        private Map<String, Double> evolveContextualFactors(double novelInput) {
-            Map<String, Double> evolved = new HashMap<>(contextualFactors);
-            evolved.put(
-                "novelty_sensitivity",
-                evolved.getOrDefault("novelty_sensitivity", 0.5) * 0.9 +
-                novelInput * 0.1
-            );
-            evolved.put(
-                "stability_preference",
-                evolved.getOrDefault("stability_preference", 0.5) +
-                (1 - wandering) * 0.05
-            );
-            return evolved;
-        }
-
-        // Getters
+        @Override
         public double getAttention() {
             return attention;
         }
 
+        @Override
         public double getRecognition() {
             return recognition;
         }
 
+        @Override
         public double getWandering() {
             return wandering;
         }
 
-        public long getTimestamp() {
-            return timestamp;
-        }
-
-        public Map<String, Double> getContextualFactors() {
-            return new HashMap<>(contextualFactors);
-        }
-
-        /**
-         * Calculate cognitive load based on attention, recognition, and wandering levels
-         * @return Cognitive load value between 0 and 1
-         */
+        @Override
         public double getCognitiveLoad() {
-            // Cognitive load increases with high attention and recognition demands
-            // but decreases with mind-wandering (attention is elsewhere)
-            return (
-                attention * 0.4 + recognition * 0.4 + (1 - wandering) * 0.2
-            );
+            return cognitiveLoad;
         }
 
-        /**
-         * Determine if the cognitive system is in a flow state
-         * Flow state: high attention, high recognition, low wandering
-         * @return true if in flow state
-         */
+        @Override
         public boolean isInFlowState() {
-            final double FLOW_ATTENTION_THRESHOLD = 0.7;
-            final double FLOW_RECOGNITION_THRESHOLD = 0.6;
-            final double FLOW_WANDERING_THRESHOLD = 0.3;
+            return inFlowState;
+        }
 
-            return (
-                attention >= FLOW_ATTENTION_THRESHOLD &&
-                recognition >= FLOW_RECOGNITION_THRESHOLD &&
-                wandering <= FLOW_WANDERING_THRESHOLD
-            );
+        @Override
+        public Map<String, Double> getMetrics() {
+            return metrics;
         }
 
         @Override
         public String toString() {
-            return String.format(
-                "CognitiveState{attention=%.3f, recognition=%.3f, wandering=%.3f}",
-                attention,
-                recognition,
-                wandering
-            );
+            return "CognitiveState{" +
+                "attention=" + attention +
+                ", recognition=" + recognition +
+                ", wandering=" + wandering +
+                ", cognitiveLoad=" + cognitiveLoad +
+                ", inFlowState=" + inFlowState +
+                ", metrics=" + metrics +
+                '}';
         }
     }
 
@@ -296,7 +220,7 @@ public class AttentionRecognitionFramework {
 
         public ScaleLevel(int scale) {
             this.scale = scale;
-            this.currentState = new CognitiveState(0.5, 0.5, 0.1);
+            this.currentState = new CognitiveState(0.5, 0.5, 0.1, 0.5, false);
             this.stateHistory = new LinkedList<>();
             this.patternDetector = new PatternDetector(scale);
         }
@@ -565,7 +489,7 @@ public class AttentionRecognitionFramework {
      */
     public CognitiveState getCurrentCognitiveState() {
         if (scales.isEmpty()) {
-            return new CognitiveState(0.5, 0.5, 0.3);
+            return new CognitiveState(0.5, 0.5, 0.3, 0.5, false);
         }
 
         double avgAttention = scales
@@ -586,7 +510,18 @@ public class AttentionRecognitionFramework {
             .average()
             .orElse(0.3);
 
-        return new CognitiveState(avgAttention, avgRecognition, avgWandering);
+        double avgCognitiveLoad = scales
+            .stream()
+            .mapToDouble(scale -> scale.getCurrentState().getCognitiveLoad())
+            .average()
+            .orElse(0.5);
+
+        boolean avgInFlowState = scales
+            .stream()
+            .map(scale -> scale.getCurrentState().isInFlowState())
+            .anyMatch(Boolean::booleanValue);
+
+        return new CognitiveState(avgAttention, avgRecognition, avgWandering, avgCognitiveLoad, avgInFlowState);
     }
 
     /**
@@ -696,5 +631,99 @@ public class AttentionRecognitionFramework {
                 averageWandering
             );
         }
+    }
+
+    /**
+     * Analytics for learning and cognitive data.
+     */
+    public static class LearningAnalytics {
+        private Map<String, Double> metrics;
+        
+        public LearningAnalytics() {
+            this.metrics = new HashMap<>();
+        }
+        
+        public void addMetric(String name, double value) {
+            metrics.put(name, value);
+        }
+        
+        public double getMetric(String name) {
+            return metrics.getOrDefault(name, 0.0);
+        }
+        
+        public Map<String, Double> getAllMetrics() {
+            return new HashMap<>(metrics);
+        }
+    }
+
+    /**
+     * Create a new cognitive state.
+     */
+    public static CognitiveState createCognitiveState(double attention, double recognition, 
+                                                     double wandering) {
+        double cognitiveLoad = calculateCognitiveLoad(attention, recognition, wandering);
+        boolean inFlow = determineFlowState(attention, recognition, wandering);
+        return new CognitiveState(attention, recognition, wandering, cognitiveLoad, inFlow);
+    }
+
+    /**
+     * Calculate cognitive load based on attention, recognition, and wandering.
+     */
+    private static double calculateCognitiveLoad(double attention, double recognition, 
+                                               double wandering) {
+        // Simple model: high attention and recognition with low wandering = lower cognitive load
+        return 1.0 - ((attention + recognition) / 2.0) + wandering;
+    }
+
+    /**
+     * Determine if the learner is in a flow state.
+     */
+    private static boolean determineFlowState(double attention, double recognition, 
+                                            double wandering) {
+        // Simple model: high attention and recognition with low wandering = flow state
+        return attention > 0.7 && recognition > 0.6 && wandering < 0.3;
+    }
+
+    /**
+     * Analyze a sequence of cognitive states to identify patterns.
+     */
+    public LearningAnalytics analyzeSequence(List<CognitiveState> states) {
+        LearningAnalytics analytics = new LearningAnalytics();
+        
+        if (states == null || states.isEmpty()) {
+            return analytics;
+        }
+        
+        // Calculate averages
+        double avgAttention = states.stream().mapToDouble(CognitiveState::getAttention).average().orElse(0);
+        double avgRecognition = states.stream().mapToDouble(CognitiveState::getRecognition).average().orElse(0);
+        double avgWandering = states.stream().mapToDouble(CognitiveState::getWandering).average().orElse(0);
+        double avgLoad = states.stream().mapToDouble(CognitiveState::getCognitiveLoad).average().orElse(0);
+        
+        analytics.addMetric("avg_attention", avgAttention);
+        analytics.addMetric("avg_recognition", avgRecognition);
+        analytics.addMetric("avg_wandering", avgWandering);
+        analytics.addMetric("avg_cognitive_load", avgLoad);
+        
+        // Calculate flow percentage
+        double flowPercentage = states.stream().filter(CognitiveState::isInFlowState).count() / (double)states.size();
+        analytics.addMetric("flow_percentage", flowPercentage);
+        
+        return analytics;
+    }
+
+    /**
+     * Predict future cognitive state based on current state and context.
+     */
+    public CompletableFuture<CognitiveState> predictFutureState(CognitiveState currentState, 
+                                                              String context) {
+        return CompletableFuture.supplyAsync(() -> {
+            // Simple prediction model
+            double predictedAttention = Math.min(currentState.getAttention() * 1.1, 1.0);
+            double predictedRecognition = Math.min(currentState.getRecognition() * 1.05, 1.0);
+            double predictedWandering = Math.max(currentState.getWandering() * 0.95, 0.0);
+            
+            return createCognitiveState(predictedAttention, predictedRecognition, predictedWandering);
+        });
     }
 }

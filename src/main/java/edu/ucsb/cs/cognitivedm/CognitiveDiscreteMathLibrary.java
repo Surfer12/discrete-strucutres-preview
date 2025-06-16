@@ -2,8 +2,12 @@ package edu.ucsb.cs.cognitivedm;
 
 import com.discretelogic.util.LoggingUtil;
 import edu.ucsb.cs.cognitivedm.education.CognitiveEducationFramework;
-import edu.ucsb.cs.cognitivedm.framework.CognitiveFrameworkInterfaces.*;
-import edu.ucsb.cs.cognitivedm.framework.CognitiveFrameworkTypes.*;
+import edu.ucsb.cs.cognitivedm.education.LearningAnalytics;
+import edu.ucsb.cs.cognitivedm.framework.AttentionRecognitionFramework;
+import edu.ucsb.cs.cognitivedm.framework.CognitiveFrameworkTypes;
+import edu.ucsb.cs.cognitivedm.framework.CognitiveFrameworkInterfaces;
+import edu.ucsb.cs.cognitivedm.framework.CognitiveFrameworkUtility;
+import static edu.ucsb.cs.cognitivedm.framework.CognitiveFrameworkUtility.*;
 import edu.ucsb.cs.cognitivedm.graph.ScalableConcurrentGraphEngine;
 import edu.ucsb.cs.cognitivedm.patterns.PatternDetector;
 import edu.ucsb.cs.cognitivedm.recommendations.CognitiveRecommendationEngine;
@@ -13,6 +17,7 @@ import org.slf4j.Logger;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
@@ -124,40 +129,40 @@ public class CognitiveDiscreteMathLibrary {
             "set_operations",
             "Set Operations",
             "Basic set operations: union, intersection, complement",
-            ContentType.CONCEPT,
-            DifficultyLevel.BEGINNER
+            CognitiveFrameworkTypes.ContentType.CONCEPT,
+            CognitiveFrameworkTypes.DifficultyLevel.BEGINNER
         );
 
         addMathematicalContent(
             "boolean_logic",
             "Boolean Logic",
             "Propositional logic and truth tables",
-            ContentType.PROCEDURE,
-            DifficultyLevel.INTERMEDIATE
+            CognitiveFrameworkTypes.ContentType.PROCEDURE,
+            CognitiveFrameworkTypes.DifficultyLevel.INTERMEDIATE
         );
 
         addMathematicalContent(
             "graph_algorithms",
             "Graph Algorithms",
             "Graph traversal and shortest path algorithms",
-            ContentType.PROBLEM_SOLVING,
-            DifficultyLevel.ADVANCED
+            CognitiveFrameworkTypes.ContentType.PROBLEM_SOLVING,
+            CognitiveFrameworkTypes.DifficultyLevel.ADVANCED
         );
 
         addMathematicalContent(
             "combinatorics",
             "Combinatorics",
             "Permutations, combinations, and counting principles",
-            ContentType.CONCEPT,
-            DifficultyLevel.INTERMEDIATE
+            CognitiveFrameworkTypes.ContentType.CONCEPT,
+            CognitiveFrameworkTypes.DifficultyLevel.INTERMEDIATE
         );
 
         addMathematicalContent(
             "discrete_probability",
             "Discrete Probability",
             "Probability in discrete sample spaces",
-            ContentType.PROBLEM_SOLVING,
-            DifficultyLevel.ADVANCED
+            CognitiveFrameworkTypes.ContentType.PROBLEM_SOLVING,
+            CognitiveFrameworkTypes.DifficultyLevel.ADVANCED
         );
 
         System.out.println("📚 Mathematical content library initialized");
@@ -167,10 +172,10 @@ public class CognitiveDiscreteMathLibrary {
         String id,
         String title,
         String description,
-        ContentType type,
-        DifficultyLevel difficulty
+        CognitiveFrameworkTypes.ContentType type,
+        CognitiveFrameworkTypes.DifficultyLevel difficulty
     ) {
-        LearningContent content = new LearningContent(
+        CognitiveFrameworkTypes.LearningContent content = createLearningContent(
             id,
             title,
             "Discrete Mathematics",
@@ -180,9 +185,9 @@ public class CognitiveDiscreteMathLibrary {
         content.setContent("description", description);
 
         // Set cognitive style alignments for mathematics
-        content.setStyleAlignment(LearningStyle.ANALYTICAL, 0.9);
-        content.setStyleAlignment(LearningStyle.VISUAL, 0.7);
-        content.setStyleAlignment(LearningStyle.KINESTHETIC, 0.5);
+        content.setStyleAlignment(CognitiveFrameworkTypes.LearningStyle.ANALYTICAL, 0.9);
+        content.setStyleAlignment(CognitiveFrameworkTypes.LearningStyle.VISUAL, 0.7);
+        content.setStyleAlignment(CognitiveFrameworkTypes.LearningStyle.KINESTHETIC, 0.5);
 
         educationFramework.addLearningContent(content);
         recommendationEngine.addLearningContent(id, content);
@@ -201,59 +206,39 @@ public class CognitiveDiscreteMathLibrary {
         String expression,
         String userId
     ) {
-        LOGGER.debug("Processing expression '{}' for user {}", expression, userId);
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                // Get or create user session
-                CognitiveSession session = sessionManager.getOrCreateSession(
-                    userId
-                );
-
-                // Process through cognitive framework
-                var cognitiveResults = cognitiveFramework
-                    .processMultiScale(expression)
-                    .get(5, TimeUnit.SECONDS);
-                CognitiveState currentState = cognitiveResults
-                    .get(0)
-                    .getCognitiveState();
-
-                // Update user's cognitive state
-                session.updateCognitiveState(currentState);
-
-                // Create enhanced math expression
-                MathExpression mathExpr =
-                    expressionProcessor.createMathExpression(
-                        expression,
-                        currentState
-                    );
-
-                // Add to graph for relationship analysis
-                graphEngine.addNode(mathExpr.getId(), mathExpr);
-
-                // Process with cognitive context
-                var processingResult = graphEngine
-                    .processNode(
-                        mathExpr.getId(),
-                        expr -> expr.enhanceWithCognition(currentState),
-                        currentState,
-                        2
-                    )
-                    .get(5, TimeUnit.SECONDS);
-
-                if (processingResult.isSuccess()) {
-                    return processingResult.getProcessedData();
-                } else {
-                    System.err.println(
-                        "Graph processing failed: " +
-                        processingResult.getErrorMessage()
-                    );
-                    return mathExpr; // Return original if processing fails
-                }
-            } catch (Exception e) {
-                LOGGER.error("Error processing expression '{}' for user {}", expression, userId, e);
-                throw new CompletionException(e);
-            }
-        });
+        LOGGER.info("Processing expression: {} for user: {}", expression, userId);
+        
+        try {
+            // Get or create cognitive session for user
+            CognitiveFrameworkInterfaces.CognitiveSession session = sessionManager.getOrCreateSession(userId);
+            
+            // Process expression through cognitive framework
+            CompletableFuture<MathExpression> result = cognitiveFramework
+                .processExpression(expression)
+                .thenApply(processingResult -> {
+                    // Extract cognitive state from processing
+                    AttentionRecognitionFramework.CognitiveState cognitiveState = 
+                        processingResult.getCognitiveState();
+                    
+                    // Create mathematical expression with cognitive enhancement
+                    MathExpression mathExpr = new MathExpression(expression)
+                        .enhanceWithCognition(cognitiveState);
+                    
+                    // Add expression to graph for pattern recognition
+                    graphEngine.addNode(mathExpr.getId(), mathExpr);
+                    
+                    return mathExpr;
+                });
+            
+            LOGGER.debug("Expression processing started asynchronously");
+            return result;
+            
+        } catch (Exception e) {
+            LOGGER.error("Error processing expression", e);
+            return CompletableFuture.failedFuture(
+                new CompletionException("Expression processing failed", e)
+            );
+        }
     }
 
     /**
@@ -274,7 +259,7 @@ public class CognitiveDiscreteMathLibrary {
                 CognitiveSession session = sessionManager.getOrCreateSession(
                     userId
                 );
-                CognitiveState currentState =
+                AttentionRecognitionFramework.CognitiveState currentState =
                     session.getCurrentCognitiveState();
 
                 // Create recommendation request
@@ -363,7 +348,7 @@ public class CognitiveDiscreteMathLibrary {
                     userId,
                     "Discrete Mathematics",
                     Collections.emptyList(),
-                    new CognitiveState(0.5, 0.5, 0.3)
+                    new AttentionRecognitionFramework.CognitiveState(0.5, 0.5, 0.3)
                 );
             }
         });
@@ -668,7 +653,7 @@ public class CognitiveDiscreteMathLibrary {
 
         private final String id;
         private final String expression;
-        private CognitiveState processingState;
+        private AttentionRecognitionFramework.CognitiveState processingState;
         private final Map<String, Double> cognitiveTags;
         private final Map<String, Object> metadata;
         private final long createdTime;
@@ -676,35 +661,27 @@ public class CognitiveDiscreteMathLibrary {
         public MathExpression(String expression) {
             this.id = UUID.randomUUID().toString();
             this.expression = expression;
-            this.cognitiveTags = new ConcurrentHashMap<>();
-            this.metadata = new ConcurrentHashMap<>();
+            this.cognitiveTags = new HashMap<>();
+            this.metadata = new HashMap<>();
             this.createdTime = System.currentTimeMillis();
         }
 
-        public MathExpression enhanceWithCognition(CognitiveState state) {
+        public MathExpression enhanceWithCognition(AttentionRecognitionFramework.CognitiveState state) {
             this.processingState = state;
-
-            // Apply cognitive enhancements
-            cognitiveTags.put("attention", state.getAttention());
-            cognitiveTags.put("recognition", state.getRecognition());
-            cognitiveTags.put("wandering", state.getWandering());
-            cognitiveTags.put("cognitiveLoad", state.getCognitiveLoad());
-
-            // Add complexity adjustments based on cognitive state
-            if (state.getCognitiveLoad() > 0.8) {
-                metadata.put("simplificationSuggested", true);
-                metadata.put("complexityReduction", 0.3);
-            }
-
-            if (state.isInFlowState()) {
-                metadata.put("flowStateOptimal", true);
-                metadata.put("difficultyBoost", 0.2);
-            }
-
+            
+            // Calculate cognitive tags from state
+            cognitiveTags.put("attention_level", state.getAttention());
+            cognitiveTags.put("recognition_level", state.getRecognition());
+            cognitiveTags.put("wandering_level", state.getWandering());
+            cognitiveTags.put("cognitive_load", state.getCognitiveLoad());
+            
+            // Add metadata about cognitive processing
+            metadata.put("flow_state", state.isInFlowState());
+            metadata.put("processing_time", System.currentTimeMillis() - createdTime);
+            
             return this;
         }
 
-        // Getters
         public String getId() {
             return id;
         }
@@ -713,16 +690,16 @@ public class CognitiveDiscreteMathLibrary {
             return expression;
         }
 
-        public CognitiveState getProcessingState() {
+        public AttentionRecognitionFramework.CognitiveState getProcessingState() {
             return processingState;
         }
 
         public Map<String, Double> getCognitiveTags() {
-            return new HashMap<>(cognitiveTags);
+            return cognitiveTags;
         }
 
         public Map<String, Object> getMetadata() {
-            return new HashMap<>(metadata);
+            return metadata;
         }
 
         public long getCreatedTime() {
@@ -731,7 +708,11 @@ public class CognitiveDiscreteMathLibrary {
 
         @Override
         public String toString() {
-            return expression;
+            return "MathExpression{" +
+                "id='" + id + '\'' +
+                ", expression='" + expression + '\'' +
+                ", processingState=" + processingState +
+                '}';
         }
     }
 

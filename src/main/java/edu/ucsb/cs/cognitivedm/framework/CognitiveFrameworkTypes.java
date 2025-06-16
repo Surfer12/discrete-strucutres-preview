@@ -46,6 +46,39 @@ public final class CognitiveFrameworkTypes {
     }
 
     /**
+     * Represents a pattern for pattern detection.
+     */
+    public static class Pattern {
+        private final String name;
+        private final String description;
+        private final int patternType;
+        private final double threshold;
+        private final long timestamp;
+
+        public Pattern(String name, String description, int patternType, double threshold) {
+            this.name = name;
+            this.description = description;
+            this.patternType = patternType;
+            this.threshold = threshold;
+            this.timestamp = System.currentTimeMillis();
+        }
+
+        public Pattern(String name, String description, int patternType, double threshold, long timestamp) {
+            this.name = name;
+            this.description = description;
+            this.patternType = patternType;
+            this.threshold = threshold;
+            this.timestamp = timestamp;
+        }
+
+        public String getName() { return name; }
+        public String getDescription() { return description; }
+        public int getPatternType() { return patternType; }
+        public double getThreshold() { return threshold; }
+        public long getTimestamp() { return timestamp; }
+    }
+
+    /**
      * Represents a learning content item.
      */
     public static class LearningContent {
