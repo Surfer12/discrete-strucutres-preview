@@ -36,29 +36,71 @@ public class MathEmbeddingService {
      */
     private void initializeMathematicalEmbeddings() {
         // Set theory terms
-        addMathEmbedding("union", createSetOperationEmbedding(0.9, 0.8, 0.7, 0.6));
+        addMathEmbedding(
+            "union",
+            createSetOperationEmbedding(0.9, 0.8, 0.7, 0.6)
+        );
         addMathEmbedding("∪", createSetOperationEmbedding(0.9, 0.8, 0.7, 0.6));
-        addMathEmbedding("intersection", createSetOperationEmbedding(0.8, 0.9, 0.6, 0.7));
+        addMathEmbedding(
+            "intersection",
+            createSetOperationEmbedding(0.8, 0.9, 0.6, 0.7)
+        );
         addMathEmbedding("∩", createSetOperationEmbedding(0.8, 0.9, 0.6, 0.7));
-        addMathEmbedding("complement", createSetOperationEmbedding(0.6, 0.5, 0.9, 0.8));
-        addMathEmbedding("difference", createSetOperationEmbedding(0.7, 0.6, 0.8, 0.9));
-        addMathEmbedding("cartesian_product", createSetOperationEmbedding(0.5, 0.4, 0.7, 0.8));
+        addMathEmbedding(
+            "complement",
+            createSetOperationEmbedding(0.6, 0.5, 0.9, 0.8)
+        );
+        addMathEmbedding(
+            "difference",
+            createSetOperationEmbedding(0.7, 0.6, 0.8, 0.9)
+        );
+        addMathEmbedding(
+            "cartesian_product",
+            createSetOperationEmbedding(0.5, 0.4, 0.7, 0.8)
+        );
         addMathEmbedding("×", createSetOperationEmbedding(0.5, 0.4, 0.7, 0.8));
-        addMathEmbedding("power_set", createSetOperationEmbedding(0.4, 0.3, 0.8, 0.9));
-        addMathEmbedding("subset", createSetOperationEmbedding(0.7, 0.8, 0.5, 0.6));
-        addMathEmbedding("superset", createSetOperationEmbedding(0.6, 0.7, 0.4, 0.5));
+        addMathEmbedding(
+            "power_set",
+            createSetOperationEmbedding(0.4, 0.3, 0.8, 0.9)
+        );
+        addMathEmbedding(
+            "subset",
+            createSetOperationEmbedding(0.7, 0.8, 0.5, 0.6)
+        );
+        addMathEmbedding(
+            "superset",
+            createSetOperationEmbedding(0.6, 0.7, 0.4, 0.5)
+        );
 
         // Notation types
         addMathEmbedding("roster", createNotationEmbedding(0.9, 0.8, 0.3, 0.4));
-        addMathEmbedding("builder", createNotationEmbedding(0.6, 0.7, 0.9, 0.8));
-        addMathEmbedding("symbolic", createNotationEmbedding(0.4, 0.5, 0.8, 0.9));
+        addMathEmbedding(
+            "builder",
+            createNotationEmbedding(0.6, 0.7, 0.9, 0.8)
+        );
+        addMathEmbedding(
+            "symbolic",
+            createNotationEmbedding(0.4, 0.5, 0.8, 0.9)
+        );
         addMathEmbedding("verbal", createNotationEmbedding(0.8, 0.9, 0.4, 0.5));
 
         // Algebraic terms
-        addMathEmbedding("polynomial", createAlgebraEmbedding(0.7, 0.8, 0.6, 0.5));
-        addMathEmbedding("variable", createAlgebraEmbedding(0.8, 0.7, 0.5, 0.6));
-        addMathEmbedding("constant", createAlgebraEmbedding(0.9, 0.6, 0.4, 0.7));
-        addMathEmbedding("coefficient", createAlgebraEmbedding(0.6, 0.9, 0.7, 0.4));
+        addMathEmbedding(
+            "polynomial",
+            createAlgebraEmbedding(0.7, 0.8, 0.6, 0.5)
+        );
+        addMathEmbedding(
+            "variable",
+            createAlgebraEmbedding(0.8, 0.7, 0.5, 0.6)
+        );
+        addMathEmbedding(
+            "constant",
+            createAlgebraEmbedding(0.9, 0.6, 0.4, 0.7)
+        );
+        addMathEmbedding(
+            "coefficient",
+            createAlgebraEmbedding(0.6, 0.9, 0.7, 0.4)
+        );
 
         // Initialize adaptive weights
         termEmbeddings.keySet().forEach(term -> adaptiveWeights.put(term, 1.0));
@@ -67,19 +109,27 @@ public class MathEmbeddingService {
     /**
      * Create embedding vector for set operations
      */
-    private double[] createSetOperationEmbedding(double combine, double separate, double include, double exclude) {
+    private double[] createSetOperationEmbedding(
+        double combine,
+        double separate,
+        double include,
+        double exclude
+    ) {
         double[] embedding = new double[embeddingDimension];
         // Base semantic features
-        embedding[0] = combine;    // combining operation strength
-        embedding[1] = separate;   // separating operation strength
-        embedding[2] = include;    // inclusion semantics
-        embedding[3] = exclude;    // exclusion semantics
+        embedding[0] = combine; // combining operation strength
+        embedding[1] = separate; // separating operation strength
+        embedding[2] = include; // inclusion semantics
+        embedding[3] = exclude; // exclusion semantics
 
         // Fill remaining dimensions with normalized random values influenced by base features
-        Random random = new Random(combine.hashCode() + separate.hashCode());
+        Random random = new Random(
+            Double.hashCode(combine) + Double.hashCode(separate)
+        );
         for (int i = 4; i < embeddingDimension; i++) {
-            embedding[i] = (combine + separate + include + exclude) / 4.0 +
-                          (random.nextGaussian() * 0.1);
+            embedding[i] =
+                (combine + separate + include + exclude) / 4.0 +
+                (random.nextGaussian() * 0.1);
         }
 
         return normalizeVector(embedding);
@@ -88,17 +138,25 @@ public class MathEmbeddingService {
     /**
      * Create embedding vector for notation types
      */
-    private double[] createNotationEmbedding(double visual, double explicit, double abstract, double compact) {
+    private double[] createNotationEmbedding(
+        double visual,
+        double explicit,
+        double abstractLevel,
+        double compact
+    ) {
         double[] embedding = new double[embeddingDimension];
-        embedding[0] = visual;     // visual clarity
-        embedding[1] = explicit;   // explicitness level
-        embedding[2] = abstract;   // abstraction level
-        embedding[3] = compact;    // compactness
+        embedding[0] = visual; // visual clarity
+        embedding[1] = explicit; // explicitness level
+        embedding[2] = abstractLevel; // abstraction level
+        embedding[3] = compact; // compactness
 
-        Random random = new Random(visual.hashCode() + explicit.hashCode());
+        Random random = new Random(
+            Double.hashCode(visual) + Double.hashCode(explicit)
+        );
         for (int i = 4; i < embeddingDimension; i++) {
-            embedding[i] = (visual + explicit + abstract + compact) / 4.0 +
-                          (random.nextGaussian() * 0.1);
+            embedding[i] =
+                (visual + explicit + abstractLevel + compact) / 4.0 +
+                (random.nextGaussian() * 0.1);
         }
 
         return normalizeVector(embedding);
@@ -107,17 +165,25 @@ public class MathEmbeddingService {
     /**
      * Create embedding vector for algebraic terms
      */
-    private double[] createAlgebraEmbedding(double structural, double functional, double symbolic, double numeric) {
+    private double[] createAlgebraEmbedding(
+        double structural,
+        double functional,
+        double symbolic,
+        double numeric
+    ) {
         double[] embedding = new double[embeddingDimension];
-        embedding[0] = structural;  // structural role
-        embedding[1] = functional;  // functional role
-        embedding[2] = symbolic;    // symbolic nature
-        embedding[3] = numeric;     // numeric content
+        embedding[0] = structural; // structural role
+        embedding[1] = functional; // functional role
+        embedding[2] = symbolic; // symbolic nature
+        embedding[3] = numeric; // numeric content
 
-        Random random = new Random(structural.hashCode() + functional.hashCode());
+        Random random = new Random(
+            Double.hashCode(structural) + Double.hashCode(functional)
+        );
         for (int i = 4; i < embeddingDimension; i++) {
-            embedding[i] = (structural + functional + symbolic + numeric) / 4.0 +
-                          (random.nextGaussian() * 0.1);
+            embedding[i] =
+                (structural + functional + symbolic + numeric) / 4.0 +
+                (random.nextGaussian() * 0.1);
         }
 
         return normalizeVector(embedding);
@@ -151,8 +217,12 @@ public class MathEmbeddingService {
     /**
      * Calculate cognitive-aware similarity with attention and load consideration
      */
-    public double calculateCognitiveSimilarity(String term1, String term2,
-                                             double attention, double cognitiveLoad) {
+    public double calculateCognitiveSimilarity(
+        String term1,
+        String term2,
+        double attention,
+        double cognitiveLoad
+    ) {
         double baseSimilarity = calculateEmbeddingSimilarity(term1, term2);
 
         // Adjust similarity based on cognitive state
@@ -170,17 +240,34 @@ public class MathEmbeddingService {
     /**
      * Find most similar terms to a given term
      */
-    public List<SimilarityResult> findSimilarTerms(String term, int topK,
-                                                  double attention, double cognitiveLoad) {
+    public List<SimilarityResult> findSimilarTerms(
+        String term,
+        int topK,
+        double attention,
+        double cognitiveLoad
+    ) {
         if (!termEmbeddings.containsKey(term)) {
             return Collections.emptyList();
         }
 
-        return termEmbeddings.keySet().stream()
+        return termEmbeddings
+            .keySet()
+            .stream()
             .filter(t -> !t.equals(term))
-            .map(t -> new SimilarityResult(t,
-                calculateCognitiveSimilarity(term, t, attention, cognitiveLoad)))
-            .sorted((a, b) -> Double.compare(b.getSimilarity(), a.getSimilarity()))
+            .map(t ->
+                new SimilarityResult(
+                    t,
+                    calculateCognitiveSimilarity(
+                        term,
+                        t,
+                        attention,
+                        cognitiveLoad
+                    )
+                )
+            )
+            .sorted((a, b) ->
+                Double.compare(b.getSimilarity(), a.getSimilarity())
+            )
             .limit(topK)
             .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
     }
@@ -188,9 +275,13 @@ public class MathEmbeddingService {
     /**
      * Update embeddings based on usage patterns and cognitive feedback
      */
-    public void updateEmbeddingFromFeedback(String term, String context,
-                                          double attention, double cognitiveLoad,
-                                          boolean positiveOutcome) {
+    public void updateEmbeddingFromFeedback(
+        String term,
+        String context,
+        double attention,
+        double cognitiveLoad,
+        boolean positiveOutcome
+    ) {
         if (!termEmbeddings.containsKey(term)) return;
 
         double[] currentEmbedding = termEmbeddings.get(term);
@@ -202,17 +293,25 @@ public class MathEmbeddingService {
         if (positiveOutcome) {
             // Move embedding closer to successful context
             for (int i = 0; i < embeddingDimension; i++) {
-                currentEmbedding[i] += adaptiveLR * (contextVector[i] - currentEmbedding[i]);
+                currentEmbedding[i] +=
+                    adaptiveLR * (contextVector[i] - currentEmbedding[i]);
             }
             // Increase adaptive weight
-            adaptiveWeights.put(term, Math.min(2.0, adaptiveWeights.get(term) * 1.1));
+            adaptiveWeights.put(
+                term,
+                Math.min(2.0, adaptiveWeights.get(term) * 1.1)
+            );
         } else {
             // Move embedding away from unsuccessful context
             for (int i = 0; i < embeddingDimension; i++) {
-                currentEmbedding[i] -= adaptiveLR * 0.5 * (contextVector[i] - currentEmbedding[i]);
+                currentEmbedding[i] -=
+                    adaptiveLR * 0.5 * (contextVector[i] - currentEmbedding[i]);
             }
             // Decrease adaptive weight
-            adaptiveWeights.put(term, Math.max(0.1, adaptiveWeights.get(term) * 0.9));
+            adaptiveWeights.put(
+                term,
+                Math.max(0.1, adaptiveWeights.get(term) * 0.9)
+            );
         }
 
         termEmbeddings.put(term, normalizeVector(currentEmbedding));
@@ -227,8 +326,10 @@ public class MathEmbeddingService {
             double[] embedding = new double[embeddingDimension];
 
             // Analyze context features
-            double setOperations = countOccurrences(ctx, "∪∩-×") / (double) ctx.length();
-            double symbols = countOccurrences(ctx, "{}|∈⊆⊇") / (double) ctx.length();
+            double setOperations =
+                countOccurrences(ctx, "∪∩-×") / (double) ctx.length();
+            double symbols =
+                countOccurrences(ctx, "{}|∈⊆⊇") / (double) ctx.length();
             double complexity = calculateContextComplexity(ctx);
             double notation = determineNotationType(ctx);
 
@@ -240,8 +341,9 @@ public class MathEmbeddingService {
             // Fill remaining dimensions
             Random random = new Random(ctx.hashCode());
             for (int i = 4; i < embeddingDimension; i++) {
-                embedding[i] = (setOperations + symbols + complexity + notation) / 4.0 +
-                              (random.nextGaussian() * 0.1);
+                embedding[i] =
+                    (setOperations + symbols + complexity + notation) / 4.0 +
+                    (random.nextGaussian() * 0.1);
             }
 
             return normalizeVector(embedding);
@@ -318,7 +420,10 @@ public class MathEmbeddingService {
     /**
      * Update cognitive alignment parameters
      */
-    public void updateCognitiveAlignment(double attention, double cognitiveLoad) {
+    public void updateCognitiveAlignment(
+        double attention,
+        double cognitiveLoad
+    ) {
         // Adapt attention weight based on current cognitive state
         if (cognitiveLoad > cognitiveLoadThreshold) {
             attentionWeight = Math.min(1.0, attentionWeight * 1.05); // Rely more on attention
@@ -331,22 +436,32 @@ public class MathEmbeddingService {
      * Get embedding statistics for monitoring
      */
     public EmbeddingStats getEmbeddingStats() {
-        double avgWeight = adaptiveWeights.values().stream()
+        double avgWeight = adaptiveWeights
+            .values()
+            .stream()
             .mapToDouble(Double::doubleValue)
-            .average().orElse(1.0);
+            .average()
+            .orElse(1.0);
 
-        long highWeightTerms = adaptiveWeights.values().stream()
+        long highWeightTerms = adaptiveWeights
+            .values()
+            .stream()
             .mapToLong(w -> w > 1.5 ? 1 : 0)
             .sum();
 
-        return new EmbeddingStats(termEmbeddings.size(), avgWeight,
-                                 highWeightTerms, attentionWeight);
+        return new EmbeddingStats(
+            termEmbeddings.size(),
+            avgWeight,
+            highWeightTerms,
+            attentionWeight
+        );
     }
 
     /**
      * Similarity result class
      */
     public static class SimilarityResult {
+
         private final String term;
         private final double similarity;
 
@@ -355,12 +470,21 @@ public class MathEmbeddingService {
             this.similarity = similarity;
         }
 
-        public String getTerm() { return term; }
-        public double getSimilarity() { return similarity; }
+        public String getTerm() {
+            return term;
+        }
+
+        public double getSimilarity() {
+            return similarity;
+        }
 
         @Override
         public String toString() {
-            return String.format("SimilarityResult{term='%s', similarity=%.3f}", term, similarity);
+            return String.format(
+                "SimilarityResult{term='%s', similarity=%.3f}",
+                term,
+                similarity
+            );
         }
     }
 
@@ -368,28 +492,49 @@ public class MathEmbeddingService {
      * Embedding statistics class
      */
     public static class EmbeddingStats {
+
         private final int totalTerms;
         private final double avgAdaptiveWeight;
         private final long highWeightTerms;
         private final double attentionWeight;
 
-        public EmbeddingStats(int totalTerms, double avgAdaptiveWeight,
-                             long highWeightTerms, double attentionWeight) {
+        public EmbeddingStats(
+            int totalTerms,
+            double avgAdaptiveWeight,
+            long highWeightTerms,
+            double attentionWeight
+        ) {
             this.totalTerms = totalTerms;
             this.avgAdaptiveWeight = avgAdaptiveWeight;
             this.highWeightTerms = highWeightTerms;
             this.attentionWeight = attentionWeight;
         }
 
-        public int getTotalTerms() { return totalTerms; }
-        public double getAvgAdaptiveWeight() { return avgAdaptiveWeight; }
-        public long getHighWeightTerms() { return highWeightTerms; }
-        public double getAttentionWeight() { return attentionWeight; }
+        public int getTotalTerms() {
+            return totalTerms;
+        }
+
+        public double getAvgAdaptiveWeight() {
+            return avgAdaptiveWeight;
+        }
+
+        public long getHighWeightTerms() {
+            return highWeightTerms;
+        }
+
+        public double getAttentionWeight() {
+            return attentionWeight;
+        }
 
         @Override
         public String toString() {
-            return String.format("EmbeddingStats{terms=%d, avgWeight=%.3f, highWeight=%d, attention=%.3f}",
-                               totalTerms, avgAdaptiveWeight, highWeightTerms, attentionWeight);
+            return String.format(
+                "EmbeddingStats{terms=%d, avgWeight=%.3f, highWeight=%d, attention=%.3f}",
+                totalTerms,
+                avgAdaptiveWeight,
+                highWeightTerms,
+                attentionWeight
+            );
         }
     }
 
@@ -397,13 +542,18 @@ public class MathEmbeddingService {
      * Embedding configuration class
      */
     public static class EmbeddingConfig {
+
         private final int dimension;
         private final double learningRate;
         private final double attentionWeight;
         private final double cognitiveLoadThreshold;
 
-        public EmbeddingConfig(int dimension, double learningRate,
-                              double attentionWeight, double cognitiveLoadThreshold) {
+        public EmbeddingConfig(
+            int dimension,
+            double learningRate,
+            double attentionWeight,
+            double cognitiveLoadThreshold
+        ) {
             this.dimension = dimension;
             this.learningRate = learningRate;
             this.attentionWeight = attentionWeight;
@@ -414,9 +564,20 @@ public class MathEmbeddingService {
             return new EmbeddingConfig(128, 0.01, 0.7, 0.8);
         }
 
-        public int getDimension() { return dimension; }
-        public double getLearningRate() { return learningRate; }
-        public double getAttentionWeight() { return attentionWeight; }
-        public double getCognitiveLoadThreshold() { return cognitiveLoadThreshold; }
+        public int getDimension() {
+            return dimension;
+        }
+
+        public double getLearningRate() {
+            return learningRate;
+        }
+
+        public double getAttentionWeight() {
+            return attentionWeight;
+        }
+
+        public double getCognitiveLoadThreshold() {
+            return cognitiveLoadThreshold;
+        }
     }
 }
