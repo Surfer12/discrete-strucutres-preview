@@ -934,4 +934,15 @@ public class ScalableConcurrentGraphEngine<T> {
             graphLock.readLock().unlock();
         }
     }
+
+    /**
+     * Add a node to the graph with associated data
+     * This method creates a vertex and associates data with it
+     */
+    public Vertex addNode(String nodeId, T data) {
+        Vertex vertex = addVertex(nodeId);
+        vertex.setProperty("data", data);
+        vertex.setProperty("nodeType", data.getClass().getSimpleName());
+        return vertex;
+    }
 }

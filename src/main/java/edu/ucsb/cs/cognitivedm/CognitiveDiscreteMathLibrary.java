@@ -263,7 +263,7 @@ public class CognitiveDiscreteMathLibrary {
     ) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                CognitiveSession session = sessionManager.getOrCreateSession(
+                edu.ucsb.cs.cognitivedm.framework.CognitiveFrameworkInterfaces.CognitiveSession session = sessionManager.getOrCreateSession(
                     userId
                 );
                 AttentionRecognitionFramework.CognitiveState currentState =
@@ -323,7 +323,7 @@ public class CognitiveDiscreteMathLibrary {
                 }
 
                 // Update cognitive state from current session
-                CognitiveSession session = sessionManager.getOrCreateSession(
+                edu.ucsb.cs.cognitivedm.framework.CognitiveFrameworkInterfaces.CognitiveSession session = sessionManager.getOrCreateSession(
                     userId
                 );
                 educationFramework.updateLearnerState(
@@ -331,12 +331,15 @@ public class CognitiveDiscreteMathLibrary {
                     session.getCurrentCognitiveState()
                 );
 
-                // Generate learning path
+                // Generate learning path - Convert DifficultyLevel to the framework's type
+                edu.ucsb.cs.cognitivedm.education.CognitiveEducationFramework.DifficultyLevel frameworkDifficultyLevel = 
+                    convertToFrameworkDifficultyLevel(targetLevel);
+                    
                 LearningPath path = educationFramework
                     .createLearningPath(
                         userId,
-                        "Discrete Mathematics",
-                        targetLevel
+                        Arrays.asList("Discrete Mathematics"),
+                        frameworkDifficultyLevel
                     )
                     .get(10, TimeUnit.SECONDS);
 
@@ -385,12 +388,13 @@ public class CognitiveDiscreteMathLibrary {
             .collect(Collectors.toList());
 
         // Detect patterns using our pattern detector
-        var patterns = PatternDetector.analyzeSequence(timeSeries);
+        PatternDetector patternDetector = new PatternDetector(5); // Use scale of 5
+        var patterns = patternDetector.analyzeSequence(timeSeries);
 
         // Create mathematical pattern analysis
         return new MathPatternAnalysis(
             userId,
-            patterns,
+            convertPatterns(patterns),
             calculateLearningTrends(problemHistory)
         );
     }
@@ -402,11 +406,11 @@ public class CognitiveDiscreteMathLibrary {
      * @param sessionType Type of mathematical session
      * @return Interactive cognitive session
      */
-    public CognitiveSession startInteractiveSession(
+    public edu.ucsb.cs.cognitivedm.framework.CognitiveFrameworkInterfaces.CognitiveSession startInteractiveSession(
         String userId,
         MathSessionType sessionType
     ) {
-        CognitiveSession session = sessionManager.getOrCreateSession(userId);
+        edu.ucsb.cs.cognitivedm.framework.CognitiveFrameworkInterfaces.CognitiveSession session = sessionManager.getOrCreateSession(userId);
         session.setSessionType(sessionType);
         session.startSession();
 
@@ -559,6 +563,44 @@ public class CognitiveDiscreteMathLibrary {
         return (
             (cognitiveEfficiency + graphEfficiency + educationEfficiency) / 3.0
         );
+    }
+
+    /**
+     * Convert our DifficultyLevel enum to the framework's DifficultyLevel enum
+     */
+    private edu.ucsb.cs.cognitivedm.education.CognitiveEducationFramework.DifficultyLevel convertToFrameworkDifficultyLevel(DifficultyLevel level) {
+        switch (level) {
+            case BEGINNER:
+                return edu.ucsb.cs.cognitivedm.education.CognitiveEducationFramework.DifficultyLevel.BEGINNER;
+            case INTERMEDIATE:
+                return edu.ucsb.cs.cognitivedm.education.CognitiveEducationFramework.DifficultyLevel.INTERMEDIATE;
+            case ADVANCED:
+                return edu.ucsb.cs.cognitivedm.education.CognitiveEducationFramework.DifficultyLevel.ADVANCED;
+            case EXPERT:
+                return edu.ucsb.cs.cognitivedm.education.CognitiveEducationFramework.DifficultyLevel.EXPERT;
+            default:
+                return edu.ucsb.cs.cognitivedm.education.CognitiveEducationFramework.DifficultyLevel.BEGINNER;
+        }
+    }
+
+    /**
+     * Convert patterns from PatternDetector to AttentionRecognitionFramework patterns
+     */
+    private List<AttentionRecognitionFramework.Pattern> convertPatterns(List<edu.ucsb.cs.cognitivedm.patterns.PatternDetector.Pattern> patterns) {
+        return patterns.stream()
+            .map(pattern -> {
+                // Create a new AttentionRecognitionFramework.Pattern from the PatternDetector.Pattern
+                // This is a simplified conversion - in practice, you'd map the actual pattern data
+                return new AttentionRecognitionFramework.Pattern(
+                    pattern.getId(),
+                    pattern.getType(),
+                    pattern.getConfidence(),
+                    pattern.getFrequency(),
+                    pattern.getStartTime(),
+                    pattern.getEndTime()
+                );
+            })
+            .collect(Collectors.toList());
     }
 
     // ================== CONFIGURATION METHODS ==================

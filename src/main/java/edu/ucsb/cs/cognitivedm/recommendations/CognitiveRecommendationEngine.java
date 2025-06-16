@@ -340,10 +340,18 @@ public class CognitiveRecommendationEngine {
     }
 
     /**
-     * Generate recommendations from a RecommendationRequest
+     * Generate recommendations based on a RecommendationRequest
      */
     public List<Recommendation> generateRecommendations(RecommendationRequest request) {
         // Convert RecommendationRequest to RecommendationContext
+        RecommendationContext context = convertRequestToContext(request);
+        return generateRecommendations(context, 10, "adaptive");
+    }
+    
+    /**
+     * Convert RecommendationRequest to RecommendationContext
+     */
+    private RecommendationContext convertRequestToContext(RecommendationRequest request) {
         RecommendationContext context = new RecommendationContext(
             request.getUserId(),
             request.getId(), // use request ID as session ID
@@ -355,7 +363,7 @@ public class CognitiveRecommendationEngine {
         // Add context from request
         context.addRecentTopic(request.getTopic());
         
-        return generateRecommendations(context, request.getMaxResults());
+        return context;
     }
 
     private List<Recommendation> generateTopicRecommendations(
@@ -764,5 +772,32 @@ public class CognitiveRecommendationEngine {
             typeDistribution,
             systemEfficiency
         );
+    }
+
+    /**
+     * Update learner profile
+     */
+    public void updateLearnerProfile(String userId, edu.ucsb.cs.cognitivedm.education.CognitiveEducationFramework.LearnerProfile profile) {
+        // Store or update the learner profile
+        System.out.println("Updating learner profile for user: " + userId);
+        // Implementation would store profile data
+    }
+    
+    /**
+     * Add learning content to the recommendation engine
+     */
+    public void addLearningContent(String contentId, edu.ucsb.cs.cognitivedm.framework.CognitiveFrameworkTypes.LearningContent content) {
+        // Add content to the recommendation engine's knowledge base
+        System.out.println("Adding learning content: " + contentId);
+        // Implementation would index content for recommendations
+    }
+    
+    /**
+     * Shutdown the recommendation engine
+     */
+    public void shutdown() {
+        System.out.println("Shutting down CognitiveRecommendationEngine");
+        // Clean up resources, close connections, etc.
+        strategies.clear();
     }
 }

@@ -612,4 +612,18 @@ public class CognitiveEducationFramework {
             return createdTime;
         }
     }
+
+    /**
+     * Add learning content to the education framework
+     */
+    public void addLearningContent(edu.ucsb.cs.cognitivedm.framework.CognitiveFrameworkTypes.LearningContent content) {
+        // Add content to the education framework's content repository
+        System.out.println("Adding learning content: " + content.getTitle());
+        // Implementation would store content for educational use
+        // This could involve creating learning paths, categorizing content, etc.
+    }
+
+    /**
+     * Learner profile management
+     */
 }
