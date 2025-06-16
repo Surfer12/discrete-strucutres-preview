@@ -60,6 +60,24 @@ public class AttentionRecognitionFramework {
         }
 
         /**
+         * Convenience constructor with 3 parameters.
+         * Automatically calculates cognitive load and flow state.
+         */
+        public CognitiveState(
+            double attention,
+            double recognition,
+            double wandering
+        ) {
+            this(
+                attention,
+                recognition,
+                wandering,
+                calculateCognitiveLoad(attention, recognition, wandering),
+                determineFlowState(attention, recognition, wandering)
+            );
+        }
+
+        /**
          * Creates a new cognitive state with custom metrics.
          */
         public CognitiveState(
@@ -808,5 +826,24 @@ public class AttentionRecognitionFramework {
             
             return createCognitiveState(predictedAttention, predictedRecognition, predictedWandering);
         });
+    }
+
+    /**
+     * Process an expression string and return processing results.
+     * This is a convenience method used by CognitiveDiscreteMathLibrary.
+     *
+     * @param expression The expression to process
+     * @return List of processing results across scales
+     */
+    public List<ProcessingResult> processExpression(String expression) {
+        try {
+            return process(expression, 5);
+        } catch (Exception e) {
+            // Create a minimal result if processing fails
+            List<ProcessingResult> results = new ArrayList<>();
+            CognitiveState defaultState = new CognitiveState(0.5, 0.5, 0.2);
+            results.add(new ProcessingResult(0, defaultState, Collections.emptyList(), 0.5));
+            return results;
+        }
     }
 }

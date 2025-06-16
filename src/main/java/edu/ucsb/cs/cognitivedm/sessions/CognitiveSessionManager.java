@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  * @author UCSB Cognitive Discrete Mathematics Team
  * @version 1.0
  */
-public class CognitiveSessionManager {
+public class CognitiveSessionManager implements edu.ucsb.cs.cognitivedm.framework.CognitiveFrameworkInterfaces.CognitiveSessionManager {
 
     private final AttentionRecognitionFramework cognitiveFramework;
     private final Map<String, CognitiveSession> activeSessions;
@@ -34,12 +34,12 @@ public class CognitiveSessionManager {
     // Session configuration
     private final int maxConcurrentSessions;
     private final Duration defaultSessionTimeout;
-    private final double cognitiveLoadThreshold;
+    private double cognitiveLoadThreshold;
 
     /**
      * Represents an active cognitive learning session
      */
-    public static class CognitiveSession {
+    public static class CognitiveSession implements edu.ucsb.cs.cognitivedm.framework.CognitiveFrameworkInterfaces.CognitiveSession {
 
         private final String sessionId;
         private final String learnerId;
@@ -59,6 +59,10 @@ public class CognitiveSessionManager {
             this.status = SessionStatus.INITIALIZING;
             this.cognitiveMonitoringInterval = 5000; // 5 seconds default
             this.events = new ArrayList<>();
+            // Initialize with default cognitive state
+            this.currentCognitiveState = new AttentionRecognitionFramework.CognitiveState(
+                0.5, 0.5, 0.3, 0.4, false
+            );
         }
 
         // Getters and setters
@@ -82,14 +86,16 @@ public class CognitiveSessionManager {
             this.status = status;
         }
 
-        public AttentionRecognitionFramework.CognitiveState getCurrentCognitiveState() {
+        @Override
+        public edu.ucsb.cs.cognitivedm.framework.CognitiveFrameworkInterfaces.CognitiveState getCurrentCognitiveState() {
             return currentCognitiveState;
         }
 
+        @Override
         public void updateCognitiveState(
-            AttentionRecognitionFramework.CognitiveState state
+            edu.ucsb.cs.cognitivedm.framework.CognitiveFrameworkInterfaces.CognitiveState state
         ) {
-            this.currentCognitiveState = state;
+            this.currentCognitiveState = (AttentionRecognitionFramework.CognitiveState) state;
             this.events.add(
                     new CognitiveEvent(
                         LocalDateTime.now(),
@@ -99,10 +105,12 @@ public class CognitiveSessionManager {
                 );
         }
 
+        @Override
         public void setSessionType(Object sessionType) {
             this.sessionType = (SessionType) sessionType;
         }
 
+        @Override
         public void startSession() {
             this.status = SessionStatus.ACTIVE;
             this.events.add(
@@ -114,6 +122,7 @@ public class CognitiveSessionManager {
                 );
         }
 
+        @Override
         public void setCognitiveMonitoringInterval(int intervalMs) {
             this.cognitiveMonitoringInterval = intervalMs;
         }
@@ -132,6 +141,57 @@ public class CognitiveSessionManager {
 
         public void setContextValue(String key, Object value) {
             sessionContext.put(key, value);
+        }
+        
+        @Override
+        public void pauseSession() {
+            this.status = SessionStatus.PAUSED;
+            this.events.add(
+                new CognitiveEvent(
+                    LocalDateTime.now(),
+                    "session_paused",
+                    null
+                )
+            );
+        }
+        
+        @Override
+        public void resumeSession() {
+            this.status = SessionStatus.ACTIVE;
+            this.events.add(
+                new CognitiveEvent(
+                    LocalDateTime.now(),
+                    "session_resumed",
+                    null
+                )
+            );
+        }
+        
+        @Override
+        public void endSession() {
+            this.status = SessionStatus.COMPLETED;
+            this.events.add(
+                new CognitiveEvent(
+                    LocalDateTime.now(),
+                    "session_ended",
+                    null
+                )
+            );
+        }
+        
+        @Override
+        public String getUserId() {
+            return this.learnerId;
+        }
+        
+        @Override
+        public long getSessionStartTime() {
+            return this.startTime.toEpochSecond(java.time.ZoneOffset.UTC) * 1000;
+        }
+        
+        @Override
+        public boolean isActive() {
+            return this.status == SessionStatus.ACTIVE;
         }
     }
 
@@ -521,5 +581,68 @@ public class CognitiveSessionManager {
         // For now, just mark in session context
         session.setContextValue("overload_detected", true);
         session.setContextValue("overload_timestamp", LocalDateTime.now());
+    }
+
+    /**
+     * Get an existing session or create a new one for the given user.
+     *
+     * @param userId The user identifier
+     * @return The existing or newly created cognitive session
+     */
+    @Override
+    public edu.ucsb.cs.cognitivedm.framework.CognitiveFrameworkInterfaces.CognitiveSession getOrCreateSession(String userId) {
+        // Check for existing session for this user
+        for (CognitiveSession session : activeSessions.values()) {
+            if (session.getLearnerId().equals(userId) && session.isActive()) {
+                return session;
+            }
+        }
+        
+        // No active session found, create a new one
+        return createSession(userId);
+    }
+    
+    /**
+     * Get the current count of active sessions.
+     *
+     * @return The number of active sessions
+     */
+    @Override
+    public int getActiveSessionCount() {
+        return (int) activeSessions.values().stream()
+            .filter(session -> session.getStatus() == SessionStatus.ACTIVE)
+            .count();
+    }
+    
+    /**
+     * Set the default attention threshold for cognitive monitoring.
+     *
+     * @param threshold The attention threshold (0.0-1.0)
+     */
+    @Override
+    public void setDefaultAttentionThreshold(double threshold) {
+        if (threshold < 0.0 || threshold > 1.0) {
+            throw new IllegalArgumentException("Attention threshold must be between 0.0 and 1.0");
+        }
+        this.cognitiveLoadThreshold = threshold;
+    }
+    
+    /**
+     * Set the default monitoring interval for cognitive sessions.
+     *
+     * @param interval The monitoring interval in milliseconds
+     */
+    @Override
+    public void setDefaultMonitoringInterval(int interval) {
+        if (interval <= 0) {
+            throw new IllegalArgumentException("Monitoring interval must be positive");
+        }
+        
+        // Update existing sessions
+        for (CognitiveSession session : activeSessions.values()) {
+            if (session.isActive()) {
+                session.setCognitiveMonitoringInterval(interval);
+            }
+        }
     }
 }
