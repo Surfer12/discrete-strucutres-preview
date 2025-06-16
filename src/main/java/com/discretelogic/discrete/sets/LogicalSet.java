@@ -1,4 +1,4 @@
-package com.discretelogic.model;
+package com.discretelogic.discrete.sets;
 
 import java.util.*;
 
