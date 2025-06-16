@@ -13,8 +13,7 @@
         <packaging>jar</packaging>
 
         <name>Discrete Logic Mathematics Library</name>
-        <description
-    >A comprehensive Java library and CLI tool for discrete logic mathematics concepts</description>
+        <description>A comprehensive Java library and CLI tool for discrete logic mathematics concepts</description>
 
         <properties>
             <java.version>11</java.version>

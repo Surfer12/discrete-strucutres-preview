@@ -158,55 +158,43 @@ public class ScalableConcurrentGraphEngine<T> {
      * @param maxDepth maximum depth to search
      * @return map of nodes to their distances from start
      */
-    public CompletableFuture<Map<T, Integer>> parallelBFS(final T startNode, final int maxDepth) {
+    public CompletableFuture<Map<T, Integer>> parallelBFS(T startNode, int maxDepth) {
         return CompletableFuture.supplyAsync(() -> {
-            final Map<T, Integer> distances = new ConcurrentHashMap<>();
-            final Queue<T> currentLevel = new ConcurrentLinkedQueue<>();
-            final Queue<T> nextLevel = new ConcurrentLinkedQueue<>();
-
+            Map<T, Integer> distances = new ConcurrentHashMap<>();
+            Queue<T> currentLevel = new ConcurrentLinkedQueue<>();
+            Queue<T> nextLevel = new ConcurrentLinkedQueue<>();
+            
+            // Initialize with start node
             currentLevel.offer(startNode);
             distances.put(startNode, 0);
-
-            for (
-                int depth = 0;
-                depth < maxDepth && !currentLevel.isEmpty();
-                depth++
-            ) {
-                final int currentDepth = depth + 1;
-
-                // Process current level in parallel
-                currentLevel
-                    .parallelStream()
-                    .forEach(node -> {
-                        Set<T> neighbors = getNeighbors(node);
-                        neighbors
-                            .stream()
-                            .filter(neighbor ->
-                                !distances.containsKey(neighbor)
-                            )
-                            .forEach(neighbor -> {
-                                if (
-                                    distances.putIfAbsent(
-                                        neighbor,
-                                        currentDepth
-                                    ) ==
-                                    null
-                                ) {
-                                    synchronized (nextLevel) {
-                                        nextLevel.offer(neighbor);
-                                    }
-                                }
-                            });
-                    });
-
-                currentLevel.clear();
-                Queue<T> temp = currentLevel;
-                currentLevel = nextLevel;
-                nextLevel = temp;
+            
+            int currentDepth = 0;
+            
+            while (!currentLevel.isEmpty() && currentDepth < maxDepth) {
+                T node = currentLevel.poll();
+                
+                // Process neighbors
+                Set<T> neighbors = getNeighbors(node);
+                if (neighbors != null) {
+                    for (T neighbor : neighbors) {
+                        if (!distances.containsKey(neighbor)) {
+                            distances.put(neighbor, currentDepth + 1);
+                            nextLevel.offer(neighbor);
+                        }
+                    }
+                }
+                
+                // Move to next level if current level is empty
+                if (currentLevel.isEmpty() && !nextLevel.isEmpty()) {
+                    Queue<T> temp = currentLevel;
+                    currentLevel = nextLevel;
+                    nextLevel = temp;
+                    currentDepth++;
+                }
             }
-
+            
             return distances;
-        }, ForkJoinPool.commonPool());
+        });
     }
 
     /**

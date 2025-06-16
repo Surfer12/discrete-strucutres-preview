@@ -3,6 +3,8 @@
 /home/computeruse/discrete-strucutres-preview/src/main/java/com/discretelogic/discrete/graphs/ScalableConcurrentGraphEngine.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/edu/ucsb/cs/cognitivedm/patterns/PatternDetector.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/com/discretelogic/app/DiscreteLogicCLI.java
+/home/computeruse/discrete-strucutres-preview/src/main/java/edu/ucsb/cs/cognitivedm/education/LearningStyle.java
+/home/computeruse/discrete-strucutres-preview/src/main/java/edu/ucsb/cs/cognitivedm/education/LearningContent.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/com/discretelogic/LogicGateSim/NumberSystemConverter.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/edu/ucsb/cs/cognitivedm/graph/ScalableConcurrentGraphEngine.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/com/discretelogic/quiz/Quiz.java
@@ -31,8 +33,10 @@
 /home/computeruse/discrete-strucutres-preview/src/main/java/com/discretelogic/cognitive/emergence/CognitiveState.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/com/discretelogic/discrete/graphs/WavePatternGraph.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/edu/ucsb/cs/cognitivedm/framework/CognitiveBiasAdjuster.java
+/home/computeruse/discrete-strucutres-preview/src/main/java/edu/ucsb/cs/cognitivedm/education/DifficultyLevel.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/com/discretelogic/Utils/TableFormatter.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/com/discretelogic/discrete/graphs/OptimizedRecommendationGraph.java
+/home/computeruse/discrete-strucutres-preview/src/main/java/edu/ucsb/cs/cognitivedm/framework/CognitiveState.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/com/discretelogic/fluid/analysis/PatternAnalysis.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/com/discretelogic/discrete/tables/KarnaughMap.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/com/discretelogic/model/Gate.java
@@ -52,6 +56,7 @@
 /home/computeruse/discrete-strucutres-preview/src/main/java/edu/ucsb/cs/cognitivedm/embeddings/MathEmbeddingService.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/edu/ucsb/cs/cognitivedm/CognitiveDiscreteMathLibrary.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/com/discretelogic/cognitive/integration/ConceptualBridge.java
+/home/computeruse/discrete-strucutres-preview/src/main/java/edu/ucsb/cs/cognitivedm/education/ContentType.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/com/discretelogic/LogicGateSim/LogicGate.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/com/discretelogic/cognitive/processing/AdaptiveProcessing.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/com/discretelogic/discrete/graphs/FlowStateGraph.java
