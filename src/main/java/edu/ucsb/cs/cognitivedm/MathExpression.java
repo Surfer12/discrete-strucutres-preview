@@ -1,6 +1,7 @@
 package edu.ucsb.cs.cognitivedm;
 
 import com.discretelogic.model.Expression;
+import edu.ucsb.cs.cognitivedm.embeddings.MathEmbeddingService;
 import edu.ucsb.cs.cognitivedm.framework.AttentionRecognitionFramework;
 import edu.ucsb.cs.cognitivedm.framework.AttentionRecognitionFramework.CognitiveState;
 import edu.ucsb.cs.cognitivedm.framework.AttentionRecognitionFramework.ProcessingResult;
@@ -1278,6 +1279,122 @@ public class MathExpression extends Expression {
                     .replace("×", " times ");
             }
             return expr;
+        }
+
+        /**
+         * Calculate embedding-based viability score
+         */
+        private double calculateEmbeddingViability(
+            String expr,
+            CognitiveState state
+        ) {
+            if (embeddingService == null) return 0.5;
+
+            // Extract terms from expression
+            String[] terms = expr.split("[∪∩\\-×\\s|{}]+");
+            double totalViability = 0.0;
+            int validTerms = 0;
+
+            for (String term : terms) {
+                if (
+                    !term.isEmpty() &&
+                    embeddingService.getEmbedding(term) != null
+                ) {
+                    // Find similar terms using embeddings
+                    List<MathEmbeddingService.SimilarityResult> similar =
+                        embeddingService.findSimilarTerms(
+                            term,
+                            3,
+                            state.getAttention(),
+                            state.getCognitiveLoad()
+                        );
+
+                    // Calculate viability based on similarity to familiar terms
+                    double termViability = similar
+                        .stream()
+                        .mapToDouble(
+                            MathEmbeddingService.SimilarityResult::getSimilarity
+                        )
+                        .max()
+                        .orElse(0.5);
+
+                    totalViability += termViability;
+                    validTerms++;
+                }
+            }
+
+            return validTerms > 0 ? totalViability / validTerms : 0.5;
+        }
+
+        /**
+         * Get most viable term using embedding similarity
+         */
+        public String getMostViableTerm(String expr, CognitiveState state) {
+            if (embeddingService == null) return expr;
+
+            String[] terms = expr.split("[∪∩\\-×\\s|{}]+");
+            String bestTerm = expr;
+            double bestViability = 0.0;
+
+            for (String term : terms) {
+                if (!term.isEmpty()) {
+                    double viability = calculateViability(
+                        term,
+                        state,
+                        Collections.emptyList()
+                    );
+                    if (viability > bestViability) {
+                        bestViability = viability;
+                        bestTerm = term;
+                    }
+                }
+            }
+
+            return bestTerm;
+        }
+
+        /**
+         * Update embedding based on successful/unsuccessful usage
+         */
+        public void updateEmbeddingFeedback(
+            String expr,
+            CognitiveState state,
+            boolean success
+        ) {
+            if (embeddingService == null) return;
+
+            String[] terms = expr.split("[∪∩\\-×\\s|{}]+");
+            for (String term : terms) {
+                if (!term.isEmpty()) {
+                    embeddingService.updateEmbeddingFromFeedback(
+                        term,
+                        expr,
+                        state.getAttention(),
+                        state.getCognitiveLoad(),
+                        success
+                    );
+                }
+            }
+
+            // Clear cache after feedback update
+            viabilityCache.clear();
+        }
+
+        /**
+         * Update learner profile
+         */
+        public void updateLearnerProfile(String key, double value) {
+            learnerProfile.put(key, Math.max(0.0, Math.min(1.0, value)));
+            viabilityCache.clear(); // Clear cache when profile changes
+        }
+
+        /**
+         * Get embedding service statistics
+         */
+        public MathEmbeddingService.EmbeddingStats getEmbeddingStats() {
+            return embeddingService != null
+                ? embeddingService.getEmbeddingStats()
+                : null;
         }
     }
 
