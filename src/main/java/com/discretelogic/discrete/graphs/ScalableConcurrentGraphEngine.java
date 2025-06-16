@@ -11,6 +11,7 @@ import java.util.concurrent.locks.StampedLock;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Scalable Concurrent Graph Engine (SCoGE) - A specialized data structure for

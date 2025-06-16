@@ -187,4 +187,124 @@ mvn exec:java -Dexec.mainClass="com.discretelogic.app.DiscreteLogicCLI" -Dexec.a
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details. 
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+# Discrete Logic CLI
+
+## Overview
+A comprehensive CLI tool for discrete mathematics operations, supporting various mathematical computations and explorations.
+
+## Prerequisites
+- Java 11 or higher
+- Maven
+
+## Building the Project
+```bash
+mvn clean package
+```
+
+## Running the CLI
+
+### General Usage
+```bash
+java -jar target/discrete-strucutres-preview-1.0-SNAPSHOT.jar [COMMAND] [OPTIONS]
+```
+
+### Available Commands
+
+1. **Truth Table Generation**
+   ```bash
+   java -jar target/discrete-strucutres-preview-1.0-SNAPSHOT.jar truth-table "A & B"
+   ```
+   Options:
+   - `-f, --format`: Output format (table, binary, analysis)
+   - `-v, --verbose`: Show detailed analysis
+
+2. **Boolean Algebra**
+   ```bash
+   java -jar target/discrete-strucutres-preview-1.0-SNAPSHOT.jar boolean-algebra "A | B"
+   ```
+   Options:
+   - `-s, --simplify`: Simplify the expression
+   - `-d, --dnf`: Convert to Disjunctive Normal Form
+   - `-c, --cnf`: Convert to Conjunctive Normal Form
+
+3. **Logic Gates**
+   ```bash
+   java -jar target/discrete-strucutres-preview-1.0-SNAPSHOT.jar logic-gates -g AND
+   ```
+   Options:
+   - `-g, --gate`: Specify gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR)
+   - `-l, --list`: List all available gates
+   - `-d, --demo`: Run demonstration (half-adder, full-adder)
+
+4. **Set Operations**
+   ```bash
+   java -jar target/discrete-strucutres-preview-1.0-SNAPSHOT.jar sets
+   ```
+   Options:
+   - `-d, --demo`: Run demonstration
+   - `-p, --power-set`: Show power set demonstration
+   - `-m, --demorgan`: Verify De Morgan's laws
+
+5. **Number Conversion**
+   ```bash
+   java -jar target/discrete-strucutres-preview-1.0-SNAPSHOT.jar convert 42
+   ```
+   Options:
+   - `-f, --from`: Source base (decimal, binary, octal, hex)
+   - `-t, --to`: Target base (decimal, binary, octal, hex, all)
+   - `-a, --arithmetic`: Perform binary arithmetic
+   - `-s, --steps`: Show conversion steps
+
+6. **Combinatorics**
+   ```bash
+   java -jar target/discrete-strucutres-preview-1.0-SNAPSHOT.jar combinatorics -n 5 -r 3
+   ```
+   Options:
+   - `-n`: Value of n
+   - `-r`: Value of r
+   - `-f, --factorial`: Calculate factorial
+   - `-p, --permutations`: Calculate permutations
+   - `-c, --combinations`: Calculate combinations
+
+7. **Karnaugh Map**
+   ```bash
+   java -jar target/discrete-strucutres-preview-1.0-SNAPSHOT.jar karnaugh "A & B"
+   ```
+   Options:
+   - `-a, --analyze`: Analyze the K-map for groupings
+
+8. **Tutorial**
+   ```bash
+   java -jar target/discrete-strucutres-preview-1.0-SNAPSHOT.jar tutorial -t boolean
+   ```
+   Options:
+   - `-t, --topic`: Tutorial topic
+   - `-l, --list`: List available tutorials
+
+9. **Quiz**
+   ```bash
+   java -jar target/discrete-strucutres-preview-1.0-SNAPSHOT.jar quiz -t boolean
+   ```
+   Options:
+   - `-t, --topic`: Quiz topic
+   - `-q, --questions`: Number of questions
+
+## Help
+For general help or command-specific help:
+```bash
+java -jar target/discrete-strucutres-preview-1.0-SNAPSHOT.jar --help
+java -jar target/discrete-strucutres-preview-1.0-SNAPSHOT.jar [COMMAND] --help
+```
+
+## Examples
+- Generate a truth table: `java -jar target/discrete-strucutres-preview-1.0-SNAPSHOT.jar truth-table "A & B"`
+- Simplify a boolean expression: `java -jar target/discrete-strucutres-preview-1.0-SNAPSHOT.jar boolean-algebra -s "A | (A & B)"`
+- Demonstrate logic gates: `java -jar target/discrete-strucutres-preview-1.0-SNAPSHOT.jar logic-gates -d half-adder`
+
+## Contributing
+Please read CONTRIBUTING.md for details on our code of conduct and the process for submitting pull requests.
+
+## License
+This project is licensed under the MIT License - see the LICENSE.md file for details. 

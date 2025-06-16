@@ -53,6 +53,7 @@
 /home/computeruse/discrete-strucutres-preview/src/main/java/com/discretelogic/discrete/sets/DynamicSet.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/com/discretelogic/tutorial/Tutorial.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/com/discretelogic/discrete/sets/LogicalSet.java
+/home/computeruse/discrete-strucutres-preview/src/main/java/com/discretelogic/util/PathResolverDemo.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/edu/ucsb/cs/cognitivedm/embeddings/MathEmbeddingService.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/edu/ucsb/cs/cognitivedm/CognitiveDiscreteMathLibrary.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/com/discretelogic/cognitive/integration/ConceptualBridge.java
@@ -60,5 +61,6 @@
 /home/computeruse/discrete-strucutres-preview/src/main/java/com/discretelogic/LogicGateSim/LogicGate.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/com/discretelogic/cognitive/processing/AdaptiveProcessing.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/com/discretelogic/discrete/graphs/FlowStateGraph.java
+/home/computeruse/discrete-strucutres-preview/src/main/java/com/discretelogic/util/PathResolver.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/com/discretelogic/model/Expression.java
 /home/computeruse/discrete-strucutres-preview/src/main/java/edu/ucsb/cs/cognitivedm/recommendations/CognitiveRecommendationEngine.java
