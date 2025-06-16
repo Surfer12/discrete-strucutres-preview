@@ -1667,12 +1667,23 @@ public class MathExpression extends Expression {
                 .orElse(0.0);
         }
 
-        public double getSystemHealth() {
+        public double getSystemHealthScore() {
             return switch (systemHealth) {
                 case HEALTHY -> 1.0;
                 case WARNING -> 0.5;
                 case CRITICAL -> 0.0;
             };
+        }
+
+        @Override
+        public String toString() {
+            return String.format(
+                "MetaAnalysis{drifts=%d, health=%s, recommendations=%d, timestamp=%d}",
+                attentionDrifts.size(),
+                systemHealth,
+                recommendations.size(),
+                timestamp
+            );
         }
     }
 
