@@ -1668,11 +1668,16 @@ public class MathExpression extends Expression {
         }
 
         public double getSystemHealthScore() {
-            return switch (systemHealth) {
-                case HEALTHY -> 1.0;
-                case WARNING -> 0.5;
-                case CRITICAL -> 0.0;
-            };
+            switch (systemHealth) {
+                case HEALTHY:
+                    return 1.0;
+                case WARNING:
+                    return 0.5;
+                case CRITICAL:
+                    return 0.0;
+                default:
+                    return 0.0;
+            }
         }
 
         @Override
@@ -1807,20 +1812,21 @@ public class MathExpression extends Expression {
 
     // Add missing methods to match demo calls
     public double calculateLexicalViability(String expr, ArrayList<Object> results) {
-        return viabilityComponent.calculateViability(expr, processingState, new ArrayList<>());
+        return viabilityComponent.calculateViability(
+            expr, 
+            processingState, 
+            results != null ? 
+                results.stream()
+                    .filter(r -> r instanceof ProcessingResult)
+                    .map(r -> (ProcessingResult) r)
+                    .collect(Collectors.toList()) : 
+                new ArrayList<>()
+        );
     }
 
     public List<String> getNotationSuggestions(String expr) {
         LexicalSuggestion suggestion = lexicalNetwork.getSuggestion(expr);
-        return List.of(suggestion.getSuggestion());
-    }
-
-    public PsiOptimizationResult optimizePsi(String expr) {
-        try {
-            return processWithPsiOptimization().get();
-        } catch (Exception e) {
-            throw new RuntimeException("Psi optimization failed", e);
-        }
+        return Collections.singletonList(suggestion.getSuggestion());
     }
 
     public String optimizeExpression(String expr) {
@@ -1828,18 +1834,75 @@ public class MathExpression extends Expression {
     }
 
     public double getOptimizationScore(String expr) {
-        PsiOptimizationResult result = optimizePsi(expr);
-        return result.getPsiValue();
+        return viabilityComponent.calculateViability(expr, processingState, new ArrayList<>());
     }
 
     public MetaAnalysis analyzeMetaController(String expr) {
-        List<ProcessingResult> results = cognitiveFramework.process(expr, 5);
-        return metaController.analyze(results, this);
+        try {
+            List<ProcessingResult> results = cognitiveFramework.process(expr, 5);
+            return metaController.analyze(results, this);
+        } catch (Exception e) {
+            // Log error or handle appropriately
+            return new MetaAnalysis(
+                Collections.emptyList(), 
+                Collections.emptyMap(), 
+                SystemHealth.WARNING, 
+                Collections.singletonList("Error in meta-analysis"), 
+                System.currentTimeMillis()
+            );
+        }
     }
 
     public void restoreAttention() {
-        // Implement a basic attention restoration mechanism
+        // Reset cognitive state and attention parameters
         processingState = new CognitiveState(0.5, 0.5, 0.1);
-        cognitiveTags.put("attentionRestored", 1.0);
+        alpha = 0.6; // Reset symbolic preference
+        beta = 1.2; // Reset bias parameter
+        
+        // Clear any accumulated cognitive tags related to attention drift
+        cognitiveTags.remove("attentionDrift");
+        cognitiveTags.remove("processingError");
+    }
+
+    public PsiOptimizationResult optimizePsi(String expr) {
+        try {
+            // Perform Psi optimization using the cognitive framework
+            List<ProcessingResult> results = cognitiveFramework.process(expr, 5);
+            
+            // Calculate symbolic and neural outputs
+            double symbolicOutput = results.stream()
+                .mapToDouble(ProcessingResult::getSymbolicScore)
+                .average()
+                .orElse(0.0);
+            
+            double neuralOutput = results.stream()
+                .mapToDouble(ProcessingResult::getNeuralScore)
+                .average()
+                .orElse(0.0);
+            
+            // Calculate Psi value with cognitive and efficiency penalties
+            double psiValue = alpha * symbolicOutput + (1 - alpha) * neuralOutput 
+                - beta * (cognitivePenalty + efficiencyPenalty);
+            
+            // Optimize the expression notation
+            String optimizedExpression = viabilityComponent.optimizeNotation(expr, processingState);
+            
+            // Create and return the optimization result
+            return new PsiOptimizationResult(
+                psiValue,
+                optimizedExpression,
+                symbolicOutput,
+                neuralOutput,
+                alpha,
+                cognitivePenalty,
+                efficiencyPenalty,
+                biasedProbability,
+                metaController.analyze(results, this),
+                cognitiveTags
+            );
+        } catch (Exception e) {
+            // Handle optimization failure
+            throw new RuntimeException("Psi optimization failed", e);
+        }
     }
 }
