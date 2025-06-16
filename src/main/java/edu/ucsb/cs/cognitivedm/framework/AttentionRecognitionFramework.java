@@ -1,5 +1,6 @@
 package edu.ucsb.cs.cognitivedm.framework;
 
+import edu.ucsb.cs.cognitivedm.patterns.PatternDetector;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
  * @version 1.0
  */
 public class AttentionRecognitionFramework {
+
     private final int numScales;
     private final List<ScaleLevel> scales;
     private final MetaAwarenessProcessor metaProcessor;
@@ -30,18 +32,27 @@ public class AttentionRecognitionFramework {
      * Represents a cognitive state at a specific moment in time
      */
     public static class CognitiveState {
-        private final double attention;      // Focus level [0,1]
-        private final double recognition;    // Pattern recognition strength [0,1]
-        private final double wandering;      // Mind-wandering intensity [0,1]
+
+        private final double attention; // Focus level [0,1]
+        private final double recognition; // Pattern recognition strength [0,1]
+        private final double wandering; // Mind-wandering intensity [0,1]
         private final long timestamp;
         private final Map<String, Double> contextualFactors;
 
-        public CognitiveState(double attention, double recognition, double wandering) {
+        public CognitiveState(
+            double attention,
+            double recognition,
+            double wandering
+        ) {
             this(attention, recognition, wandering, new HashMap<>());
         }
 
-        public CognitiveState(double attention, double recognition, double wandering,
-                            Map<String, Double> contextualFactors) {
+        public CognitiveState(
+            double attention,
+            double recognition,
+            double wandering,
+            Map<String, Double> contextualFactors
+        ) {
             this.attention = Math.max(0, Math.min(1, attention));
             this.recognition = Math.max(0, Math.min(1, recognition));
             this.wandering = Math.max(0, Math.min(1, wandering));
@@ -75,48 +86,83 @@ public class AttentionRecognitionFramework {
             );
 
             double newWandering = boundedEvolution(
-                wanderingSquared + (novelInput > 0.5 ? -0.1 : 0.05) * adaptiveInfluence,
+                wanderingSquared +
+                (novelInput > 0.5 ? -0.1 : 0.05) * adaptiveInfluence,
                 0.02
             );
 
             // Update contextual factors
-            Map<String, Double> newContextualFactors = evolveContextualFactors(novelInput);
+            Map<String, Double> newContextualFactors = evolveContextualFactors(
+                novelInput
+            );
 
-            return new CognitiveState(newAttention, newRecognition, newWandering, newContextualFactors);
+            return new CognitiveState(
+                newAttention,
+                newRecognition,
+                newWandering,
+                newContextualFactors
+            );
         }
 
         private double calculateAdaptiveInfluence(double novelInput) {
             // Adaptive influence based on current cognitive load
-            double cognitiveLoad = (attention + recognition + (1 - wandering)) / 3.0;
+            double cognitiveLoad =
+                (attention + recognition + (1 - wandering)) / 3.0;
             return novelInput * (1 - cognitiveLoad * 0.5); // Reduce influence when overloaded
         }
 
         private double boundedEvolution(double value, double minChange) {
             double evolved = Math.max(0, Math.min(1, value));
             // Ensure minimum change for system dynamics
-            return Math.abs(evolved - value) < minChange ? value + minChange : evolved;
+            return Math.abs(evolved - value) < minChange
+                ? value + minChange
+                : evolved;
         }
 
         private Map<String, Double> evolveContextualFactors(double novelInput) {
             Map<String, Double> evolved = new HashMap<>(contextualFactors);
-            evolved.put("novelty_sensitivity",
-                evolved.getOrDefault("novelty_sensitivity", 0.5) * 0.9 + novelInput * 0.1);
-            evolved.put("stability_preference",
-                evolved.getOrDefault("stability_preference", 0.5) + (1 - wandering) * 0.05);
+            evolved.put(
+                "novelty_sensitivity",
+                evolved.getOrDefault("novelty_sensitivity", 0.5) * 0.9 +
+                novelInput * 0.1
+            );
+            evolved.put(
+                "stability_preference",
+                evolved.getOrDefault("stability_preference", 0.5) +
+                (1 - wandering) * 0.05
+            );
             return evolved;
         }
 
         // Getters
-        public double getAttention() { return attention; }
-        public double getRecognition() { return recognition; }
-        public double getWandering() { return wandering; }
-        public long getTimestamp() { return timestamp; }
-        public Map<String, Double> getContextualFactors() { return new HashMap<>(contextualFactors); }
+        public double getAttention() {
+            return attention;
+        }
+
+        public double getRecognition() {
+            return recognition;
+        }
+
+        public double getWandering() {
+            return wandering;
+        }
+
+        public long getTimestamp() {
+            return timestamp;
+        }
+
+        public Map<String, Double> getContextualFactors() {
+            return new HashMap<>(contextualFactors);
+        }
 
         @Override
         public String toString() {
-            return String.format("CognitiveState{attention=%.3f, recognition=%.3f, wandering=%.3f}",
-                               attention, recognition, wandering);
+            return String.format(
+                "CognitiveState{attention=%.3f, recognition=%.3f, wandering=%.3f}",
+                attention,
+                recognition,
+                wandering
+            );
         }
     }
 
@@ -124,14 +170,19 @@ public class AttentionRecognitionFramework {
      * Represents processing results with detected patterns and cognitive metrics
      */
     public static class ProcessingResult {
+
         private final int scale;
         private final CognitiveState state;
         private final List<Pattern> detectedPatterns;
         private final double cognitiveLoad;
         private final Map<String, Object> metadata;
 
-        public ProcessingResult(int scale, CognitiveState state,
-                              List<Pattern> patterns, double cognitiveLoad) {
+        public ProcessingResult(
+            int scale,
+            CognitiveState state,
+            List<Pattern> patterns,
+            double cognitiveLoad
+        ) {
             this.scale = scale;
             this.state = state;
             this.detectedPatterns = new ArrayList<>(patterns);
@@ -140,11 +191,25 @@ public class AttentionRecognitionFramework {
         }
 
         // Getters
-        public int getScale() { return scale; }
-        public CognitiveState getState() { return state; }
-        public List<Pattern> getDetectedPatterns() { return new ArrayList<>(detectedPatterns); }
-        public double getCognitiveLoad() { return cognitiveLoad; }
-        public Map<String, Object> getMetadata() { return new HashMap<>(metadata); }
+        public int getScale() {
+            return scale;
+        }
+
+        public CognitiveState getState() {
+            return state;
+        }
+
+        public List<Pattern> getDetectedPatterns() {
+            return new ArrayList<>(detectedPatterns);
+        }
+
+        public double getCognitiveLoad() {
+            return cognitiveLoad;
+        }
+
+        public Map<String, Object> getMetadata() {
+            return new HashMap<>(metadata);
+        }
 
         public void addMetadata(String key, Object value) {
             metadata.put(key, value);
@@ -155,6 +220,7 @@ public class AttentionRecognitionFramework {
      * Represents a detected pattern in cognitive processing
      */
     public static class Pattern {
+
         private final String type;
         private final double strength;
         private final long duration;
@@ -167,10 +233,21 @@ public class AttentionRecognitionFramework {
             this.characteristics = new HashMap<>();
         }
 
-        public String getType() { return type; }
-        public double getStrength() { return strength; }
-        public long getDuration() { return duration; }
-        public Map<String, Double> getCharacteristics() { return new HashMap<>(characteristics); }
+        public String getType() {
+            return type;
+        }
+
+        public double getStrength() {
+            return strength;
+        }
+
+        public long getDuration() {
+            return duration;
+        }
+
+        public Map<String, Double> getCharacteristics() {
+            return new HashMap<>(characteristics);
+        }
 
         public void addCharacteristic(String key, double value) {
             characteristics.put(key, value);
@@ -181,6 +258,7 @@ public class AttentionRecognitionFramework {
      * Individual scale level processor
      */
     public class ScaleLevel {
+
         private final int scale;
         private volatile CognitiveState currentState;
         private final Queue<CognitiveState> stateHistory;
@@ -197,17 +275,23 @@ public class AttentionRecognitionFramework {
         /**
          * Update scale level with new input and higher-scale influence
          */
-        public ProcessingResult update(Object input, CognitiveState higherScaleInfluence) {
+        public ProcessingResult update(
+            Object input,
+            CognitiveState higherScaleInfluence
+        ) {
             synchronized (stateLock) {
                 // Process input at this scale
                 double processedInput = processInput(input);
 
                 // Apply higher-scale influence
-                double scaleInfluence = higherScaleInfluence != null ?
-                    higherScaleInfluence.getAttention() * 0.3 : 0.0;
+                double scaleInfluence = higherScaleInfluence != null
+                    ? higherScaleInfluence.getAttention() * 0.3
+                    : 0.0;
 
                 // Evolve cognitive state
-                CognitiveState newState = currentState.evolve(processedInput + scaleInfluence);
+                CognitiveState newState = currentState.evolve(
+                    processedInput + scaleInfluence
+                );
 
                 // Update history with bounded memory
                 stateHistory.offer(currentState);
@@ -221,7 +305,12 @@ public class AttentionRecognitionFramework {
                 List<Pattern> patterns = detectPatterns();
                 double cognitiveLoad = assessCognitiveLoad();
 
-                ProcessingResult result = new ProcessingResult(scale, currentState, patterns, cognitiveLoad);
+                ProcessingResult result = new ProcessingResult(
+                    scale,
+                    currentState,
+                    patterns,
+                    cognitiveLoad
+                );
                 result.addMetadata("input_processed", processedInput);
                 result.addMetadata("scale_influence", scaleInfluence);
                 result.addMetadata("history_size", stateHistory.size());
@@ -235,10 +324,16 @@ public class AttentionRecognitionFramework {
 
             // Enhanced input processing based on type and complexity
             if (input instanceof Number) {
-                return Math.min(1.0, Math.abs(((Number) input).doubleValue()) / 100.0);
+                return Math.min(
+                    1.0,
+                    Math.abs(((Number) input).doubleValue()) / 100.0
+                );
             } else if (input instanceof String) {
                 String str = (String) input;
-                return Math.min(1.0, str.length() / 50.0 + (str.matches(".*\\d.*") ? 0.2 : 0.0));
+                return Math.min(
+                    1.0,
+                    str.length() / 50.0 + (str.matches(".*\\d.*") ? 0.2 : 0.0)
+                );
             } else if (input instanceof Collection) {
                 return Math.min(1.0, ((Collection<?>) input).size() / 20.0);
             }
@@ -249,12 +344,15 @@ public class AttentionRecognitionFramework {
 
         private List<Pattern> detectPatterns() {
             return patternDetector.analyzeSequence(
-                stateHistory.stream()
-                    .map(state -> new double[]{
-                        state.getAttention(),
-                        state.getRecognition(),
-                        state.getWandering()
-                    })
+                stateHistory
+                    .stream()
+                    .map(state ->
+                        new double[] {
+                            state.getAttention(),
+                            state.getRecognition(),
+                            state.getWandering(),
+                        }
+                    )
                     .collect(Collectors.toList())
             );
         }
@@ -267,9 +365,12 @@ public class AttentionRecognitionFramework {
                 stateHistory.stream().mapToDouble(CognitiveState::getAttention)
             );
             double recognitionVariance = calculateVariance(
-                stateHistory.stream().mapToDouble(CognitiveState::getRecognition)
+                stateHistory
+                    .stream()
+                    .mapToDouble(CognitiveState::getRecognition)
             );
-            double wanderingMean = stateHistory.stream()
+            double wanderingMean = stateHistory
+                .stream()
                 .mapToDouble(CognitiveState::getWandering)
                 .average()
                 .orElse(0.5);
@@ -296,7 +397,9 @@ public class AttentionRecognitionFramework {
             return currentState;
         }
 
-        public int getScale() { return scale; }
+        public int getScale() {
+            return scale;
+        }
     }
 
     /**
@@ -323,18 +426,24 @@ public class AttentionRecognitionFramework {
         List<ProcessingResult> results = new ArrayList<>();
 
         for (int step = 0; step < timeSteps; step++) {
-            List<CompletableFuture<ProcessingResult>> futures = new ArrayList<>();
+            List<CompletableFuture<ProcessingResult>> futures =
+                new ArrayList<>();
 
             // Process from finest to coarsest scale
             for (int i = 0; i < numScales; i++) {
                 final int scaleIndex = i;
-                final CognitiveState higherScaleInfluence = i > 0 ?
-                    scales.get(i - 1).getCurrentState() : null;
+                final CognitiveState higherScaleInfluence = i > 0
+                    ? scales.get(i - 1).getCurrentState()
+                    : null;
 
-                CompletableFuture<ProcessingResult> future = CompletableFuture.supplyAsync(() ->
-                    scales.get(scaleIndex).update(input, higherScaleInfluence),
-                    executorService
-                );
+                CompletableFuture<ProcessingResult> future =
+                    CompletableFuture.supplyAsync(
+                        () ->
+                            scales
+                                .get(scaleIndex)
+                                .update(input, higherScaleInfluence),
+                        executorService
+                    );
                 futures.add(future);
             }
 
@@ -343,8 +452,12 @@ public class AttentionRecognitionFramework {
                 for (CompletableFuture<ProcessingResult> future : futures) {
                     results.add(future.get(1, TimeUnit.SECONDS));
                 }
-            } catch (InterruptedException | ExecutionException | TimeoutException e) {
-                System.err.println("Error in parallel processing: " + e.getMessage());
+            } catch (
+                InterruptedException | ExecutionException | TimeoutException e
+            ) {
+                System.err.println(
+                    "Error in parallel processing: " + e.getMessage()
+                );
             }
 
             // Apply meta-awareness processing
@@ -391,6 +504,11 @@ public class AttentionRecognitionFramework {
     }
 
     // Getters
-    public int getNumScales() { return numScales; }
-    public List<ScaleLevel> getScales() { return new ArrayList<>(scales); }
+    public int getNumScales() {
+        return numScales;
+    }
+
+    public List<ScaleLevel> getScales() {
+        return new ArrayList<>(scales);
+    }
 }
