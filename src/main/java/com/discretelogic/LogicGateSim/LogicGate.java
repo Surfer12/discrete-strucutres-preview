@@ -1,7 +1,7 @@
-package com.discretelogic.core;
+package com.discretelogic.logicgatesim;
 
 import com.discretelogic.model.Gate;
-import com.discretelogic.model.Gate.GateType;
+import com.discretelogic.model.GateType;
 import java.util.*;
 
 /**

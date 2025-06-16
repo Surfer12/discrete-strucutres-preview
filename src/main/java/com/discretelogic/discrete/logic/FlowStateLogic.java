@@ -1,4 +1,4 @@
-package discrete.logic;
+package com.discretelogic.discrete.logic;
 
 /**
  * Handles the logical operations for flow state management in discrete structures.

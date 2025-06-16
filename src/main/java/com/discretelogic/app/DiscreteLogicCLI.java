@@ -1,9 +1,9 @@
-package com.discretelogic;
+package com.discretelogic.app;
 
 import com.discretelogic.core.*;
 import com.discretelogic.model.*;
 import com.discretelogic.util.*;
-import com.discretelogic.educational.*;
+// import com.discretelogic.educational.*; // This package seems to not exist in the new structure
 
 import picocli.CommandLine;
 import picocli.CommandLine.Command;

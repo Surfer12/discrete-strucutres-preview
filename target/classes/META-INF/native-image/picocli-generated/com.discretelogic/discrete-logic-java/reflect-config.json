@@ -1,6 +1,6 @@
 [
   {
-    "name" : "com.discretelogic.DiscreteLogicCLI",
+    "name" : "com.discretelogic.app.DiscreteLogicCLI",
     "allDeclaredConstructors" : true,
     "allPublicConstructors" : true,
     "allDeclaredMethods" : true,
@@ -10,7 +10,7 @@
     ]
   },
   {
-    "name" : "com.discretelogic.DiscreteLogicCLI$BooleanAlgebraCommand",
+    "name" : "com.discretelogic.app.DiscreteLogicCLI$BooleanAlgebraCommand",
     "allDeclaredConstructors" : true,
     "allPublicConstructors" : true,
     "allDeclaredMethods" : true,
@@ -24,7 +24,7 @@
     ]
   },
   {
-    "name" : "com.discretelogic.DiscreteLogicCLI$CombinatoricsCommand",
+    "name" : "com.discretelogic.app.DiscreteLogicCLI$CombinatoricsCommand",
     "allDeclaredConstructors" : true,
     "allPublicConstructors" : true,
     "allDeclaredMethods" : true,
@@ -42,7 +42,7 @@
     ]
   },
   {
-    "name" : "com.discretelogic.DiscreteLogicCLI$KarnaughMapCommand",
+    "name" : "com.discretelogic.app.DiscreteLogicCLI$KarnaughMapCommand",
     "allDeclaredConstructors" : true,
     "allPublicConstructors" : true,
     "allDeclaredMethods" : true,
@@ -53,7 +53,7 @@
     ]
   },
   {
-    "name" : "com.discretelogic.DiscreteLogicCLI$LogicGateCommand",
+    "name" : "com.discretelogic.app.DiscreteLogicCLI$LogicGateCommand",
     "allDeclaredConstructors" : true,
     "allPublicConstructors" : true,
     "allDeclaredMethods" : true,
@@ -65,7 +65,7 @@
     ]
   },
   {
-    "name" : "com.discretelogic.DiscreteLogicCLI$NumberConversionCommand",
+    "name" : "com.discretelogic.app.DiscreteLogicCLI$NumberConversionCommand",
     "allDeclaredConstructors" : true,
     "allPublicConstructors" : true,
     "allDeclaredMethods" : true,
@@ -80,7 +80,7 @@
     ]
   },
   {
-    "name" : "com.discretelogic.DiscreteLogicCLI$QuizCommand",
+    "name" : "com.discretelogic.app.DiscreteLogicCLI$QuizCommand",
     "allDeclaredConstructors" : true,
     "allPublicConstructors" : true,
     "allDeclaredMethods" : true,
@@ -91,7 +91,7 @@
     ]
   },
   {
-    "name" : "com.discretelogic.DiscreteLogicCLI$SetOperationsCommand",
+    "name" : "com.discretelogic.app.DiscreteLogicCLI$SetOperationsCommand",
     "allDeclaredConstructors" : true,
     "allPublicConstructors" : true,
     "allDeclaredMethods" : true,
@@ -104,7 +104,7 @@
     ]
   },
   {
-    "name" : "com.discretelogic.DiscreteLogicCLI$TruthTableCommand",
+    "name" : "com.discretelogic.app.DiscreteLogicCLI$TruthTableCommand",
     "allDeclaredConstructors" : true,
     "allPublicConstructors" : true,
     "allDeclaredMethods" : true,
@@ -116,7 +116,7 @@
     ]
   },
   {
-    "name" : "com.discretelogic.DiscreteLogicCLI$TutorialCommand",
+    "name" : "com.discretelogic.app.DiscreteLogicCLI$TutorialCommand",
     "allDeclaredConstructors" : true,
     "allPublicConstructors" : true,
     "allDeclaredMethods" : true,
