@@ -1,7 +1,7 @@
 package com.discretelogic.exceptions;
 
-public sealed abstract class DiscreteLogicException extends Exception 
-    permits MathematicalOperationException, ParsingException, ValidationException {
+public abstract class DiscreteLogicException extends Exception {
+    private static final long serialVersionUID = 1L;
     
     public DiscreteLogicException(String message) {
         super(message);
