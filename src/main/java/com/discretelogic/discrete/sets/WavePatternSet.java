@@ -1,7 +1,8 @@
-package fluid.sets;
+package com.discretelogic.discrete.sets;
 
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * WavePatternSet implements a discrete mathematical model for analyzing

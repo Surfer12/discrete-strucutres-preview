@@ -1,4 +1,4 @@
-package com.discretelogic.core;
+package com.discretelogic.discrete.tables;
 
 import com.discretelogic.model.Expression;
 import java.util.*;
@@ -97,11 +97,11 @@ public class KarnaughMap {
                 else row = 3;                       // 10
 
                 // Gray code for columns: 00, 01, 11, 10
-                boolean var2 = assignment.get(variables.get(2));
+                boolean var2_4 = assignment.get(variables.get(2));
                 boolean var3 = assignment.get(variables.get(3));
-                if (!var2 && !var3) col = 0;      // 00
-                else if (!var2 && var3) col = 1;  // 01
-                else if (var2 && var3) col = 2;   // 11
+                if (!var2_4 && !var3) col = 0;      // 00
+                else if (!var2_4 && var3) col = 1;  // 01
+                else if (var2_4 && var3) col = 2;   // 11
                 else col = 3;                     // 10
                 break;
         }

@@ -1,8 +1,11 @@
 package com.discretelogic.app;
 
-import com.discretelogic.core.*;
+import com.discretelogic.discrete.tables.KarnaughMap;
+import com.discretelogic.logicgatesim.LogicGate;
 import com.discretelogic.model.*;
-import com.discretelogic.util.*;
+import com.discretelogic.discrete.sets.*;
+import com.discretelogic.logicgatesim.NumberSystemConverter;
+import com.discretelogic.core.*;
 // import com.discretelogic.educational.*; // This package seems to not exist in the new structure
 
 import picocli.CommandLine;

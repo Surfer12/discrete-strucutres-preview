@@ -22,7 +22,7 @@ public class LogicGate {
             // For simplicity, we'll use the first available inputs
             gateInputs.addAll(inputs.values());
 
-            if (gateInputs.size() > gate.getType().name().equals("NOT") ? 1 : 2) {
+            if (gateInputs.size() > (gate.getType().name().equals("NOT") ? 1 : 2)) {
                 gateInputs = gateInputs.subList(0, gate.getType().name().equals("NOT") ? 1 : 2);
             }
 

@@ -1,8 +1,9 @@
-package cognitive.graphs;
+package com.discretelogic.discrete.graphs;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * FlowStateGraph represents a mathematical model of cognitive flow states
