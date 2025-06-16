@@ -155,6 +155,35 @@ public class AttentionRecognitionFramework {
             return new HashMap<>(contextualFactors);
         }
 
+        /**
+         * Calculate cognitive load based on attention, recognition, and wandering levels
+         * @return Cognitive load value between 0 and 1
+         */
+        public double getCognitiveLoad() {
+            // Cognitive load increases with high attention and recognition demands
+            // but decreases with mind-wandering (attention is elsewhere)
+            return (
+                attention * 0.4 + recognition * 0.4 + (1 - wandering) * 0.2
+            );
+        }
+
+        /**
+         * Determine if the cognitive system is in a flow state
+         * Flow state: high attention, high recognition, low wandering
+         * @return true if in flow state
+         */
+        public boolean isInFlowState() {
+            final double FLOW_ATTENTION_THRESHOLD = 0.7;
+            final double FLOW_RECOGNITION_THRESHOLD = 0.6;
+            final double FLOW_WANDERING_THRESHOLD = 0.3;
+
+            return (
+                attention >= FLOW_ATTENTION_THRESHOLD &&
+                recognition >= FLOW_RECOGNITION_THRESHOLD &&
+                wandering <= FLOW_WANDERING_THRESHOLD
+            );
+        }
+
         @Override
         public String toString() {
             return String.format(

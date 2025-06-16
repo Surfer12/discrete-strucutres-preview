@@ -1,21 +1,21 @@
 package edu.ucsb.cs.cognitivedm;
 
+import edu.ucsb.cs.cognitivedm.education.CognitiveEducationFramework;
+import edu.ucsb.cs.cognitivedm.education.CognitiveEducationFramework.*;
 import edu.ucsb.cs.cognitivedm.framework.AttentionRecognitionFramework;
 import edu.ucsb.cs.cognitivedm.framework.AttentionRecognitionFramework.CognitiveState;
 import edu.ucsb.cs.cognitivedm.framework.AttentionRecognitionFramework.ProcessingResult;
 import edu.ucsb.cs.cognitivedm.graph.ScalableConcurrentGraphEngine;
-import edu.ucsb.cs.cognitivedm.education.CognitiveEducationFramework;
-import edu.ucsb.cs.cognitivedm.education.CognitiveEducationFramework.*;
+import edu.ucsb.cs.cognitivedm.patterns.PatternDetector;
 import edu.ucsb.cs.cognitivedm.recommendations.CognitiveRecommendationEngine;
 import edu.ucsb.cs.cognitivedm.recommendations.CognitiveRecommendationEngine.*;
-import edu.ucsb.cs.cognitivedm.patterns.PatternDetector;
-
+import edu.ucsb.cs.cognitivedm.sessions.CognitiveSessionManager;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Cognitive-Inspired Discrete Mathematics Library
@@ -51,18 +51,28 @@ public class CognitiveDiscreteMathLibrary {
      * @param cognitiveScales Number of cognitive processing scales (recommended: 3-5)
      * @param threadPoolSize Size of concurrent processing thread pool
      */
-    public CognitiveDiscreteMathLibrary(int cognitiveScales, int threadPoolSize) {
+    public CognitiveDiscreteMathLibrary(
+        int cognitiveScales,
+        int threadPoolSize
+    ) {
         this.cognitiveScales = cognitiveScales;
         this.threadPoolSize = threadPoolSize;
         this.defaultAttentionThreshold = 0.6;
         this.libraryConfig = new ConcurrentHashMap<>();
 
         // Initialize core components
-        this.cognitiveFramework = new AttentionRecognitionFramework(cognitiveScales);
-        this.graphEngine = new ScalableConcurrentGraphEngine<>(threadPoolSize, cognitiveScales);
+        this.cognitiveFramework = new AttentionRecognitionFramework(
+            cognitiveScales
+        );
+        this.graphEngine = new ScalableConcurrentGraphEngine<>(
+            threadPoolSize,
+            cognitiveScales
+        );
         this.educationFramework = new CognitiveEducationFramework();
         this.recommendationEngine = new CognitiveRecommendationEngine();
-        this.expressionProcessor = new MathExpressionProcessor(cognitiveFramework);
+        this.expressionProcessor = new MathExpressionProcessor(
+            cognitiveFramework
+        );
         this.sessionManager = new CognitiveSessionManager();
 
         // Setup component integration
@@ -71,8 +81,13 @@ public class CognitiveDiscreteMathLibrary {
         // Initialize with sample mathematical content
         initializeMathematicalContent();
 
-        System.out.println("🧠 Cognitive Discrete Mathematics Library initialized with " +
-                          cognitiveScales + " cognitive scales and " + threadPoolSize + " threads");
+        System.out.println(
+            "🧠 Cognitive Discrete Mathematics Library initialized with " +
+            cognitiveScales +
+            " cognitive scales and " +
+            threadPoolSize +
+            " threads"
+        );
     }
 
     /**
@@ -87,8 +102,10 @@ public class CognitiveDiscreteMathLibrary {
      */
     private void setupComponentIntegration() {
         // Connect recommendation engine with other components
-        recommendationEngine.updateLearnerProfile("system",
-            educationFramework.registerLearner("system"));
+        recommendationEngine.updateLearnerProfile(
+            "system",
+            educationFramework.registerLearner("system")
+        );
 
         // Setup educational monitoring
         educationFramework.initializeSampleContent();
@@ -105,27 +122,63 @@ public class CognitiveDiscreteMathLibrary {
      */
     private void initializeMathematicalContent() {
         // Add discrete mathematics specific content
-        addMathematicalContent("set_operations", "Set Operations",
-            "Basic set operations: union, intersection, complement", ContentType.CONCEPT, DifficultyLevel.BEGINNER);
+        addMathematicalContent(
+            "set_operations",
+            "Set Operations",
+            "Basic set operations: union, intersection, complement",
+            ContentType.CONCEPT,
+            DifficultyLevel.BEGINNER
+        );
 
-        addMathematicalContent("boolean_logic", "Boolean Logic",
-            "Propositional logic and truth tables", ContentType.PROCEDURE, DifficultyLevel.INTERMEDIATE);
+        addMathematicalContent(
+            "boolean_logic",
+            "Boolean Logic",
+            "Propositional logic and truth tables",
+            ContentType.PROCEDURE,
+            DifficultyLevel.INTERMEDIATE
+        );
 
-        addMathematicalContent("graph_algorithms", "Graph Algorithms",
-            "Graph traversal and shortest path algorithms", ContentType.PROBLEM_SOLVING, DifficultyLevel.ADVANCED);
+        addMathematicalContent(
+            "graph_algorithms",
+            "Graph Algorithms",
+            "Graph traversal and shortest path algorithms",
+            ContentType.PROBLEM_SOLVING,
+            DifficultyLevel.ADVANCED
+        );
 
-        addMathematicalContent("combinatorics", "Combinatorics",
-            "Permutations, combinations, and counting principles", ContentType.CONCEPT, DifficultyLevel.INTERMEDIATE);
+        addMathematicalContent(
+            "combinatorics",
+            "Combinatorics",
+            "Permutations, combinations, and counting principles",
+            ContentType.CONCEPT,
+            DifficultyLevel.INTERMEDIATE
+        );
 
-        addMathematicalContent("discrete_probability", "Discrete Probability",
-            "Probability in discrete sample spaces", ContentType.PROBLEM_SOLVING, DifficultyLevel.ADVANCED);
+        addMathematicalContent(
+            "discrete_probability",
+            "Discrete Probability",
+            "Probability in discrete sample spaces",
+            ContentType.PROBLEM_SOLVING,
+            DifficultyLevel.ADVANCED
+        );
 
         System.out.println("📚 Mathematical content library initialized");
     }
 
-    private void addMathematicalContent(String id, String title, String description,
-                                      ContentType type, DifficultyLevel difficulty) {
-        LearningContent content = new LearningContent(id, title, "Discrete Mathematics", type, difficulty);
+    private void addMathematicalContent(
+        String id,
+        String title,
+        String description,
+        ContentType type,
+        DifficultyLevel difficulty
+    ) {
+        LearningContent content = new LearningContent(
+            id,
+            title,
+            "Discrete Mathematics",
+            type,
+            difficulty
+        );
         content.setContent("description", description);
 
         // Set cognitive style alignments for mathematics
@@ -146,41 +199,66 @@ public class CognitiveDiscreteMathLibrary {
      * @param userId User identifier for personalization
      * @return Enhanced mathematical expression with cognitive processing
      */
-    public CompletableFuture<MathExpression> processExpression(String expression, String userId) {
+    public CompletableFuture<MathExpression> processExpression(
+        String expression,
+        String userId
+    ) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 // Get or create user session
-                CognitiveSession session = sessionManager.getOrCreateSession(userId);
+                CognitiveSession session = sessionManager.getOrCreateSession(
+                    userId
+                );
 
                 // Process through cognitive framework
-                var cognitiveResults = cognitiveFramework.processMultiScale(expression).get(5, TimeUnit.SECONDS);
-                CognitiveState currentState = cognitiveResults.get(0).getCognitiveState();
+                var cognitiveResults = cognitiveFramework
+                    .processMultiScale(expression)
+                    .get(5, TimeUnit.SECONDS);
+                CognitiveState currentState = cognitiveResults
+                    .get(0)
+                    .getCognitiveState();
 
                 // Update user's cognitive state
                 session.updateCognitiveState(currentState);
 
                 // Create enhanced math expression
-                MathExpression mathExpr = expressionProcessor.createMathExpression(expression, currentState);
+                MathExpression mathExpr =
+                    expressionProcessor.createMathExpression(
+                        expression,
+                        currentState
+                    );
 
                 // Add to graph for relationship analysis
                 graphEngine.addNode(mathExpr.getId(), mathExpr);
 
                 // Process with cognitive context
-                var processingResult = graphEngine.processNode(mathExpr.getId(),
-                    expr -> expr.enhanceWithCognition(currentState), currentState, 2).get(5, TimeUnit.SECONDS);
+                var processingResult = graphEngine
+                    .processNode(
+                        mathExpr.getId(),
+                        expr -> expr.enhanceWithCognition(currentState),
+                        currentState,
+                        2
+                    )
+                    .get(5, TimeUnit.SECONDS);
 
                 if (processingResult.isSuccess()) {
                     return processingResult.getProcessedData();
                 } else {
-                    System.err.println("Graph processing failed: " + processingResult.getErrorMessage());
+                    System.err.println(
+                        "Graph processing failed: " +
+                        processingResult.getErrorMessage()
+                    );
                     return mathExpr; // Return original if processing fails
                 }
-
             } catch (Exception e) {
-                System.err.println("Error processing expression: " + e.getMessage());
+                System.err.println(
+                    "Error processing expression: " + e.getMessage()
+                );
                 // Return basic expression on error
-                return expressionProcessor.createMathExpression(expression,
-                    new CognitiveState(0.5, 0.5, 0.3));
+                return expressionProcessor.createMathExpression(
+                    expression,
+                    new CognitiveState(0.5, 0.5, 0.3)
+                );
             }
         });
     }
@@ -194,27 +272,46 @@ public class CognitiveDiscreteMathLibrary {
      * @return List of personalized recommendations
      */
     public CompletableFuture<List<Recommendation>> generateMathRecommendations(
-            String userId, String currentTopic, int maxRecommendations) {
-
+        String userId,
+        String currentTopic,
+        int maxRecommendations
+    ) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                CognitiveSession session = sessionManager.getOrCreateSession(userId);
-                CognitiveState currentState = session.getCurrentCognitiveState();
+                CognitiveSession session = sessionManager.getOrCreateSession(
+                    userId
+                );
+                CognitiveState currentState =
+                    session.getCurrentCognitiveState();
 
                 // Create recommendation request
-                RecommendationRequest request = new RecommendationRequest(userId, currentState,
-                    currentTopic != null ? currentTopic : "Discrete Mathematics",
-                    maxRecommendations, EnumSet.allOf(RecommendationType.class), new HashMap<>());
+                RecommendationRequest request = new RecommendationRequest(
+                    userId,
+                    currentState,
+                    currentTopic != null
+                        ? currentTopic
+                        : "Discrete Mathematics",
+                    maxRecommendations,
+                    EnumSet.allOf(RecommendationType.class),
+                    new HashMap<>()
+                );
 
                 // Add mathematical context
                 request.getContext().put("domainType", "mathematics");
-                request.getContext().put("cognitiveLoad", currentState.getCognitiveLoad());
-                request.getContext().put("attentionLevel", currentState.getAttention());
+                request
+                    .getContext()
+                    .put("cognitiveLoad", currentState.getCognitiveLoad());
+                request
+                    .getContext()
+                    .put("attentionLevel", currentState.getAttention());
 
-                return recommendationEngine.generateRecommendations(request).get(10, TimeUnit.SECONDS);
-
+                return recommendationEngine
+                    .generateRecommendations(request)
+                    .get(10, TimeUnit.SECONDS);
             } catch (Exception e) {
-                System.err.println("Error generating recommendations: " + e.getMessage());
+                System.err.println(
+                    "Error generating recommendations: " + e.getMessage()
+                );
                 return Collections.emptyList();
             }
         });
@@ -229,8 +326,10 @@ public class CognitiveDiscreteMathLibrary {
      * @return Personalized learning path
      */
     public CompletableFuture<LearningPath> createAdaptiveLearningPath(
-            String userId, DifficultyLevel targetLevel, List<String> focusAreas) {
-
+        String userId,
+        DifficultyLevel targetLevel,
+        List<String> focusAreas
+    ) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 // Ensure user is registered in education framework
@@ -239,12 +338,22 @@ public class CognitiveDiscreteMathLibrary {
                 }
 
                 // Update cognitive state from current session
-                CognitiveSession session = sessionManager.getOrCreateSession(userId);
-                educationFramework.updateLearnerState(userId, session.getCurrentCognitiveState());
+                CognitiveSession session = sessionManager.getOrCreateSession(
+                    userId
+                );
+                educationFramework.updateLearnerState(
+                    userId,
+                    session.getCurrentCognitiveState()
+                );
 
                 // Generate learning path
-                LearningPath path = educationFramework.createLearningPath(
-                    userId, "Discrete Mathematics", targetLevel).get(10, TimeUnit.SECONDS);
+                LearningPath path = educationFramework
+                    .createLearningPath(
+                        userId,
+                        "Discrete Mathematics",
+                        targetLevel
+                    )
+                    .get(10, TimeUnit.SECONDS);
 
                 // Filter path based on focus areas if specified
                 if (focusAreas != null && !focusAreas.isEmpty()) {
@@ -252,12 +361,17 @@ public class CognitiveDiscreteMathLibrary {
                 }
 
                 return path;
-
             } catch (Exception e) {
-                System.err.println("Error creating learning path: " + e.getMessage());
+                System.err.println(
+                    "Error creating learning path: " + e.getMessage()
+                );
                 // Return empty path on error
-                return new LearningPath(userId, "Discrete Mathematics",
-                    Collections.emptyList(), new CognitiveState(0.5, 0.5, 0.3));
+                return new LearningPath(
+                    userId,
+                    "Discrete Mathematics",
+                    Collections.emptyList(),
+                    new CognitiveState(0.5, 0.5, 0.3)
+                );
             }
         });
     }
@@ -269,23 +383,31 @@ public class CognitiveDiscreteMathLibrary {
      * @param problemHistory List of solved problems with timestamps
      * @return Pattern analysis results
      */
-    public MathPatternAnalysis analyzeProblemSolvingPatterns(String userId,
-                                                           List<SolvedProblem> problemHistory) {
-
+    public MathPatternAnalysis analyzeProblemSolvingPatterns(
+        String userId,
+        List<SolvedProblem> problemHistory
+    ) {
         // Convert problem history to cognitive time series
-        List<double[]> timeSeries = problemHistory.stream()
-            .map(problem -> new double[]{
-                problem.getDifficultyScore(),
-                problem.getAccuracyScore(),
-                problem.getTimeEfficiencyScore()
-            })
+        List<double[]> timeSeries = problemHistory
+            .stream()
+            .map(problem ->
+                new double[] {
+                    problem.getDifficultyScore(),
+                    problem.getAccuracyScore(),
+                    problem.getTimeEfficiencyScore(),
+                }
+            )
             .collect(Collectors.toList());
 
         // Detect patterns using our pattern detector
         var patterns = PatternDetector.analyzeSequence(timeSeries);
 
         // Create mathematical pattern analysis
-        return new MathPatternAnalysis(userId, patterns, calculateLearningTrends(problemHistory));
+        return new MathPatternAnalysis(
+            userId,
+            patterns,
+            calculateLearningTrends(problemHistory)
+        );
     }
 
     /**
@@ -295,7 +417,10 @@ public class CognitiveDiscreteMathLibrary {
      * @param sessionType Type of mathematical session
      * @return Interactive cognitive session
      */
-    public CognitiveSession startInteractiveSession(String userId, MathSessionType sessionType) {
+    public CognitiveSession startInteractiveSession(
+        String userId,
+        MathSessionType sessionType
+    ) {
         CognitiveSession session = sessionManager.getOrCreateSession(userId);
         session.setSessionType(sessionType);
         session.startSession();
@@ -331,25 +456,54 @@ public class CognitiveDiscreteMathLibrary {
         var recommendationStats = recommendationEngine.getStatistics();
 
         return new CognitiveLibraryAnalytics(
-            cognitiveAnalysis, graphStats, educationAnalytics, recommendationStats,
-            sessionManager.getActiveSessionCount(), calculateSystemEfficiency()
+            cognitiveAnalysis,
+            graphStats,
+            educationAnalytics,
+            recommendationStats,
+            sessionManager.getActiveSessionCount(),
+            calculateSystemEfficiency()
         );
     }
 
     // ================== UTILITY METHODS ==================
 
-    private LearningPath filterLearningPathByFocusAreas(LearningPath originalPath, List<String> focusAreas) {
-        List<LearningContent> filteredContent = originalPath.getContent().stream()
-            .filter(content -> focusAreas.stream()
-                .anyMatch(area -> content.getTitle().toLowerCase().contains(area.toLowerCase()) ||
-                                content.getContent().get("description").toString().toLowerCase().contains(area.toLowerCase())))
+    private LearningPath filterLearningPathByFocusAreas(
+        LearningPath originalPath,
+        List<String> focusAreas
+    ) {
+        List<LearningContent> filteredContent = originalPath
+            .getContent()
+            .stream()
+            .filter(content ->
+                focusAreas
+                    .stream()
+                    .anyMatch(
+                        area ->
+                            content
+                                .getTitle()
+                                .toLowerCase()
+                                .contains(area.toLowerCase()) ||
+                            content
+                                .getContent()
+                                .get("description")
+                                .toString()
+                                .toLowerCase()
+                                .contains(area.toLowerCase())
+                    )
+            )
             .collect(Collectors.toList());
 
-        return new LearningPath(originalPath.getLearnerId(), originalPath.getSubject(),
-            filteredContent, originalPath.getInitialCognitiveState());
+        return new LearningPath(
+            originalPath.getLearnerId(),
+            originalPath.getSubject(),
+            filteredContent,
+            originalPath.getInitialCognitiveState()
+        );
     }
 
-    private Map<String, Double> calculateLearningTrends(List<SolvedProblem> problemHistory) {
+    private Map<String, Double> calculateLearningTrends(
+        List<SolvedProblem> problemHistory
+    ) {
         Map<String, Double> trends = new HashMap<>();
 
         if (problemHistory.size() < 2) {
@@ -357,18 +511,30 @@ public class CognitiveDiscreteMathLibrary {
         }
 
         // Calculate difficulty progression
-        double difficultyTrend = calculateTrend(problemHistory.stream()
-            .mapToDouble(SolvedProblem::getDifficultyScore).toArray());
+        double difficultyTrend = calculateTrend(
+            problemHistory
+                .stream()
+                .mapToDouble(SolvedProblem::getDifficultyScore)
+                .toArray()
+        );
         trends.put("difficultyProgression", difficultyTrend);
 
         // Calculate accuracy trend
-        double accuracyTrend = calculateTrend(problemHistory.stream()
-            .mapToDouble(SolvedProblem::getAccuracyScore).toArray());
+        double accuracyTrend = calculateTrend(
+            problemHistory
+                .stream()
+                .mapToDouble(SolvedProblem::getAccuracyScore)
+                .toArray()
+        );
         trends.put("accuracyTrend", accuracyTrend);
 
         // Calculate efficiency trend
-        double efficiencyTrend = calculateTrend(problemHistory.stream()
-            .mapToDouble(SolvedProblem::getTimeEfficiencyScore).toArray());
+        double efficiencyTrend = calculateTrend(
+            problemHistory
+                .stream()
+                .mapToDouble(SolvedProblem::getTimeEfficiencyScore)
+                .toArray()
+        );
         trends.put("efficiencyTrend", efficiencyTrend);
 
         return trends;
@@ -394,11 +560,20 @@ public class CognitiveDiscreteMathLibrary {
 
     private double calculateSystemEfficiency() {
         // Calculate overall system efficiency based on component performance
-        double cognitiveEfficiency = 1.0 - cognitiveFramework.getSystemAnalysis().getSystemCognitiveLoad();
-        double graphEfficiency = Math.min(1.0, 100.0 / graphEngine.getStatistics().getAverageProcessingTimeMs());
-        double educationEfficiency = educationFramework.getSystemAnalytics().getAverageEngagement();
+        double cognitiveEfficiency =
+            1.0 -
+            cognitiveFramework.getSystemAnalysis().getSystemCognitiveLoad();
+        double graphEfficiency = Math.min(
+            1.0,
+            100.0 / graphEngine.getStatistics().getAverageProcessingTimeMs()
+        );
+        double educationEfficiency = educationFramework
+            .getSystemAnalytics()
+            .getAverageEngagement();
 
-        return (cognitiveEfficiency + graphEfficiency + educationEfficiency) / 3.0;
+        return (
+            (cognitiveEfficiency + graphEfficiency + educationEfficiency) / 3.0
+        );
     }
 
     // ================== CONFIGURATION METHODS ==================
@@ -413,12 +588,16 @@ public class CognitiveDiscreteMathLibrary {
         switch (key) {
             case "defaultAttentionThreshold":
                 if (value instanceof Number) {
-                    sessionManager.setDefaultAttentionThreshold(((Number) value).doubleValue());
+                    sessionManager.setDefaultAttentionThreshold(
+                        ((Number) value).doubleValue()
+                    );
                 }
                 break;
             case "cognitiveMonitoringInterval":
                 if (value instanceof Number) {
-                    sessionManager.setDefaultMonitoringInterval(((Number) value).intValue());
+                    sessionManager.setDefaultMonitoringInterval(
+                        ((Number) value).intValue()
+                    );
                 }
                 break;
         }
@@ -445,7 +624,9 @@ public class CognitiveDiscreteMathLibrary {
      * Shutdown the library and clean up resources
      */
     public void shutdown() {
-        System.out.println("🛑 Shutting down Cognitive Discrete Mathematics Library...");
+        System.out.println(
+            "🛑 Shutting down Cognitive Discrete Mathematics Library..."
+        );
 
         try {
             // Shutdown all components
@@ -455,8 +636,9 @@ public class CognitiveDiscreteMathLibrary {
             recommendationEngine.shutdown();
             sessionManager.shutdown();
 
-            System.out.println("✅ Cognitive library shutdown completed successfully");
-
+            System.out.println(
+                "✅ Cognitive library shutdown completed successfully"
+            );
         } catch (Exception e) {
             System.err.println("Error during shutdown: " + e.getMessage());
         }
@@ -490,6 +672,7 @@ public class CognitiveDiscreteMathLibrary {
      * Mathematical expression enhanced with cognitive processing
      */
     public static class MathExpression {
+
         private final String id;
         private final String expression;
         private CognitiveState processingState;
@@ -529,12 +712,29 @@ public class CognitiveDiscreteMathLibrary {
         }
 
         // Getters
-        public String getId() { return id; }
-        public String getExpression() { return expression; }
-        public CognitiveState getProcessingState() { return processingState; }
-        public Map<String, Double> getCognitiveTags() { return new HashMap<>(cognitiveTags); }
-        public Map<String, Object> getMetadata() { return new HashMap<>(metadata); }
-        public long getCreatedTime() { return createdTime; }
+        public String getId() {
+            return id;
+        }
+
+        public String getExpression() {
+            return expression;
+        }
+
+        public CognitiveState getProcessingState() {
+            return processingState;
+        }
+
+        public Map<String, Double> getCognitiveTags() {
+            return new HashMap<>(cognitiveTags);
+        }
+
+        public Map<String, Object> getMetadata() {
+            return new HashMap<>(metadata);
+        }
+
+        public long getCreatedTime() {
+            return createdTime;
+        }
 
         @Override
         public String toString() {
@@ -546,14 +746,19 @@ public class CognitiveDiscreteMathLibrary {
      * Represents a solved mathematical problem for pattern analysis
      */
     public static class SolvedProblem {
+
         private final String problemId;
         private final double difficultyScore;
         private final double accuracyScore;
         private final double timeEfficiencyScore;
         private final long timestamp;
 
-        public SolvedProblem(String problemId, double difficultyScore,
-                           double accuracyScore, double timeEfficiencyScore) {
+        public SolvedProblem(
+            String problemId,
+            double difficultyScore,
+            double accuracyScore,
+            double timeEfficiencyScore
+        ) {
             this.problemId = problemId;
             this.difficultyScore = difficultyScore;
             this.accuracyScore = accuracyScore;
@@ -562,25 +767,44 @@ public class CognitiveDiscreteMathLibrary {
         }
 
         // Getters
-        public String getProblemId() { return problemId; }
-        public double getDifficultyScore() { return difficultyScore; }
-        public double getAccuracyScore() { return accuracyScore; }
-        public double getTimeEfficiencyScore() { return timeEfficiencyScore; }
-        public long getTimestamp() { return timestamp; }
+        public String getProblemId() {
+            return problemId;
+        }
+
+        public double getDifficultyScore() {
+            return difficultyScore;
+        }
+
+        public double getAccuracyScore() {
+            return accuracyScore;
+        }
+
+        public double getTimeEfficiencyScore() {
+            return timeEfficiencyScore;
+        }
+
+        public long getTimestamp() {
+            return timestamp;
+        }
     }
 
     /**
      * Mathematical pattern analysis results
      */
     public static class MathPatternAnalysis {
+
         private final String userId;
-        private final List<AttentionRecognitionFramework.Pattern> cognitivePatterns;
+        private final List<
+            AttentionRecognitionFramework.Pattern
+        > cognitivePatterns;
         private final Map<String, Double> learningTrends;
         private final long analysisTime;
 
-        public MathPatternAnalysis(String userId,
-                                 List<AttentionRecognitionFramework.Pattern> cognitivePatterns,
-                                 Map<String, Double> learningTrends) {
+        public MathPatternAnalysis(
+            String userId,
+            List<AttentionRecognitionFramework.Pattern> cognitivePatterns,
+            Map<String, Double> learningTrends
+        ) {
             this.userId = userId;
             this.cognitivePatterns = new ArrayList<>(cognitivePatterns);
             this.learningTrends = new HashMap<>(learningTrends);
@@ -588,30 +812,40 @@ public class CognitiveDiscreteMathLibrary {
         }
 
         // Getters
-        public String getUserId() { return userId; }
-        public List<AttentionRecognitionFramework.Pattern> getCognitivePatterns() {
+        public String getUserId() {
+            return userId;
+        }
+
+        public List<
+            AttentionRecognitionFramework.Pattern
+        > getCognitivePatterns() {
             return new ArrayList<>(cognitivePatterns);
         }
+
         public Map<String, Double> getLearningTrends() {
             return new HashMap<>(learningTrends);
         }
-        public long getAnalysisTime() { return analysisTime; }
+
+        public long getAnalysisTime() {
+            return analysisTime;
+        }
     }
 
     /**
      * Types of mathematical sessions
      */
     public enum MathSessionType {
-        PROBLEM_SOLVING,    // Focused problem-solving sessions
-        CONCEPT_LEARNING,   // Concept introduction and explanation
+        PROBLEM_SOLVING, // Focused problem-solving sessions
+        CONCEPT_LEARNING, // Concept introduction and explanation
         PRACTICE_EXERCISES, // Drill and practice
-        EXPLORATION        // Open-ended mathematical exploration
+        EXPLORATION, // Open-ended mathematical exploration
     }
 
     /**
      * Comprehensive library analytics
      */
     public static class CognitiveLibraryAnalytics {
+
         private final AttentionRecognitionFramework.SystemAnalysis cognitiveAnalysis;
         private final ScalableConcurrentGraphEngine.GraphStatistics graphStats;
         private final LearningAnalytics educationAnalytics;
@@ -621,12 +855,13 @@ public class CognitiveDiscreteMathLibrary {
         private final long timestamp;
 
         public CognitiveLibraryAnalytics(
-                AttentionRecognitionFramework.SystemAnalysis cognitiveAnalysis,
-                ScalableConcurrentGraphEngine.GraphStatistics graphStats,
-                LearningAnalytics educationAnalytics,
-                CognitiveRecommendationEngine.RecommendationStatistics recommendationStats,
-                int activeSessionCount,
-                double systemEfficiency) {
+            AttentionRecognitionFramework.SystemAnalysis cognitiveAnalysis,
+            ScalableConcurrentGraphEngine.GraphStatistics graphStats,
+            LearningAnalytics educationAnalytics,
+            CognitiveRecommendationEngine.RecommendationStatistics recommendationStats,
+            int activeSessionCount,
+            double systemEfficiency
+        ) {
             this.cognitiveAnalysis = cognitiveAnalysis;
             this.graphStats = graphStats;
             this.educationAnalytics = educationAnalytics;
@@ -637,18 +872,42 @@ public class CognitiveDiscreteMathLibrary {
         }
 
         // Getters
-        public AttentionRecognitionFramework.SystemAnalysis getCognitiveAnalysis() { return cognitiveAnalysis; }
-        public ScalableConcurrentGraphEngine.GraphStatistics getGraphStats() { return graphStats; }
-        public LearningAnalytics getEducationAnalytics() { return educationAnalytics; }
-        public CognitiveRecommendationEngine.RecommendationStatistics getRecommendationStats() { return recommendationStats; }
-        public int getActiveSessionCount() { return activeSessionCount; }
-        public double getSystemEfficiency() { return systemEfficiency; }
-        public long getTimestamp() { return timestamp; }
+        public AttentionRecognitionFramework.SystemAnalysis getCognitiveAnalysis() {
+            return cognitiveAnalysis;
+        }
+
+        public ScalableConcurrentGraphEngine.GraphStatistics getGraphStats() {
+            return graphStats;
+        }
+
+        public LearningAnalytics getEducationAnalytics() {
+            return educationAnalytics;
+        }
+
+        public CognitiveRecommendationEngine.RecommendationStatistics getRecommendationStats() {
+            return recommendationStats;
+        }
+
+        public int getActiveSessionCount() {
+            return activeSessionCount;
+        }
+
+        public double getSystemEfficiency() {
+            return systemEfficiency;
+        }
+
+        public long getTimestamp() {
+            return timestamp;
+        }
 
         @Override
         public String toString() {
-            return String.format("CognitiveLibraryAnalytics{sessions=%d, efficiency=%.3f, cognitiveState=%s}",
-                activeSessionCount, systemEfficiency, cognitiveAnalysis.getSystemState());
+            return String.format(
+                "CognitiveLibraryAnalytics{sessions=%d, efficiency=%.3f, cognitiveState=%s}",
+                activeSessionCount,
+                systemEfficiency,
+                cognitiveAnalysis.getSystemState()
+            );
         }
     }
 }
