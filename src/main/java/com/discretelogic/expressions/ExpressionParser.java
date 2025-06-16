@@ -253,4 +253,18 @@ public class ExpressionParser {
         
         return truthTable;
     }
+    
+    /**
+     * Parses a string expression into an Expression object.
+     *
+     * @param expression the boolean expression to parse
+     * @return an Expression object representing the parsed expression
+     */
+    public static com.discretelogic.model.Expression parseExpression(String expression) {
+        // Extract variables
+        List<String> variables = extractVariables(expression);
+        
+        // Create and return an Expression object
+        return new com.discretelogic.model.Expression(expression, variables);
+    }
 } 

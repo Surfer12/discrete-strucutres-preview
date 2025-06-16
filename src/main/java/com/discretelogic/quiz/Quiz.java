@@ -13,9 +13,9 @@ import java.util.Scanner;
 public class Quiz {
     
     private final String topic;
-    private final List<Question> questions;
+    private final List<QuizQuestion> questions;
     private int score;
-    private static final Map<String, List<Question>> questionBank = new HashMap<>();
+    private static final Map<String, List<QuizQuestion>> questionBank = new HashMap<>();
     
     static {
         initializeQuestionBank();
@@ -23,13 +23,13 @@ public class Quiz {
     
     private static void initializeQuestionBank() {
         // Set Theory Questions
-        List<Question> setQuestions = new ArrayList<>();
-        setQuestions.add(new Question(
+        List<QuizQuestion> setQuestions = new ArrayList<>();
+        setQuestions.add(new QuizQuestion(
             "What is the union of sets A = {1, 2, 3} and B = {3, 4, 5}?",
             "{1, 2, 3, 4, 5}",
             new String[]{"{1, 2, 3, 4, 5}", "{1, 2, 4, 5}", "{3}", "{1, 2, 3, 3, 4, 5}"}
         ));
-        setQuestions.add(new Question(
+        setQuestions.add(new QuizQuestion(
             "What is the intersection of sets A = {1, 2, 3, 4} and B = {3, 4, 5, 6}?",
             "{3, 4}",
             new String[]{"{3, 4}", "{1, 2, 5, 6}", "{}", "{1, 2, 3, 4, 5, 6}"}
@@ -37,13 +37,13 @@ public class Quiz {
         questionBank.put("sets", setQuestions);
         
         // Boolean Algebra Questions
-        List<Question> booleanQuestions = new ArrayList<>();
-        booleanQuestions.add(new Question(
+        List<QuizQuestion> booleanQuestions = new ArrayList<>();
+        booleanQuestions.add(new QuizQuestion(
             "What is the result of (A AND B) OR (NOT A)?",
             "B OR (NOT A)",
             new String[]{"B OR (NOT A)", "A", "B", "NOT B"}
         ));
-        booleanQuestions.add(new Question(
+        booleanQuestions.add(new QuizQuestion(
             "According to De Morgan's law, what is the equivalent of NOT(A OR B)?",
             "(NOT A) AND (NOT B)",
             new String[]{"(NOT A) AND (NOT B)", "(NOT A) OR (NOT B)", "A AND B", "NOT(A AND B)"}
@@ -51,32 +51,18 @@ public class Quiz {
         questionBank.put("boolean", booleanQuestions);
         
         // Logic Gates Questions
-        List<Question> gateQuestions = new ArrayList<>();
-        gateQuestions.add(new Question(
-            "Which gate outputs 1 only when exactly one of its inputs is 1?",
-            "XOR",
-            new String[]{"XOR", "AND", "OR", "NAND"}
+        List<QuizQuestion> gateQuestions = new ArrayList<>();
+        gateQuestions.add(new QuizQuestion(
+            "Which gate outputs 1 only when all inputs are 1?",
+            "AND",
+            new String[]{"AND", "OR", "NOT", "XOR"}
         ));
-        gateQuestions.add(new Question(
-            "Which of these gates is universal (can be used to build any other logic function)?",
-            "NAND",
-            new String[]{"NAND", "XOR", "AND", "Buffer"}
+        gateQuestions.add(new QuizQuestion(
+            "What is the output of a NAND gate when both inputs are 1?",
+            "0",
+            new String[]{"0", "1", "Undefined", "Both"}
         ));
         questionBank.put("gates", gateQuestions);
-        
-        // Number System Questions
-        List<Question> numberQuestions = new ArrayList<>();
-        numberQuestions.add(new Question(
-            "What is the binary representation of decimal 25?",
-            "11001",
-            new String[]{"11001", "10101", "10011", "11010"}
-        ));
-        numberQuestions.add(new Question(
-            "What is the hexadecimal representation of binary 1010 1111?",
-            "AF",
-            new String[]{"AF", "A7", "BF", "9F"}
-        ));
-        questionBank.put("numbers", numberQuestions);
     }
     
     /**
@@ -86,92 +72,55 @@ public class Quiz {
      */
     public Quiz(String topic) {
         this.topic = topic.toLowerCase();
-        this.questions = questionBank.getOrDefault(this.topic, new ArrayList<>());
+        this.questions = new ArrayList<>(questionBank.getOrDefault(this.topic, new ArrayList<>()));
         Collections.shuffle(this.questions);
         this.score = 0;
     }
     
     /**
-     * Starts the quiz.
+     * Starts the quiz and handles user interaction.
      */
     public void start() {
         if (questions.isEmpty()) {
             System.out.println("No questions available for topic: " + topic);
-            System.out.println("Available topics: " + String.join(", ", questionBank.keySet()));
             return;
         }
         
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Starting quiz on " + topic + " (" + questions.size() + " questions)");
-        System.out.println("----------------------------------------");
+        System.out.println("\nQUIZ: " + topic.toUpperCase() + "\n");
         
         for (int i = 0; i < questions.size(); i++) {
-            Question q = questions.get(i);
-            System.out.println("Question " + (i + 1) + ": " + q.getQuestion());
+            QuizQuestion question = questions.get(i);
+            System.out.println("Question " + (i + 1) + ":");
+            System.out.println(question.getQuestion());
+            System.out.println();
             
-            String[] options = q.getOptions();
-            for (int j = 0; j < options.length; j++) {
-                System.out.println((j + 1) + ". " + options[j]);
+            String[] choices = question.getChoices();
+            for (int j = 0; j < choices.length; j++) {
+                System.out.println((j + 1) + ") " + choices[j]);
             }
             
-            System.out.print("Your answer (1-" + options.length + "): ");
+            System.out.print("\nYour answer (1-" + choices.length + "): ");
             try {
                 int answer = Integer.parseInt(scanner.nextLine().trim());
-                if (answer >= 1 && answer <= options.length) {
-                    if (options[answer - 1].equals(q.getCorrectAnswer())) {
-                        System.out.println("Correct!");
+                if (answer >= 1 && answer <= choices.length) {
+                    if (choices[answer - 1].equals(question.getCorrectAnswer())) {
+                        System.out.println("Correct!\n");
                         score++;
                     } else {
-                        System.out.println("Incorrect. The correct answer is: " + q.getCorrectAnswer());
+                        System.out.println("Incorrect. The correct answer is: " + question.getCorrectAnswer() + "\n");
                     }
                 } else {
-                    System.out.println("Invalid option. The correct answer is: " + q.getCorrectAnswer());
+                    System.out.println("Invalid choice. The correct answer is: " + question.getCorrectAnswer() + "\n");
                 }
             } catch (NumberFormatException e) {
-                System.out.println("Invalid input. The correct answer is: " + q.getCorrectAnswer());
+                System.out.println("Invalid input. The correct answer is: " + question.getCorrectAnswer() + "\n");
             }
-            System.out.println("----------------------------------------");
         }
         
-        System.out.println("Quiz completed!");
-        System.out.println("Your score: " + score + " out of " + questions.size());
+        System.out.println("Quiz complete!");
+        System.out.println("Your score: " + score + "/" + questions.size());
         double percentage = (double) score / questions.size() * 100;
-        System.out.println("Percentage: " + String.format("%.1f", percentage) + "%");
+        System.out.printf("Percentage: %.1f%%\n", percentage);
     }
-    
-    /**
-     * Returns the list of available quiz topics.
-     *
-     * @return available quiz topics
-     */
-    public static List<String> getAvailableTopics() {
-        return new ArrayList<>(questionBank.keySet());
-    }
-    
-    /**
-     * Inner class representing a quiz question.
-     */
-    private static class Question {
-        private final String question;
-        private final String correctAnswer;
-        private final String[] options;
-        
-        public Question(String question, String correctAnswer, String[] options) {
-            this.question = question;
-            this.correctAnswer = correctAnswer;
-            this.options = options;
-        }
-        
-        public String getQuestion() {
-            return question;
-        }
-        
-        public String getCorrectAnswer() {
-            return correctAnswer;
-        }
-        
-        public String[] getOptions() {
-            return options;
-        }
-    }
-} 
+}

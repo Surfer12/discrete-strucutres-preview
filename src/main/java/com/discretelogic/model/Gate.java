@@ -7,7 +7,14 @@ import java.util.List;
  * This class provides functionality for evaluating different types of logic gates.
  */
 public class Gate {
-    private final GateType type;
+    /**
+     * Represents the type of logic gate.
+     */
+    public enum GateType {
+        AND, OR, NOT, NAND, NOR, XOR, XNOR
+    }
+
+    private GateType type;
     private final String symbol;
 
     /**

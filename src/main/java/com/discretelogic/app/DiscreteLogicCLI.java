@@ -22,10 +22,9 @@ import com.discretelogic.discrete.sets.SetOperations;
 import com.discretelogic.tutorial.Tutorial;
 import com.discretelogic.quiz.Quiz;
 import com.discretelogic.model.GateType;
-import com.discretelogic.LogicGateSim.LogicGate;
 import com.discretelogic.expressions.ExpressionParser;
-import com.discretelogic.algebra.BooleanAlgebra;
-import com.discretelogic.numbersystems.NumberSystemConverter;
+import com.discretelogic.core.BooleanAlgebra;
+import com.discretelogic.model.TruthTable;
 
 /**
  * Main CLI application for discrete logic mathematics operations.
@@ -521,7 +520,7 @@ public class DiscreteLogicCLI implements Callable<Integer> {
                 return 0;
             }
 
-            Quiz quiz = new Quiz(topic, questionCount);
+            Quiz quiz = new Quiz(topic);
             quiz.start();
             return 0;
         }

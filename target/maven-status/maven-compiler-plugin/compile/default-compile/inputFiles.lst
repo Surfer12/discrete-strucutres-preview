@@ -21,7 +21,9 @@
 /Users/ryandavidoates/discrete-strucutres-preview/src/main/java/com/discretelogic/fluid/analysis/FlowAnalysis.java
 /Users/ryandavidoates/discrete-strucutres-preview/src/main/java/com/discretelogic/model/Gate.java
 /Users/ryandavidoates/discrete-strucutres-preview/src/main/java/com/discretelogic/cognitive/emergence/CognitiveState.java
+/Users/ryandavidoates/discrete-strucutres-preview/src/main/java/com/discretelogic/model/TruthTable.java
 /Users/ryandavidoates/discrete-strucutres-preview/src/main/java/com/discretelogic/fluid/dynamics/FluidEmergence.java
+/Users/ryandavidoates/discrete-strucutres-preview/src/main/java/com/discretelogic/quiz/QuizQuestion.java
 /Users/ryandavidoates/discrete-strucutres-preview/src/main/java/com/discretelogic/discrete/tables/TruthTable.java
 /Users/ryandavidoates/discrete-strucutres-preview/src/main/java/com/discretelogic/discrete/logic/FlowStateLogic.java
 /Users/ryandavidoates/discrete-strucutres-preview/src/main/java/com/discretelogic/utils/TableFormatter.java
