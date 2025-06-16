@@ -13,6 +13,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Enhanced MathExpression with cognitive processing, lexical network integration,
@@ -81,6 +83,11 @@ public class MathExpression extends Expression {
         this.processingExecutor = Executors.newFixedThreadPool(3);
 
         initializeExpression(expressionString);
+    }
+
+    // Add no-argument constructor
+    public MathExpression() {
+        this("", new AttentionRecognitionFramework(3));
     }
 
     /**
@@ -1652,6 +1659,21 @@ public class MathExpression extends Expression {
         public long getTimestamp() {
             return timestamp;
         }
+
+        public double getAttentionDrift() {
+            return attentionDrifts.stream()
+                .mapToDouble(AttentionDrift::getMagnitude)
+                .average()
+                .orElse(0.0);
+        }
+
+        public double getSystemHealth() {
+            return switch (systemHealth) {
+                case HEALTHY -> 1.0;
+                case WARNING -> 0.5;
+                case CRITICAL -> 0.0;
+            };
+        }
     }
 
     /**
@@ -1735,6 +1757,10 @@ public class MathExpression extends Expression {
             return new HashMap<>(cognitiveTags);
         }
 
+        public double getOptimizationScore() {
+            return psiValue;
+        }
+
         @Override
         public String toString() {
             return String.format(
@@ -1766,5 +1792,43 @@ public class MathExpression extends Expression {
             "power_set",
             Map.of("operation", 1.0, "complexity", 0.8, "familiarity", 0.4)
         );
+    }
+
+    // Add missing methods to match demo calls
+    public double calculateLexicalViability(String expr, ArrayList<Object> results) {
+        return viabilityComponent.calculateViability(expr, processingState, new ArrayList<>());
+    }
+
+    public List<String> getNotationSuggestions(String expr) {
+        LexicalSuggestion suggestion = lexicalNetwork.getSuggestion(expr);
+        return List.of(suggestion.getSuggestion());
+    }
+
+    public PsiOptimizationResult optimizePsi(String expr) {
+        try {
+            return processWithPsiOptimization().get();
+        } catch (Exception e) {
+            throw new RuntimeException("Psi optimization failed", e);
+        }
+    }
+
+    public String optimizeExpression(String expr) {
+        return viabilityComponent.optimizeNotation(expr, processingState);
+    }
+
+    public double getOptimizationScore(String expr) {
+        PsiOptimizationResult result = optimizePsi(expr);
+        return result.getPsiValue();
+    }
+
+    public MetaAnalysis analyzeMetaController(String expr) {
+        List<ProcessingResult> results = cognitiveFramework.process(expr, 5);
+        return metaController.analyze(results, this);
+    }
+
+    public void restoreAttention() {
+        // Implement a basic attention restoration mechanism
+        processingState = new CognitiveState(0.5, 0.5, 0.1);
+        cognitiveTags.put("attentionRestored", 1.0);
     }
 }
