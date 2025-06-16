@@ -3,6 +3,9 @@ package edu.ucsb.cs.cognitivedm.patterns;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import com.discretelogic.util.LoggingUtil;
+import edu.ucsb.cs.cognitivedm.framework.CognitiveFrameworkTypes.Pattern;
+import org.slf4j.Logger;
 
 /**
  * PatternDetector for cognitive-inspired discrete mathematics
@@ -15,6 +18,8 @@ import java.util.stream.IntStream;
  * @version 1.0
  */
 public class PatternDetector {
+    private static final Logger LOGGER = LoggingUtil.getLogger(PatternDetector.class);
+
     private final int scale;
     private final double hurstThreshold;
     private final double selfSimilarityThreshold;
@@ -172,51 +177,62 @@ public class PatternDetector {
     /**
      * Analyze fractal patterns using Hurst exponent and self-similarity
      */
-    private List<Pattern> analyzeFractalPatterns(List<double[]> timeSeries) {
+    public List<Pattern> analyzeFractalPatterns(List<double[]> timeSeries) {
+        LOGGER.debug("Analyzing fractal patterns in time series with {} data points", timeSeries.size());
+        
         List<Pattern> patterns = new ArrayList<>();
 
-        // Hurst exponent calculation for fractal analysis
-        double hurstExponent = calculateHurstExponent(timeSeries);
-        if (hurstExponent > hurstThreshold && hurstExponent < 1.0) {
-            Pattern fractalPattern = new Pattern(
-                "FractalPersistence",
-                "Fractal persistence pattern with Hurst exponent " + hurstExponent,
-                scale,
-                Math.abs(hurstExponent - 0.5) * 2 // Confidence based on deviation from 0.5
-            );
-            fractalPattern.addCharacteristic("hurst_exponent", hurstExponent);
-            fractalPattern.addCharacteristic("persistence_type",
-                hurstExponent > 0.5 ? "persistent" : "anti-persistent");
-            patterns.add(fractalPattern);
+        if (timeSeries == null || timeSeries.size() < 10) {
+            LOGGER.warn("Insufficient data points for pattern analysis");
+            return patterns;
         }
 
-        // Recursive self-similarity check
-        double selfSimilarity = analyzeSelfSimilarity(timeSeries);
-        if (selfSimilarity > selfSimilarityThreshold) {
-            Pattern selfSimilarPattern = new Pattern(
-                "RecursiveSelfSimilarity",
-                "Self-similarity pattern with coefficient " + String.format("%.3f", selfSimilarity),
-                scale,
-                selfSimilarity
-            );
-            selfSimilarPattern.addCharacteristic("self_similarity", selfSimilarity);
-            patterns.add(selfSimilarPattern);
-        }
+        try {
+            // Hurst exponent analysis
+            double hurstExponent = calculateHurstExponent(timeSeries);
+            double hurstThreshold = 0.6; // Configurable threshold
 
-        // Multi-fractal analysis
-        double multiFractalDimension = calculateMultiFractalDimension(timeSeries);
-        if (multiFractalDimension > 1.5 && multiFractalDimension < 2.5) {
-            Pattern multiFractalPattern = new Pattern(
-                "MultiFractal",
-                "Multi-fractal pattern with dimension " + multiFractalDimension,
-                scale,
-                Math.min(1.0, (multiFractalDimension - 1.0) / 1.5)
-            );
-            multiFractalPattern.addCharacteristic("fractal_dimension", multiFractalDimension);
-            patterns.add(multiFractalPattern);
-        }
+            // Ensure hurstExponent is a valid double
+            if (!Double.isNaN(hurstExponent) && hurstExponent > hurstThreshold && hurstExponent < 1.0) {
+                Pattern fractalPattern = new Pattern(
+                    "FractalPersistence",
+                    "Fractal persistence pattern with Hurst exponent " + hurstExponent,
+                    calculatePatternConfidence(hurstExponent)
+                );
+                patterns.add(fractalPattern);
+            }
 
-        return patterns;
+            // Recursive self-similarity check
+            double selfSimilarity = analyzeSelfSimilarity(timeSeries);
+            if (selfSimilarity > selfSimilarityThreshold) {
+                Pattern selfSimilarPattern = new Pattern(
+                    "RecursiveSelfSimilarity",
+                    "Self-similarity pattern with coefficient " + String.format("%.3f", selfSimilarity),
+                    scale,
+                    selfSimilarity
+                );
+                selfSimilarPattern.addCharacteristic("self_similarity", selfSimilarity);
+                patterns.add(selfSimilarPattern);
+            }
+
+            // Multi-fractal analysis
+            double multiFractalDimension = calculateMultiFractalDimension(timeSeries);
+            if (multiFractalDimension > 1.5 && multiFractalDimension < 2.5) {
+                Pattern multiFractalPattern = new Pattern(
+                    "MultiFractal",
+                    "Multi-fractal pattern with dimension " + multiFractalDimension,
+                    scale,
+                    Math.min(1.0, (multiFractalDimension - 1.0) / 1.5)
+                );
+                multiFractalPattern.addCharacteristic("fractal_dimension", multiFractalDimension);
+                patterns.add(multiFractalPattern);
+            }
+
+            return patterns;
+        } catch (Exception e) {
+            LOGGER.error("Error analyzing fractal patterns", e);
+            return patterns;
+        }
     }
 
     /**
@@ -716,5 +732,17 @@ public class PatternDetector {
 
         // Calculate slope using linear regression
         return Math.abs(calculateTrend(logCounts));
+    }
+
+    /**
+     * Calculate pattern confidence based on Hurst exponent.
+     *
+     * @param hurstExponent Calculated Hurst exponent
+     * @return Confidence score
+     */
+    private double calculatePatternConfidence(double hurstExponent) {
+        // Map Hurst exponent to confidence score
+        // 0.5 is a neutral point, above indicates persistence, below indicates mean reversion
+        return Math.abs(hurstExponent - 0.5) * 2;
     }
 }

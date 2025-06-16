@@ -1,15 +1,16 @@
 package edu.ucsb.cs.cognitivedm;
 
+import com.discretelogic.util.LoggingUtil;
 import edu.ucsb.cs.cognitivedm.education.CognitiveEducationFramework;
-import edu.ucsb.cs.cognitivedm.education.CognitiveEducationFramework.*;
-import edu.ucsb.cs.cognitivedm.framework.AttentionRecognitionFramework;
-import edu.ucsb.cs.cognitivedm.framework.AttentionRecognitionFramework.CognitiveState;
-import edu.ucsb.cs.cognitivedm.framework.AttentionRecognitionFramework.ProcessingResult;
+import edu.ucsb.cs.cognitivedm.framework.CognitiveFrameworkInterfaces.*;
+import edu.ucsb.cs.cognitivedm.framework.CognitiveFrameworkTypes.*;
 import edu.ucsb.cs.cognitivedm.graph.ScalableConcurrentGraphEngine;
 import edu.ucsb.cs.cognitivedm.patterns.PatternDetector;
 import edu.ucsb.cs.cognitivedm.recommendations.CognitiveRecommendationEngine;
-import edu.ucsb.cs.cognitivedm.recommendations.CognitiveRecommendationEngine.*;
 import edu.ucsb.cs.cognitivedm.sessions.CognitiveSessionManager;
+
+import org.slf4j.Logger;
+
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -31,6 +32,8 @@ import java.util.stream.Collectors;
  * - Flow state optimization for mathematical problem-solving
  */
 public class CognitiveDiscreteMathLibrary {
+
+    private static final Logger LOGGER = LoggingUtil.getLogger(CognitiveDiscreteMathLibrary.class);
 
     private final AttentionRecognitionFramework cognitiveFramework;
     private final ScalableConcurrentGraphEngine<MathExpression> graphEngine;
@@ -55,44 +58,34 @@ public class CognitiveDiscreteMathLibrary {
         int cognitiveScales,
         int threadPoolSize
     ) {
+        LOGGER.info("Initializing Cognitive Discrete Mathematics Library");
+        
         this.cognitiveScales = cognitiveScales;
         this.threadPoolSize = threadPoolSize;
         this.defaultAttentionThreshold = 0.6;
         this.libraryConfig = new ConcurrentHashMap<>();
 
-        // Initialize core components
-        this.cognitiveFramework = new AttentionRecognitionFramework(
-            cognitiveScales
-        );
-        this.graphEngine = new ScalableConcurrentGraphEngine<>(
-            threadPoolSize,
-            cognitiveScales
-        );
-        this.educationFramework = new CognitiveEducationFramework(
-            cognitiveFramework
-        );
-        this.recommendationEngine = new CognitiveRecommendationEngine(
-            cognitiveFramework,
-            educationFramework
-        );
-        this.expressionProcessor = new MathExpressionProcessor(
-            cognitiveFramework
-        );
-        this.sessionManager = new CognitiveSessionManager(cognitiveFramework);
+        // Initialize core components with error handling
+        try {
+            this.cognitiveFramework = new AttentionRecognitionFramework(cognitiveScales);
+            this.graphEngine = new ScalableConcurrentGraphEngine<>(threadPoolSize, cognitiveScales);
+            this.educationFramework = new CognitiveEducationFramework(cognitiveFramework);
+            this.recommendationEngine = new CognitiveRecommendationEngine(cognitiveFramework, educationFramework);
+            this.expressionProcessor = new MathExpressionProcessor(cognitiveFramework);
+            this.sessionManager = new CognitiveSessionManager(cognitiveFramework);
 
-        // Setup component integration
-        setupComponentIntegration();
+            // Setup component integration
+            setupComponentIntegration();
 
-        // Initialize with sample mathematical content
-        initializeMathematicalContent();
+            // Initialize with sample mathematical content
+            initializeMathematicalContent();
 
-        System.out.println(
-            "🧠 Cognitive Discrete Mathematics Library initialized with " +
-            cognitiveScales +
-            " cognitive scales and " +
-            threadPoolSize +
-            " threads"
-        );
+            LOGGER.info("Cognitive Discrete Mathematics Library initialized with {} cognitive scales and {} threads", 
+                cognitiveScales, threadPoolSize);
+        } catch (Exception e) {
+            LOGGER.error("Failed to initialize Cognitive Discrete Mathematics Library", e);
+            throw new IllegalStateException("Library initialization failed", e);
+        }
     }
 
     /**
@@ -202,12 +195,13 @@ public class CognitiveDiscreteMathLibrary {
      *
      * @param expression Mathematical expression string
      * @param userId User identifier for personalization
-     * @return Enhanced mathematical expression with cognitive processing
+     * @return CompletableFuture with processed MathExpression
      */
     public CompletableFuture<MathExpression> processExpression(
         String expression,
         String userId
     ) {
+        LOGGER.debug("Processing expression '{}' for user {}", expression, userId);
         return CompletableFuture.supplyAsync(() -> {
             try {
                 // Get or create user session
@@ -256,14 +250,8 @@ public class CognitiveDiscreteMathLibrary {
                     return mathExpr; // Return original if processing fails
                 }
             } catch (Exception e) {
-                System.err.println(
-                    "Error processing expression: " + e.getMessage()
-                );
-                // Return basic expression on error
-                return expressionProcessor.createMathExpression(
-                    expression,
-                    new CognitiveState(0.5, 0.5, 0.3)
-                );
+                LOGGER.error("Error processing expression '{}' for user {}", expression, userId, e);
+                throw new CompletionException(e);
             }
         });
     }
