@@ -89,19 +89,19 @@ public class KarnaughMap {
                 break;
             case 4:
                 // Gray code for rows: 00, 01, 11, 10
-                boolean var0 = assignment.get(variables.get(0));
+                boolean var0_4 = assignment.get(variables.get(0));
                 boolean var1_4 = assignment.get(variables.get(1));
-                if (!var0 && !var1_4) row = 0;      // 00
-                else if (!var0 && var1_4) row = 1;  // 01
-                else if (var0 && var1_4) row = 2;   // 11
+                if (!var0_4 && !var1_4) row = 0;      // 00
+                else if (!var0_4 && var1_4) row = 1;  // 01
+                else if (var0_4 && var1_4) row = 2;   // 11
                 else row = 3;                       // 10
 
                 // Gray code for columns: 00, 01, 11, 10
                 boolean var2_4 = assignment.get(variables.get(2));
-                boolean var3 = assignment.get(variables.get(3));
-                if (!var2_4 && !var3) col = 0;      // 00
-                else if (!var2_4 && var3) col = 1;  // 01
-                else if (var2_4 && var3) col = 2;   // 11
+                boolean var3_4 = assignment.get(variables.get(3));
+                if (!var2_4 && !var3_4) col = 0;      // 00
+                else if (!var2_4 && var3_4) col = 1;  // 01
+                else if (var2_4 && var3_4) col = 2;   // 11
                 else col = 3;                     // 10
                 break;
         }

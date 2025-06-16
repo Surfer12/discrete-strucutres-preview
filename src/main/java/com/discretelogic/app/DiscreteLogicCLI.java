@@ -1,11 +1,12 @@
 package com.discretelogic.app;
 
 import com.discretelogic.discrete.tables.KarnaughMap;
-import com.discretelogic.logicgatesim.LogicGate;
+import com.discretelogic.LogicGateSim.LogicGate;
 import com.discretelogic.model.*;
 import com.discretelogic.discrete.sets.*;
-import com.discretelogic.logicgatesim.NumberSystemConverter;
-import com.discretelogic.core.*;
+import com.discretelogic.LogicGateSim.NumberSystemConverter;
+import com.discretelogic.core.ExpressionParser;
+import com.discretelogic.core.BooleanAlgebra;
 // import com.discretelogic.educational.*; // This package seems to not exist in the new structure
 
 import picocli.CommandLine;
@@ -30,12 +31,12 @@ import java.util.concurrent.Callable;
         DiscreteLogicCLI.TruthTableCommand.class,
         DiscreteLogicCLI.BooleanAlgebraCommand.class,
         DiscreteLogicCLI.LogicGateCommand.class,
-        DiscreteLogicCLI.SetOperationsCommand.class,
+        // DiscreteLogicCLI.SetOperationsCommand.class,
         DiscreteLogicCLI.NumberConversionCommand.class,
-        DiscreteLogicCLI.CombinatoricsCommand.class,
-        DiscreteLogicCLI.KarnaughMapCommand.class,
-        DiscreteLogicCLI.TutorialCommand.class,
-        DiscreteLogicCLI.QuizCommand.class
+        // DiscreteLogicCLI.CombinatoricsCommand.class,
+        DiscreteLogicCLI.KarnaughMapCommand.class
+        // DiscreteLogicCLI.TutorialCommand.class,
+        // DiscreteLogicCLI.QuizCommand.class
     }
 )
 public class DiscreteLogicCLI implements Callable<Integer> {
@@ -197,7 +198,7 @@ public class DiscreteLogicCLI implements Callable<Integer> {
 
             if (gateType != null) {
                 try {
-                    Gate.GateType type = Gate.GateType.valueOf(gateType.toUpperCase());
+                    GateType type = GateType.valueOf(gateType.toUpperCase());
                     System.out.println(LogicGate.generateGateTruthTable(type));
                     return 0;
                 } catch (IllegalArgumentException e) {
@@ -208,67 +209,6 @@ public class DiscreteLogicCLI implements Callable<Integer> {
 
             System.out.println(LogicGate.listGateTypes());
             return 0;
-        }
-    }
-
-    @Command(name = "sets", description = "Perform set theory operations")
-    static class SetOperationsCommand implements Callable<Integer> {
-
-        @Option(names = {"-d", "--demo"}, description = "Run demonstration")
-        private boolean demo;
-
-        @Option(names = {"-p", "--power-set"}, description = "Show power set demonstration")
-        private boolean powerSet;
-
-        @Option(names = {"-m", "--demorgan"}, description = "Verify De Morgan's laws")
-        private boolean deMorgan;
-
-        @Option(names = {"-a", "--analyze"}, description = "Analyze two sets", arity = "2")
-        private List<String> analyzeSets;
-
-        @Override
-        public Integer call() {
-            if (demo) {
-                System.out.println(SetOperations.demonstrateBasicOperations());
-                return 0;
-            }
-
-            if (powerSet) {
-                System.out.println(SetOperations.demonstratePowerSet());
-                return 0;
-            }
-
-            if (deMorgan) {
-                System.out.println(SetOperations.verifyDeMorganLaws());
-                return 0;
-            }
-
-            if (analyzeSets != null && analyzeSets.size() == 2) {
-                // Parse sets from string representation
-                LogicalSet<Integer> setA = parseIntegerSet("A", analyzeSets.get(0));
-                LogicalSet<Integer> setB = parseIntegerSet("B", analyzeSets.get(1));
-                System.out.println(SetOperations.analyzeSetRelationships(setA, setB));
-                return 0;
-            }
-
-            System.out.println(SetOperations.demonstrateBasicOperations());
-            return 0;
-        }
-
-        private LogicalSet<Integer> parseIntegerSet(String name, String setString) {
-            LogicalSet<Integer> set = new LogicalSet<>(name);
-            setString = setString.replaceAll("[{}\\s]", "");
-            if (!setString.isEmpty()) {
-                String[] elements = setString.split(",");
-                for (String element : elements) {
-                    try {
-                        set.add(Integer.parseInt(element.trim()));
-                    } catch (NumberFormatException e) {
-                        // Skip invalid elements
-                    }
-                }
-            }
-            return set;
         }
     }
 
@@ -363,79 +303,6 @@ public class DiscreteLogicCLI implements Callable<Integer> {
         }
     }
 
-    @Command(name = "combinatorics", description = "Perform combinatorial calculations")
-    static class CombinatoricsCommand implements Callable<Integer> {
-
-        @Option(names = {"-n"}, description = "Value of n")
-        private Integer n;
-
-        @Option(names = {"-r"}, description = "Value of r")
-        private Integer r;
-
-        @Option(names = {"-f", "--factorial"}, description = "Calculate factorial")
-        private boolean factorial;
-
-        @Option(names = {"-p", "--permutations"}, description = "Calculate permutations P(n,r)")
-        private boolean permutations;
-
-        @Option(names = {"-c", "--combinations"}, description = "Calculate combinations C(n,r)")
-        private boolean combinations;
-
-        @Option(names = {"--pascal"}, description = "Generate Pascal's triangle")
-        private boolean pascal;
-
-        @Option(names = {"--pigeonhole"}, description = "Demonstrate pigeonhole principle")
-        private boolean pigeonhole;
-
-        @Option(names = {"--derangements"}, description = "Calculate derangements")
-        private boolean derangements;
-
-        @Option(names = {"--table"}, description = "Show combinatorics table")
-        private boolean table;
-
-        @Override
-        public Integer call() {
-            if (pigeonhole) {
-                System.out.println(Combinatorics.demonstratePigeonholePrinciple());
-                return 0;
-            }
-
-            if (table) {
-                System.out.println(Combinatorics.createCombinatoricsTable(10));
-                return 0;
-            }
-
-            if (n == null) {
-                System.err.println("Please specify -n value");
-                return 1;
-            }
-
-            if (factorial) {
-                System.out.println(n + "! = " + Combinatorics.factorial(n));
-            }
-
-            if (pascal) {
-                System.out.println(Combinatorics.generatePascalsTriangle(n));
-            }
-
-            if (derangements) {
-                System.out.println(Combinatorics.demonstrateDerangements(n));
-            }
-
-            if (r != null) {
-                if (permutations) {
-                    System.out.println("P(" + n + "," + r + ") = " + Combinatorics.permutations(n, r));
-                }
-
-                if (combinations) {
-                    System.out.println("C(" + n + "," + r + ") = " + Combinatorics.combinations(n, r));
-                }
-            }
-
-            return 0;
-        }
-    }
-
     @Command(name = "karnaugh", description = "Generate and analyze Karnaugh maps")
     static class KarnaughMapCommand implements Callable<Integer> {
 
@@ -472,49 +339,6 @@ public class DiscreteLogicCLI implements Callable<Integer> {
                 System.err.println("Error: " + e.getMessage());
                 return 1;
             }
-        }
-    }
-
-    @Command(name = "tutorial", description = "Interactive tutorials on discrete mathematics")
-    static class TutorialCommand implements Callable<Integer> {
-
-        @Option(names = {"-t", "--topic"}, description = "Tutorial topic: boolean, sets, logic-gates, number-systems")
-        private String topic;
-
-        @Option(names = {"-l", "--list"}, description = "List available tutorials")
-        private boolean list;
-
-        @Override
-        public Integer call() {
-            if (list || topic == null) {
-                System.out.println(Tutorial.listAvailableTutorials());
-                return 0;
-            }
-
-            System.out.println(Tutorial.getTutorial(topic));
-            return 0;
-        }
-    }
-
-    @Command(name = "quiz", description = "Take quizzes on discrete mathematics topics")
-    static class QuizCommand implements Callable<Integer> {
-
-        @Option(names = {"-t", "--topic"}, description = "Quiz topic: boolean, sets, logic-gates")
-        private String topic;
-
-        @Option(names = {"-q", "--questions"}, description = "Number of questions", defaultValue = "5")
-        private int questionCount;
-
-        @Override
-        public Integer call() {
-            if (topic == null) {
-                System.out.println("Available quiz topics: boolean, sets, logic-gates");
-                return 0;
-            }
-
-            Quiz quiz = new Quiz(topic, questionCount);
-            quiz.start();
-            return 0;
         }
     }
 }
