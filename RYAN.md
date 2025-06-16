@@ -575,19 +575,19 @@ Would you like me to:
 
 ## Overview
 
-We've created an enhanced wrapper script (`dl`) that makes it much easier to use the discrete logic tool from the command line.
+We've created an enhanced wrapper script (`dl.sh`) that makes it much easier to use the discrete logic tool from the command line.
 
 ## Installation
 
 The script is already created and made executable:
 ```bash
-chmod +x dl
+chmod +x dl.sh
 ```
 
 ## Features
 
 1. **Shortened commands** - Use `tt` instead of `truth-table`, `ba` instead of `boolean-algebra`
-2. **Built-in help with examples** - Run `./dl help` to see all available shortcuts
+2. **Built-in help with examples** - Run `./dl.sh help` to see all available shortcuts
 3. **Color-coded output** - Makes it easier to read help and error messages
 4. **Automatic JAR checking** - Verifies the JAR exists before running
 
@@ -595,40 +595,40 @@ chmod +x dl
 
 ### Truth Tables
 ```bash
-./dl tt 'A & B'                    # AND operation
-./dl tt 'A | B'                    # OR operation
-./dl tt '!A'                       # NOT operation
-./dl tt 'A -> B'                   # Implication (now working!)
-./dl tt 'A <-> B'                  # Biconditional (now working!)
-./dl tt '(A | B) -> C'             # Complex expression
+./dl.sh tt 'A & B'                    # AND operation
+./dl.sh tt 'A | B'                    # OR operation
+./dl.sh tt '!A'                       # NOT operation
+./dl.sh tt 'A -> B'                   # Implication (now working!)
+./dl.sh tt 'A <-> B'                  # Biconditional (now working!)
+./dl.sh tt '(A | B) -> C'             # Complex expression
 ```
 
 ### Boolean Algebra
 ```bash
-./dl ba 'A & (B | C)' --simplify   # Simplify expression
-./dl ba '!(!A | !B)' --dnf         # Convert to DNF
-./dl ba 'A & B | C' --cnf          # Convert to CNF
+./dl.sh ba 'A & (B | C)' --simplify   # Simplify expression
+./dl.sh ba '!(!A | !B)' --dnf         # Convert to DNF
+./dl.sh ba 'A & B | C' --cnf          # Convert to CNF
 ```
 
 ### Number Conversion
 ```bash
-./dl convert 42                    # Decimal to all systems
-./dl convert 1010 --from binary --to decimal
-./dl convert FF --from hex --to binary
+./dl.sh convert 42                    # Decimal to all systems
+./dl.sh convert 1010 --from binary --to decimal
+./dl.sh convert FF --from hex --to binary
 ```
 
 ### Logic Gates
 ```bash
-./dl lg --list                     # List all gate types
-./dl lg --gate AND                 # Show AND gate truth table
-./dl lg --demo half-adder          # Demo half-adder circuit
+./dl.sh lg --list                     # List all gate types
+./dl.sh lg --gate AND                 # Show AND gate truth table
+./dl.sh lg --demo half-adder          # Demo half-adder circuit
 ```
 
 ### Combinatorics
 ```bash
-./dl comb -n 5 -r 3 --combinations # C(5,3)
-./dl comb -n 10 --factorial        # 10!
-./dl comb -n 5 --pascal            # Pascal's triangle
+./dl.sh comb -n 5 -r 3 --combinations # C(5,3)
+./dl.sh comb -n 10 --factorial        # 10!
+./dl.sh comb -n 5 --pascal            # Pascal's triangle
 ```
 
 ## Available Shortcuts
@@ -649,8 +649,8 @@ chmod +x dl
 
 - Always use single quotes (') around boolean expressions to avoid shell interpretation issues
 - The script automatically checks if the JAR file exists
-- Run `./dl` without arguments to see the main program help
-- Run `./dl help` to see the enhanced wrapper help with examples
+- Run `./dl.sh` without arguments to see the main program help
+- Run `./dl.sh help` to see the enhanced wrapper help with examples
 
 ## Fixed Issues
 
@@ -660,7 +660,7 @@ The following operators now work correctly:
 
 Example outputs:
 ```bash
-$ ./dl tt 'A -> B'
+$ ./dl.sh tt 'A -> B'
 Truth Table for: A -> B
 ==================================================
 
@@ -671,7 +671,7 @@ T       F       F
 F       T       T
 T       T       T
 
-$ ./dl tt 'A <-> B'
+$ ./dl.sh tt 'A <-> B'
 Truth Table for: A <-> B
 ==================================================
 
