@@ -40,7 +40,7 @@ public class MathExpression extends Expression {
     private final PatternDetector patternDetector;
     private final LexicalNetwork lexicalNetwork;
     private final MetaController metaController;
-    private final LexicalViabilityComponent viabilityComponent;
+    private final LexicalNetwork.LexicalViabilityComponent viabilityComponent;
     private final MathEmbeddingService embeddingService;
 
     private volatile CognitiveState processingState;
@@ -77,10 +77,8 @@ public class MathExpression extends Expression {
         this.embeddingService = new MathEmbeddingService(
             MathEmbeddingService.EmbeddingConfig.defaultConfig()
         );
-        this.viabilityComponent = new LexicalViabilityComponent(
-            lexicalNetwork,
-            embeddingService
-        );
+        this.lexicalNetwork.setEmbeddingService(this.embeddingService);
+        this.viabilityComponent = this.lexicalNetwork.new LexicalViabilityComponent();
 
         this.processingState = new CognitiveState(0.5, 0.5, 0.1);
         this.cognitiveTags = new ConcurrentHashMap<>();
@@ -1153,7 +1151,6 @@ public class MathExpression extends Expression {
                 relatedTerms.put("cos", Arrays.asList("sin", "tan", "angle", "trigonometric"));
                 termWeights.put("log", 0.8);
                 termWeights.put("exp", 0.8);
-                relatedTerms.put("log", Arrays.asList("exp", "ln", "logarithm", "base"));
             }
             
             /**
@@ -1327,6 +1324,126 @@ public class MathExpression extends Expression {
             public Map<String, List<String>> getRelatedTerms() {
                 return Collections.unmodifiableMap(relatedTerms);
             }
+            
+            /**
+             * Calculate viability score for expression considering cognitive state and processing results
+             * 
+             * @param expression The expression to analyze
+             * @param state The current cognitive state
+             * @param results The processing results
+             * @return A viability score between 0.0 and 1.0
+             */
+            public double calculateViability(String expression, CognitiveState state, List<ProcessingResult> results) {
+                if (expression == null || expression.trim().isEmpty()) {
+                    return 0.0;
+                }
+                
+                // Base viability from analyzeViability
+                double baseViability = analyzeViability(expression);
+                
+                // Adjust based on cognitive state
+                double attentionFactor = state.getAttention();
+                double wanderingPenalty = state.getWandering() * 0.3;
+                
+                // Adjust based on processing results
+                double avgCognitiveLoad = results.stream()
+                    .mapToDouble(ProcessingResult::getCognitiveLoad)
+                    .average()
+                    .orElse(0.5);
+                
+                double loadPenalty = avgCognitiveLoad > 0.7 ? (avgCognitiveLoad - 0.7) * 0.5 : 0.0;
+                
+                // Combine factors
+                double adjustedViability = baseViability * attentionFactor * (1.0 - wanderingPenalty) * (1.0 - loadPenalty);
+                
+                return Math.max(0.0, Math.min(1.0, adjustedViability));
+            }
+            
+            /**
+             * Get notation preference for a given expression
+             * 
+             * @param expression The expression to analyze
+             * @return A preference score between 0.0 and 1.0
+             */
+            public double getNotationPreference(String expression) {
+                if (expression == null || expression.trim().isEmpty()) {
+                    return 0.5;
+                }
+                
+                double preferenceScore = 0.5; // Default middle value
+                
+                // Check for different notation styles
+                if (expression.contains("∪") || expression.contains("∩") || expression.contains("×")) {
+                    // Symbolic notation
+                    preferenceScore = 0.8;
+                } else if (expression.contains("{") && expression.contains("}")) {
+                    // Set notation
+                    preferenceScore = 0.7;
+                } else if (expression.contains("(") && expression.contains(")")) {
+                    // Algebraic notation
+                    preferenceScore = 0.6;
+                }
+                
+                // Adjust based on term weights
+                List<String> tokens = tokenize(expression);
+                double weightedScore = 0.0;
+                int weightedTerms = 0;
+                
+                for (String token : tokens) {
+                    if (termWeights.containsKey(token)) {
+                        weightedScore += termWeights.get(token);
+                        weightedTerms++;
+                    }
+                }
+                
+                if (weightedTerms > 0) {
+                    double avgWeight = weightedScore / weightedTerms;
+                    preferenceScore = 0.6 * preferenceScore + 0.4 * avgWeight;
+                }
+                
+                return Math.max(0.0, Math.min(1.0, preferenceScore));
+            }
+            
+            /**
+             * Optimize notation based on cognitive state
+             * 
+             * @param expression The expression to optimize
+             * @param state The current cognitive state
+             * @return An optimized expression
+             */
+            public String optimizeNotation(String expression, CognitiveState state) {
+                if (expression == null || expression.trim().isEmpty()) {
+                    return expression;
+                }
+                
+                String optimized = expression;
+                
+                // If attention is low, simplify notation
+                if (state.getAttention() < 0.4) {
+                    // Replace complex symbols with simpler equivalents
+                    optimized = optimized.replace("∪", " union ");
+                    optimized = optimized.replace("∩", " intersect ");
+                    optimized = optimized.replace("×", " cross ");
+                }
+                
+                // If mind-wandering is high, add structure
+                if (state.getWandering() > 0.6) {
+                    // Add parentheses for clarity
+                    if (optimized.contains("+") || optimized.contains("-")) {
+                        optimized = "(" + optimized + ")";
+                    }
+                }
+                
+                // If focus is high, allow more compact notation
+                if (state.getAttention() > 0.8 && state.getWandering() < 0.2) {
+                    // Use more compact symbolic notation
+                    optimized = optimized.replace(" union ", "∪");
+                    optimized = optimized.replace(" intersect ", "∩");
+                    optimized = optimized.replace(" cross ", "×");
+                }
+                
+                return optimized;
+            }
         }
     }
 
@@ -1370,6 +1487,52 @@ public class MathExpression extends Expression {
         public double getConfidence() {
             return confidence;
         }
+    }
+    
+    /**
+     * Gets the notation preference for a given expression.
+     * 
+     * @param expr The expression to get the notation preference for
+     * @return The notation preference value (0.0-1.0)
+     */
+    public double getNotationPreference(String expr) {
+        // Calculate a notation preference score based on the expression content
+        double preferenceScore = 0.5; // Default middle value
+        
+        // Check for different notation styles
+        if (expr.contains("∪") || expr.contains("∩") || expr.contains("×")) {
+            // Symbolic notation
+            preferenceScore = 0.8;
+        } else if (expr.contains("{") && expr.contains("}")) {
+            // Set notation
+            preferenceScore = 0.7;
+        } else if (expr.contains("(") && expr.contains(")")) {
+            // Algebraic notation
+            preferenceScore = 0.6;
+        }
+        
+        return preferenceScore;
+    }
+    
+    /**
+     * Updates the learner profile with feedback about an expression.
+     * 
+     * @param key The profile key to update
+     * @param value The value to set
+     */
+    public void updateLearnerProfile(String key, Double value) {
+        if (key == null || value == null) {
+            return;
+        }
+        
+        // Store learner preferences for future reference
+        Map<String, Double> learnerProfile = new HashMap<>();
+        
+        // Update the profile
+        learnerProfile.put(key, value);
+        
+        // Log the update
+        System.out.println("Updated learner profile: " + key + " = " + value);
     }
 
     /**
@@ -1877,17 +2040,6 @@ public class MathExpression extends Expression {
         } catch (Exception e) {
             // Handle optimization failure
             throw new RuntimeException("Psi optimization failed", e);
-        }
-    }
-
-    public List<ProcessingResult> processWithCognitiveFramework(String expr) {
-        try {
-            // Use the existing cognitive framework to process the expression
-            return cognitiveFramework.process(expr, 5);
-        } catch (Exception e) {
-            // Log error or handle appropriately
-            System.err.println("Error processing expression with cognitive framework: " + e.getMessage());
-            return Collections.emptyList();
         }
     }
 }

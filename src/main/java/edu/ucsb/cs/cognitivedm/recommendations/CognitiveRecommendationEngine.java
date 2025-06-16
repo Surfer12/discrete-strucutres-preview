@@ -339,6 +339,25 @@ public class CognitiveRecommendationEngine {
             .collect(Collectors.toList());
     }
 
+    /**
+     * Generate recommendations from a RecommendationRequest
+     */
+    public List<Recommendation> generateRecommendations(RecommendationRequest request) {
+        // Convert RecommendationRequest to RecommendationContext
+        RecommendationContext context = new RecommendationContext(
+            request.getUserId(),
+            request.getId(), // use request ID as session ID
+            request.getCognitiveState().getAttention(),
+            request.getCognitiveState().getCognitiveLoad(),
+            request.getCognitiveState().getWandering()
+        );
+        
+        // Add context from request
+        context.addRecentTopic(request.getTopic());
+        
+        return generateRecommendations(context, request.getMaxResults());
+    }
+
     private List<Recommendation> generateTopicRecommendations(
         RecommendationContext context,
         RecommendationStrategy strategy

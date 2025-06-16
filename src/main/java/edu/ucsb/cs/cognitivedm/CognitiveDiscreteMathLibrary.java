@@ -12,6 +12,13 @@ import edu.ucsb.cs.cognitivedm.graph.ScalableConcurrentGraphEngine;
 import edu.ucsb.cs.cognitivedm.patterns.PatternDetector;
 import edu.ucsb.cs.cognitivedm.recommendations.CognitiveRecommendationEngine;
 import edu.ucsb.cs.cognitivedm.sessions.CognitiveSessionManager;
+import edu.ucsb.cs.cognitivedm.education.LearningPath;
+import edu.ucsb.cs.cognitivedm.education.LearningContent;
+import edu.ucsb.cs.cognitivedm.education.DifficultyLevel;
+import edu.ucsb.cs.cognitivedm.framework.CognitiveSession;
+import edu.ucsb.cs.cognitivedm.recommendations.Recommendation;
+import edu.ucsb.cs.cognitivedm.recommendations.RecommendationRequest;
+import edu.ucsb.cs.cognitivedm.recommendations.RecommendationType;
 
 import org.slf4j.Logger;
 
