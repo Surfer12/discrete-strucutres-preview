@@ -90,4 +90,16 @@ public final class LoggingUtil {
             logger.trace(message, args);
         }
     }
+
+    public static void logInfo(Logger logger, String message) {
+        if (logger.isInfoEnabled()) {
+            logger.info(message);
+        }
+    }
+
+    public static void logError(Logger logger, String message, Throwable throwable) {
+        if (logger.isErrorEnabled()) {
+            logger.error(message, throwable);
+        }
+    }
 } 
