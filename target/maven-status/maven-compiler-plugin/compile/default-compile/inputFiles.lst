@@ -1,3 +1,4 @@
+/Users/ryandavidoates/discrete-strucutres-preview/src/main/java/discrete/sets/WavePatternSet.java
 /Users/ryandavidoates/discrete-strucutres-preview/src/main/java/Utils/TableFormatter.java
 /Users/ryandavidoates/discrete-strucutres-preview/src/main/java/discrete/graphs/FlowStateGraph.java
 /Users/ryandavidoates/discrete-strucutres-preview/src/main/java/fluid/dynamics/FluidEmergence.java
@@ -8,9 +9,7 @@
 /Users/ryandavidoates/discrete-strucutres-preview/src/main/java/LogicGateSim/LogicGate.java
 /Users/ryandavidoates/discrete-strucutres-preview/src/main/java/app/DiscreteLogicCLI.java
 /Users/ryandavidoates/discrete-strucutres-preview/src/main/java/discrete/sets/LogicalSet.java
-/Users/ryandavidoates/discrete-strucutres-preview/src/main/java/cognitive/integration/flow-integration.java
 /Users/ryandavidoates/discrete-strucutres-preview/src/main/java/fluid/dynamics/MathUtils.java
-/Users/ryandavidoates/discrete-strucutres-preview/src/main/java/discrete/graphs/flow-state-graph.java
 /Users/ryandavidoates/discrete-strucutres-preview/src/main/java/discrete/sets/EmergentSet.java
 /Users/ryandavidoates/discrete-strucutres-preview/src/main/java/cognitive/integration/ConceptualBridge.java
 /Users/ryandavidoates/discrete-strucutres-preview/src/main/java/cognitive/integration/FlowMathMapping.java
@@ -20,8 +19,7 @@
 /Users/ryandavidoates/discrete-strucutres-preview/src/main/java/discrete/graphs/WavePatternGraph.java
 /Users/ryandavidoates/discrete-strucutres-preview/src/main/java/discrete/logic/StateVerification.java
 /Users/ryandavidoates/discrete-strucutres-preview/src/main/java/cognitive/processing/RecursiveAnalysis.java
-/Users/ryandavidoates/discrete-strucutres-preview/src/main/java/LogicGateSim/NumberSystemsConverter.java
-/Users/ryandavidoates/discrete-strucutres-preview/src/main/java/discrete/sets/wave-pattern-set.java
+/Users/ryandavidoates/discrete-strucutres-preview/src/main/java/LogicGateSim/NumberSystemConverter.java
 /Users/ryandavidoates/discrete-strucutres-preview/src/main/java/fluid/dynamics/WavePatterns.java
 /Users/ryandavidoates/discrete-strucutres-preview/src/main/java/fluid/analysis/FlowAnalysis.java
 /Users/ryandavidoates/discrete-strucutres-preview/src/main/java/discrete/tables/KarnaughMap.java
