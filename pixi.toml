@@ -1,0 +1,16 @@
+[project]
+authors = ["Ryan Oates <ryanoatsie@outlook.com>"]
+channels = ["https://conda.modular.com/max-nightly", "https://conda.modular.com/max", "https://repo.prefix.dev/modular-community", "conda-forge"]
+name = "discrete-strucutres-preview"
+platforms = ["osx-arm64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+gradle = ">=8.11.1,<9"
+maven = ">=3.9.10,<4"
+max = ">=25.5.0.dev2025061505,<26"
+openai = ">=1.86.0,<2"
+anthropic = ">=0.54.0,<0.55"
+pip = ">=25.1.1,<26"
