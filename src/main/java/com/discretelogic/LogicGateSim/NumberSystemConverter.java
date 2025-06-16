@@ -1,4 +1,4 @@
-package com.discretelogic.logicgatesim;
+package com.discretelogic.LogicGateSim;
 
 import java.math.BigInteger;
 import java.util.*;

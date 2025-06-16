@@ -11,7 +11,7 @@ public class Gate {
      * Represents the type of logic gate.
      */
     public enum GateType {
-        AND, OR, NOT, NAND, NOR, XOR, XNOR
+        AND, OR, NOT, NAND, NOR, XOR, XNOR, BUFFER
     }
 
     private GateType type;

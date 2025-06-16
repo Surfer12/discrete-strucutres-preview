@@ -23,7 +23,8 @@ public class ExpressionParser {
         // appropriate parsing techniques (e.g., recursive descent parser)
         
         // For now, we'll create a simple expression that just stores the string
-        Set<String> variables = extractVariables(expressionString);
+        Set<String> variablesSet = extractVariables(expressionString);
+        List<String> variables = new ArrayList<>(variablesSet);
         return new Expression(expressionString, variables);
     }
     

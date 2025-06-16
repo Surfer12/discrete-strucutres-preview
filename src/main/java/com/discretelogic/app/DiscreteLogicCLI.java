@@ -1,10 +1,10 @@
 package com.discretelogic.app;
 
 import com.discretelogic.discrete.tables.KarnaughMap;
-import com.discretelogic.logicgatesim.LogicGate;
+import com.discretelogic.LogicGateSim.LogicGate;
 import com.discretelogic.model.*;
 import com.discretelogic.discrete.sets.*;
-import com.discretelogic.logicgatesim.NumberSystemConverter;
+import com.discretelogic.LogicGateSim.NumberSystemConverter;
 import com.discretelogic.core.*;
 // import com.discretelogic.educational.*; // This package seems to not exist in the new structure
 
@@ -21,7 +21,7 @@ import java.util.concurrent.Callable;
 import com.discretelogic.discrete.sets.SetOperations;
 import com.discretelogic.tutorial.Tutorial;
 import com.discretelogic.quiz.Quiz;
-import com.discretelogic.model.GateType;
+import com.discretelogic.model.Gate.GateType;
 import com.discretelogic.expressions.ExpressionParser;
 import com.discretelogic.core.BooleanAlgebra;
 import com.discretelogic.model.TruthTable;
@@ -304,13 +304,13 @@ public class DiscreteLogicCLI implements Callable<Integer> {
         @Override
         public Integer call() {
             if (showTable) {
-                System.out.println(NumberSystemConverter.createConversionTable());
+                System.out.println(com.discretelogic.LogicGateSim.NumberSystemConverter.createConversionTable());
                 return 0;
             }
 
             if (arithmetic != null && arithmetic.size() == 2) {
                 String operation = arithmetic.get(1);
-                System.out.println(NumberSystemConverter.performBinaryArithmetic(number, arithmetic.get(0), operation));
+                System.out.println(com.discretelogic.LogicGateSim.NumberSystemConverter.performBinaryArithmetic(number, arithmetic.get(0), operation));
                 return 0;
             }
 
@@ -320,14 +320,14 @@ public class DiscreteLogicCLI implements Callable<Integer> {
                 // Convert to decimal first
                 switch (fromBase.toLowerCase()) {
                     case "binary":
-                        decimal = NumberSystemConverter.binaryToDecimal(number);
+                        decimal = com.discretelogic.LogicGateSim.NumberSystemConverter.binaryToDecimal(number);
                         break;
                     case "octal":
-                        decimal = NumberSystemConverter.octalToDecimal(number);
+                        decimal = com.discretelogic.LogicGateSim.NumberSystemConverter.octalToDecimal(number);
                         break;
                     case "hex":
                     case "hexadecimal":
-                        decimal = NumberSystemConverter.hexadecimalToDecimal(number);
+                        decimal = com.discretelogic.LogicGateSim.NumberSystemConverter.hexadecimalToDecimal(number);
                         break;
                     case "decimal":
                     default:
@@ -336,24 +336,24 @@ public class DiscreteLogicCLI implements Callable<Integer> {
                 }
 
                 if (showSteps && fromBase.equals("decimal")) {
-                    System.out.println(NumberSystemConverter.showDecimalToBinarySteps(decimal));
+                    System.out.println(com.discretelogic.LogicGateSim.NumberSystemConverter.showDecimalToBinarySteps(decimal));
                     System.out.println();
                 }
 
                 if (toBase.equals("all")) {
-                    System.out.println(NumberSystemConverter.demonstrateConversions(decimal));
+                    System.out.println(com.discretelogic.LogicGateSim.NumberSystemConverter.demonstrateConversions(decimal));
                 } else {
                     String result;
                     switch (toBase.toLowerCase()) {
                         case "binary":
-                            result = NumberSystemConverter.decimalToBinary(decimal);
+                            result = com.discretelogic.LogicGateSim.NumberSystemConverter.decimalToBinary(decimal);
                             break;
                         case "octal":
-                            result = NumberSystemConverter.decimalToOctal(decimal);
+                            result = com.discretelogic.LogicGateSim.NumberSystemConverter.decimalToOctal(decimal);
                             break;
                         case "hex":
                         case "hexadecimal":
-                            result = NumberSystemConverter.decimalToHexadecimal(decimal);
+                            result = com.discretelogic.LogicGateSim.NumberSystemConverter.decimalToHexadecimal(decimal);
                             break;
                         case "decimal":
                         default:

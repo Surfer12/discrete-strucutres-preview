@@ -74,4 +74,117 @@ This project explores the intersection of discrete mathematics, cognitive scienc
 
 ## Contact
 
-[Your contact information] 
+[Your contact information]
+
+# Discrete Logic Mathematics Library
+
+This is a comprehensive Java library and CLI tool for discrete logic mathematics concepts. It demonstrates modern Java 24 features including Stream Gatherers API.
+
+## Features
+
+- Boolean algebra operations
+- Truth tables
+- Logic gates simulation
+- Set theory operations
+- Number system conversions
+- Combinatorial calculations
+- Karnaugh maps
+
+## Building the Project
+
+The project can be built using either Maven or Gradle.
+
+### Using Maven
+
+To build with Maven:
+
+```bash
+mvn compile
+mvn package
+```
+
+This will compile the code and create a JAR file in the `target` directory.
+
+### Using Gradle
+
+To build with Gradle:
+
+```bash
+./gradlew build
+```
+
+This will compile the code and create a JAR file in the `build/libs` directory.
+
+## Running the Application
+
+### Using Maven
+
+To run the application with Maven:
+
+```bash
+mvn exec:java -Dexec.mainClass="com.discretelogic.app.DiscreteLogicCLI"
+```
+
+To run a specific command:
+
+```bash
+mvn exec:java -Dexec.mainClass="com.discretelogic.app.DiscreteLogicCLI" -Dexec.args="truth-table 'a & b'"
+```
+
+### Using Gradle
+
+To run the application with Gradle:
+
+```bash
+./gradlew run
+```
+
+To run a specific command:
+
+```bash
+./gradlew run --args="truth-table 'a & b'"
+```
+
+## Available Commands
+
+- `truth-table`: Generate truth tables for boolean expressions
+- `boolean-algebra`: Perform boolean algebra operations
+- `logic-gates`: Simulate logic gates and circuits
+- `sets`: Perform set theory operations
+- `convert`: Convert between number systems
+- `combinatorics`: Perform combinatorial calculations
+- `karnaugh`: Generate and analyze Karnaugh maps
+- `tutorial`: Interactive tutorials on discrete mathematics
+- `quiz`: Take quizzes on discrete mathematics topics
+
+## Examples
+
+### Generate a Truth Table
+
+```bash
+mvn exec:java -Dexec.mainClass="com.discretelogic.app.DiscreteLogicCLI" -Dexec.args="truth-table 'a & b'"
+```
+
+### Convert a Number Between Systems
+
+```bash
+mvn exec:java -Dexec.mainClass="com.discretelogic.app.DiscreteLogicCLI" -Dexec.args="convert 42 -f decimal -t binary"
+```
+
+### Perform Set Operations
+
+```bash
+mvn exec:java -Dexec.mainClass="com.discretelogic.app.DiscreteLogicCLI" -Dexec.args="sets --demo"
+```
+
+## Project Structure
+
+- `src/main/java/com/discretelogic/model`: Core domain model classes
+- `src/main/java/com/discretelogic/discrete`: Discrete mathematics implementations
+- `src/main/java/com/discretelogic/expressions`: Expression parsing and evaluation
+- `src/main/java/com/discretelogic/LogicGateSim`: Logic gate simulator
+- `src/main/java/com/discretelogic/app`: CLI application
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details. 
