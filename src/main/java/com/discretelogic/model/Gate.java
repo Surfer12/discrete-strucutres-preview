@@ -4,17 +4,9 @@ import java.util.List;
 
 /**
  * Represents a logical gate in a digital circuit.
- * This class provides functionality for evaluating different types of logic gates.
  */
 public class Gate {
-    /**
-     * Represents the type of logic gate.
-     */
-    public enum GateType {
-        AND, OR, NOT, NAND, NOR, XOR, XNOR
-    }
-
-    private GateType type;
+    private final GateType type;
     private final String symbol;
 
     /**
@@ -39,13 +31,11 @@ public class Gate {
         }
 
         // Handle special case for NOT gate which takes only one input
-        if (type == GateType.NOT || type == GateType.BUFFER) {
-            if (inputs.size() < 1) {
-                throw new IllegalArgumentException(type.name() + " gate requires at least one input");
+        if (type == GateType.NOT) {
+            if (inputs.size() != 1) {
+                throw new IllegalArgumentException("NOT gate requires exactly one input");
             }
-            
-            boolean input = inputs.get(0);
-            return type == GateType.NOT ? !input : input;
+            return !inputs.get(0);
         }
 
         // For all other gates, require at least two inputs
@@ -141,7 +131,6 @@ public class Gate {
             case NOR: return "⊽";
             case XOR: return "⊕";
             case XNOR: return "⊙";
-            case BUFFER: return "→";
             default: return "?";
         }
     }
@@ -150,4 +139,4 @@ public class Gate {
     public String toString() {
         return type.name() + " Gate";
     }
-} 
+}

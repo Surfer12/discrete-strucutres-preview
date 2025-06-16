@@ -12,10 +12,21 @@ import static org.example.app.MessageUtils.getMessage;
 import org.apache.commons.text.WordUtils;
 
 public class App {
+    // Import statements for logging and WordUtils
+    /* 
+    import org.slf4j.Logger;
+    import org.slf4j.LoggerFactory;
+    import org.apache.commons.text.WordUtils;
+    
+    Logger is used for logging, LoggerFactory for creating logger instances,
+    and WordUtils for capitalizing words.
+    */
+    private static final Logger logger = LoggerFactory.getLogger(YourClassName.class);
+
     public static void main(String[] args) {
         LinkedList tokens;
         tokens = split(getMessage());
         String result = join(tokens);
-        System.out.println(WordUtils.capitalize(result));
+        logger.info(WordUtils.capitalize(result));
     }
 }

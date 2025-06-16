@@ -2,8 +2,6 @@ package com.discretelogic.tutorial;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.List;
-import java.util.Arrays;
 
 /**
  * Provides tutorials on various discrete mathematics topics.
@@ -88,15 +86,6 @@ public class Tutorial {
     }
     
     /**
-     * Lists all available tutorial topics.
-     *
-     * @return a string listing all tutorial topics
-     */
-    public static String listTopics() {
-        return "Available tutorials: " + String.join(", ", tutorials.keySet());
-    }
-    
-    /**
      * Lists all available tutorials with descriptions.
      *
      * @return a string listing all available tutorials
@@ -118,4 +107,4 @@ public class Tutorial {
         sb.append("Use 'tutorial -t <topic>' to view a specific tutorial.\n");
         return sb.toString();
     }
-} 
+}
