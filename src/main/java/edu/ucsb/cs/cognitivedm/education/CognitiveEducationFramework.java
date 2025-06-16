@@ -18,6 +18,9 @@ public class CognitiveEducationFramework {
 
     // Core learning concepts
     public enum ContentType {
+        CONCEPT,
+        PROCEDURE,
+        PROBLEM_SOLVING,
         SET_THEORY,
         BOOLEAN_LOGIC,
         GRAPH_THEORY,
@@ -133,6 +136,32 @@ public class CognitiveEducationFramework {
 
         public Object getData(String key) {
             return sessionData.get(key);
+        }
+
+        public AttentionRecognitionFramework.CognitiveState getCurrentCognitiveState() {
+            Object cognitiveState = sessionData.get("cognitive_state");
+            if (
+                cognitiveState instanceof
+                AttentionRecognitionFramework.CognitiveState
+            ) {
+                return (AttentionRecognitionFramework.CognitiveState) cognitiveState;
+            }
+            // Return default state if none stored
+            return new AttentionRecognitionFramework.CognitiveState(
+                0.5,
+                0.5,
+                0.3
+            );
+        }
+
+        public void updateCognitiveState(
+            AttentionRecognitionFramework.CognitiveState state
+        ) {
+            sessionData.put("cognitive_state", state);
+            sessionData.put(
+                "cognitive_state_timestamp",
+                System.currentTimeMillis()
+            );
         }
     }
 
@@ -470,5 +499,111 @@ public class CognitiveEducationFramework {
             masteryAverages,
             efficiency
         );
+    }
+
+    /**
+     * Register a new learner in the system
+     */
+    public LearnerProfile registerLearner(String learnerId) {
+        // Create a basic learner profile
+        LearnerProfile profile = new LearnerProfile(learnerId);
+        // Store the profile (simplified implementation)
+        return profile;
+    }
+
+    /**
+     * Initialize sample learning content
+     */
+    public void initializeSampleContent() {
+        // Sample content is already initialized in constructor
+        // This method can be used for additional setup
+        System.out.println(
+            "Sample content initialized for " +
+            learningPaths.size() +
+            " learning paths"
+        );
+    }
+
+    /**
+     * Get learner profile by ID
+     */
+    public LearnerProfile getLearnerProfile(String learnerId) {
+        // Simplified implementation - returns a basic profile
+        return new LearnerProfile(learnerId);
+    }
+
+    /**
+     * Update learner state with cognitive information
+     */
+    public void updateLearnerState(
+        String learnerId,
+        AttentionRecognitionFramework.CognitiveState state
+    ) {
+        // Find or create session for learner
+        CognitiveSession session = activeSessions.get(learnerId);
+        if (session == null) {
+            session = createSession(learnerId);
+        }
+        session.addData("cognitive_state", state);
+    }
+
+    /**
+     * Create learning path for a specific learner
+     */
+    public CompletableFuture<LearningPath> createLearningPath(
+        String learnerId,
+        String subject,
+        DifficultyLevel targetLevel
+    ) {
+        return CompletableFuture.supplyAsync(() -> {
+            // Find appropriate path based on subject and difficulty
+            for (LearningPath path : learningPaths.values()) {
+                if (path.getDifficultyLevel() == targetLevel) {
+                    return path;
+                }
+            }
+            // Create a default path if none found
+            return new LearningPath(
+                "default_" + subject.toLowerCase(),
+                Arrays.asList("introduction", "basics", "practice"),
+                targetLevel
+            );
+        });
+    }
+
+    /**
+     * Shutdown the education framework
+     */
+    public void shutdown() {
+        activeSessions.clear();
+        System.out.println("Education framework shutdown complete");
+    }
+
+    /**
+     * Basic learner profile class
+     */
+    public static class LearnerProfile {
+
+        private final String learnerId;
+        private final Map<String, Object> preferences;
+        private final long createdTime;
+
+        public LearnerProfile(String learnerId) {
+            this.learnerId = learnerId;
+            this.preferences = new HashMap<>();
+            this.createdTime = System.currentTimeMillis();
+        }
+
+        public String getLearnerId() {
+            return learnerId;
+        }
+
+        public Map<String, Object> getPreferences() {
+            return new HashMap<>(preferences);
+        }
+
+        public long getCreatedTime() {
+            return createdTime;
+        }
     }
 }
