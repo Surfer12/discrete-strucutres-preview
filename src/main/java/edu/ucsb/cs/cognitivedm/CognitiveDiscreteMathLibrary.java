@@ -68,12 +68,17 @@ public class CognitiveDiscreteMathLibrary {
             threadPoolSize,
             cognitiveScales
         );
-        this.educationFramework = new CognitiveEducationFramework();
-        this.recommendationEngine = new CognitiveRecommendationEngine();
+        this.educationFramework = new CognitiveEducationFramework(
+            cognitiveFramework
+        );
+        this.recommendationEngine = new CognitiveRecommendationEngine(
+            cognitiveFramework,
+            educationFramework
+        );
         this.expressionProcessor = new MathExpressionProcessor(
             cognitiveFramework
         );
-        this.sessionManager = new CognitiveSessionManager();
+        this.sessionManager = new CognitiveSessionManager(cognitiveFramework);
 
         // Setup component integration
         setupComponentIntegration();

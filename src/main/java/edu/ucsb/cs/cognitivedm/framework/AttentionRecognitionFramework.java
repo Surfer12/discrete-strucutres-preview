@@ -542,6 +542,65 @@ public class AttentionRecognitionFramework {
     }
 
     /**
+     * Process input across multiple scales with comprehensive analysis
+     */
+    public CompletableFuture<List<ProcessingResult>> processMultiScale(
+        String input
+    ) {
+        return CompletableFuture.supplyAsync(
+            () -> {
+                return process(input, 1);
+            },
+            executorService
+        );
+    }
+
+    /**
+     * Get current cognitive state (averaged across all scales)
+     */
+    public CognitiveState getCurrentCognitiveState() {
+        if (scales.isEmpty()) {
+            return new CognitiveState(0.5, 0.5, 0.3);
+        }
+
+        double avgAttention = scales
+            .stream()
+            .mapToDouble(scale -> scale.getCurrentState().getAttention())
+            .average()
+            .orElse(0.5);
+
+        double avgRecognition = scales
+            .stream()
+            .mapToDouble(scale -> scale.getCurrentState().getRecognition())
+            .average()
+            .orElse(0.5);
+
+        double avgWandering = scales
+            .stream()
+            .mapToDouble(scale -> scale.getCurrentState().getWandering())
+            .average()
+            .orElse(0.3);
+
+        return new CognitiveState(avgAttention, avgRecognition, avgWandering);
+    }
+
+    /**
+     * Get comprehensive system analysis
+     */
+    public SystemAnalysis getSystemAnalysis() {
+        CognitiveState currentState = getCurrentCognitiveState();
+
+        return new SystemAnalysis(
+            currentState.getCognitiveLoad(),
+            currentState.getAttention(),
+            currentState.getRecognition(),
+            currentState.getWandering(),
+            System.currentTimeMillis(),
+            numScales
+        );
+    }
+
+    /**
      * System-wide analysis and statistics
      */
     public static class SystemAnalysis {
@@ -610,6 +669,16 @@ public class AttentionRecognitionFramework {
 
         public void addPerformanceMetric(String key, double value) {
             performanceMetrics.put(key, value);
+        }
+
+        public String getSystemState() {
+            if (systemCognitiveLoad < 0.3) {
+                return "LOW_LOAD";
+            } else if (systemCognitiveLoad < 0.7) {
+                return "NORMAL_LOAD";
+            } else {
+                return "HIGH_LOAD";
+            }
         }
 
         @Override

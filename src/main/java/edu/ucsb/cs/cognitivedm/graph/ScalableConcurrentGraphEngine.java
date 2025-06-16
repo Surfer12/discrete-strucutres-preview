@@ -4,6 +4,8 @@ import edu.ucsb.cs.cognitivedm.framework.AttentionRecognitionFramework;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 
 /**
@@ -17,7 +19,7 @@ import java.util.stream.Collectors;
  * @author UCSB Cognitive Discrete Mathematics Team
  * @version 1.0
  */
-public class ScalableConcurrentGraphEngine {
+public class ScalableConcurrentGraphEngine<T> {
 
     public static class Vertex {
 
@@ -289,6 +291,19 @@ public class ScalableConcurrentGraphEngine {
         AttentionRecognitionFramework attentionFramework
     ) {
         this(true, 4);
+    }
+
+    public ScalableConcurrentGraphEngine(
+        int threadPoolSize,
+        int cognitiveScales
+    ) {
+        this.vertices = new ConcurrentHashMap<>();
+        this.edges = new ConcurrentHashMap<>();
+        this.executorService = Executors.newFixedThreadPool(threadPoolSize);
+        this.analytics = new GraphAnalytics();
+        this.attentionFramework = null; // Can be set later
+        this.graphLock = new ReentrantReadWriteLock();
+        this.enableConcurrentOperations = true;
     }
 
     // Vertex operations
