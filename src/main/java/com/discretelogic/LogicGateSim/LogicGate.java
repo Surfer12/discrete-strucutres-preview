@@ -1,6 +1,9 @@
-import java.util.ArrayList;
+package com.discretelogic.LogicGateSim;
 
+import java.util.ArrayList;
 import java.util.List;
+import com.discretelogic.model.Gate;
+import com.discretelogic.model.GateType;
 
 public class LogicGate {
 
@@ -10,7 +13,7 @@ public class LogicGate {
         for (Gate gate : gates) {
             List<Boolean> gateInputs = new ArrayList<>();
             // For simplicity, we'll use the first available inputs
-            gateInputs.addAll(inputs.values());
+            gateInputs.addAll(inputs);
 
             int requiredInputs = gate.getType() == GateType.NOT ? 1 : 2;
             if (gateInputs.size() > requiredInputs) {
