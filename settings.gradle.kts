@@ -17,4 +17,4 @@ plugins {
 }
 
 rootProject.name = "discrete-strucutres-preview"
-include("app", "list", "utilities")
+include("app", "list", "utilities", "web-ui")
