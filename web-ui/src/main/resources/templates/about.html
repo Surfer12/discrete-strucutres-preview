@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">About</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/styles.css}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-calculator"></i> Discrete Logic
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/calculator">Calculator</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/truth-tables">Truth Tables</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/about">About</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow">
+                    <div class="card-header bg-warning text-dark">
+                        <h3 class="mb-0">
+                            <i class="fas fa-info-circle me-2"></i>About Discrete Logic Mathematics
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <h5>What is Discrete Logic?</h5>
+                        <p>
+                            Discrete logic mathematics is the study of mathematical structures that are fundamentally discrete 
+                            rather than continuous. It deals with distinct, separate values and is essential in computer science, 
+                            mathematics, and digital electronics.
+                        </p>
+
+                        <h5>Key Concepts</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <ul>
+                                    <li><strong>Propositional Logic:</strong> Statements that are either true or false</li>
+                                    <li><strong>Boolean Algebra:</strong> Mathematical operations with binary values</li>
+                                    <li><strong>Truth Tables:</strong> Systematic representation of logical operations</li>
+                                    <li><strong>Logical Operators:</strong> AND, OR, NOT, XOR, NAND, NOR</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <ul>
+                                    <li><strong>Implication:</strong> If-then relationships</li>
+                                    <li><strong>Biconditional:</strong> If and only if relationships</li>
+                                    <li><strong>Logical Equivalence:</strong> Statements with same truth values</li>
+                                    <li><strong>Proof Techniques:</strong> Methods for logical reasoning</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <h5>Applications</h5>
+                        <p>
+                            Discrete logic mathematics has numerous practical applications:
+                        </p>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="card bg-light">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-microchip fa-2x text-primary mb-2"></i>
+                                        <h6>Computer Science</h6>
+                                        <small>Algorithm design, database queries, programming logic</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card bg-light">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-bolt fa-2x text-warning mb-2"></i>
+                                        <h6>Digital Electronics</h6>
+                                        <small>Logic gates, circuit design, digital systems</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card bg-light">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-graduation-cap fa-2x text-success mb-2"></i>
+                                        <h6>Mathematics</h6>
+                                        <small>Formal proofs, set theory, combinatorics</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h5 class="mt-4">About This Tool</h5>
+                        <p>
+                            This web application provides an interactive platform for exploring discrete logic concepts. 
+                            It features:
+                        </p>
+                        <ul>
+                            <li>Interactive logic calculator for evaluating expressions</li>
+                            <li>Truth table generator for any logical expression</li>
+                            <li>Visual representation of logical operations</li>
+                            <li>Educational resources and examples</li>
+                        </ul>
+
+                        <div class="alert alert-info mt-4">
+                            <h6><i class="fas fa-lightbulb me-2"></i>Future Enhancements</h6>
+                            <p class="mb-0">
+                                This application is designed for gradual migration to a React-based frontend while 
+                                maintaining the current Thymeleaf-based user interface. Future versions will include 
+                                more advanced features and interactive visualizations.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- React Root for future migration -->
+    <div id="react-root"></div>
+
+    <!-- Footer -->
+    <footer class="bg-light text-center mt-5 py-3">
+        <div class="container">
+            <p class="text-muted mb-0">
+                Discrete Logic Mathematics © 2024 | 
+                <span th:text="${version}">v1.0.0</span>
+            </p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
+    <!-- Custom JS -->
+    <script th:src="@{/app.js}"></script>
+</body>
+</html>
