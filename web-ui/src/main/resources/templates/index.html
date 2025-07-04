@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent UI - Discrete Logic & AI Assistant</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        header h1 {
+            margin-bottom: 0.5rem;
+        }
+        
+        .status-bar {
+            background: rgba(255,255,255,0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            display: inline-block;
+        }
+        
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .feature-card, .chat-interface {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .feature-list {
+            list-style: none;
+        }
+        
+        .feature-list li {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+        }
+        
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .feature-list li:before {
+            content: "✓";
+            color: #667eea;
+            font-weight: bold;
+            margin-right: 1rem;
+        }
+        
+        .chat-interface {
+            display: flex;
+            flex-direction: column;
+            height: 500px;
+        }
+        
+        #chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background: #fafafa;
+        }
+        
+        .message {
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            border-radius: 8px;
+        }
+        
+        .message.user {
+            background: #667eea;
+            color: white;
+            margin-left: 20%;
+            text-align: right;
+        }
+        
+        .message.assistant {
+            background: #e9ecef;
+            margin-right: 20%;
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        #prompt-input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        #prompt-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            padding: 0.75rem 2rem;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .btn:hover {
+            background: #5a52d5;
+        }
+        
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        /* React placeholder */
+        #react-root {
+            margin-top: 2rem;
+            padding: 2rem;
+            background: #f0f0f0;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            text-align: center;
+            color: #999;
+        }
+        
+        .api-status {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            margin-left: 1rem;
+        }
+        
+        .api-status.connected {
+            background: #28a745;
+            color: white;
+        }
+        
+        .api-status.disconnected {
+            background: #dc3545;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1 th:text="${greeting}">Welcome to Agent UI</h1>
+            <p>Your AI-powered discrete logic mathematics assistant</p>
+            <div class="status-bar">
+                API Status: 
+                <span class="api-status" th:class="${hasApiKeys ? 'api-status connected' : 'api-status disconnected'}"
+                      th:text="${hasApiKeys ? 'Connected' : 'No API Keys'}">
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <div id="app" class="container">
+        <div class="main-grid">
+            <div class="feature-card">
+                <h2>Features</h2>
+                <ul class="feature-list">
+                    <li th:each="feature : ${features}" th:text="${feature}">Feature</li>
+                </ul>
+            </div>
+            
+            <div class="chat-interface">
+                <h2>Agent Chat</h2>
+                <div id="chat-messages">
+                    <div class="message assistant">
+                        Hello! I'm your AI assistant for discrete logic mathematics. How can I help you today?
+                    </div>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="prompt-input" placeholder="Ask me about discrete logic..." />
+                    <button class="btn" onclick="sendMessage()">Send</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- React mounting point for future migration -->
+        <div id="react-root">
+            React components will mount here during migration
+        </div>
+    </div>
+
+    <script th:src="@{/app.js}"></script>
+    <script>
+        async function sendMessage() {
+            const input = document.getElementById('prompt-input');
+            const prompt = input.value.trim();
+            if (!prompt) return;
+            
+            const messagesDiv = document.getElementById('chat-messages');
+            
+            // Add user message
+            const userMsg = document.createElement('div');
+            userMsg.className = 'message user';
+            userMsg.textContent = prompt;
+            messagesDiv.appendChild(userMsg);
+            
+            // Clear input
+            input.value = '';
+            
+            // Send to backend
+            try {
+                const response = await fetch('/api/agent/query', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                    body: 'prompt=' + encodeURIComponent(prompt)
+                });
+                
+                const data = await response.json();
+                
+                // Add assistant response
+                const assistantMsg = document.createElement('div');
+                assistantMsg.className = 'message assistant';
+                assistantMsg.textContent = data.message || 'Agent response will appear here';
+                messagesDiv.appendChild(assistantMsg);
+                
+                // Scroll to bottom
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+        
+        // Enter key support
+        document.getElementById('prompt-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') sendMessage();
+        });
+    </script>
+</body>
+</html>

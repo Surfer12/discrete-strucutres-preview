@@ -1,0 +1,30 @@
+/* Additional styles for the Agent UI */
+/* This file is kept separate to facilitate the React migration */
+
+/* Custom theme variables */
+:root {
+    --primary-color: #667eea;
+    --primary-hover: #5a52d5;
+    --secondary-color: #764ba2;
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --text-primary: #333;
+    --bg-primary: #f5f7fa;
+    --bg-card: #ffffff;
+    --border-color: #e0e0e0;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .main-grid {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .message.user {
+        margin-left: 10% !important;
+    }
+    
+    .message.assistant {
+        margin-right: 10% !important;
+    }
+}
