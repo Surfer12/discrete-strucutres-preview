@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">Truth Tables</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/styles.css}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-calculator"></i> Discrete Logic
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/calculator">Calculator</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/truth-tables">Truth Tables</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/about">About</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <div class="card shadow">
+                    <div class="card-header bg-success text-white">
+                        <h3 class="mb-0">
+                            <i class="fas fa-table me-2"></i>Truth Tables Generator
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5>Generate Truth Table</h5>
+                                <form>
+                                    <div class="mb-3">
+                                        <label for="variables" class="form-label">Variables:</label>
+                                        <input type="text" 
+                                               class="form-control" 
+                                               id="variables" 
+                                               placeholder="Enter variables (e.g., A, B, C)"
+                                               required>
+                                        <div class="form-text">
+                                            Separate multiple variables with commas
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="expression" class="form-label">Logical Expression:</label>
+                                        <input type="text" 
+                                               class="form-control" 
+                                               id="expression" 
+                                               placeholder="Enter expression (e.g., A AND B OR C)"
+                                               required>
+                                    </div>
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="fas fa-play me-2"></i>Generate Table
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="col-md-6">
+                                <h5>Common Truth Tables</h5>
+                                <div class="list-group">
+                                    <a href="#" class="list-group-item list-group-item-action">
+                                        <strong>AND Gate</strong><br>
+                                        <small class="text-muted">A ∧ B</small>
+                                    </a>
+                                    <a href="#" class="list-group-item list-group-item-action">
+                                        <strong>OR Gate</strong><br>
+                                        <small class="text-muted">A ∨ B</small>
+                                    </a>
+                                    <a href="#" class="list-group-item list-group-item-action">
+                                        <strong>XOR Gate</strong><br>
+                                        <small class="text-muted">A ⊕ B</small>
+                                    </a>
+                                    <a href="#" class="list-group-item list-group-item-action">
+                                        <strong>Implication</strong><br>
+                                        <small class="text-muted">A → B</small>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Result Table -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-list-alt me-2"></i>Truth Table Result
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Enter an expression above to generate the truth table.
+                        </div>
+                        
+                        <!-- Sample truth table for demonstration -->
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>A</th>
+                                        <th>B</th>
+                                        <th>A AND B</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>0</td>
+                                        <td>0</td>
+                                        <td class="text-danger">0</td>
+                                    </tr>
+                                    <tr>
+                                        <td>0</td>
+                                        <td>1</td>
+                                        <td class="text-danger">0</td>
+                                    </tr>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>0</td>
+                                        <td class="text-danger">0</td>
+                                    </tr>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>1</td>
+                                        <td class="text-success">1</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- React Root for future migration -->
+    <div id="react-root"></div>
+
+    <!-- Footer -->
+    <footer class="bg-light text-center mt-5 py-3">
+        <div class="container">
+            <p class="text-muted mb-0">
+                Discrete Logic Mathematics © 2024 | 
+                <span th:text="${version}">v1.0.0</span>
+            </p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script th:src="@{/app.js}"></script>
+</body>
+</html>
